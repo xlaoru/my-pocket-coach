@@ -1,5 +1,6 @@
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
+import Paragraph from "@/components/Paragraph/Paragraph";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -12,6 +13,7 @@ export default function Programs() {
             <View>
                 <HeadingLabel>Training</HeadingLabel>
                 <Heading>Programs</Heading>
+                <Paragraph>{0} programs</Paragraph>
             </View>
         </View>
     );

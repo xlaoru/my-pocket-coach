@@ -1,10 +1,11 @@
 import { colors } from "@/styles/colors";
-import React, { ReactNode } from "react";
+import { IHeadingLabelProps } from "@/types/props";
+import React from "react";
 import { StyleSheet, Text } from "react-native";
 
-export default function HeadingLabel({ children }: { children: ReactNode }) {
+export default function HeadingLabel({ children, style }: IHeadingLabelProps) {
     return (
-        <Text style={styles.label}>{children}</Text>
+        <Text style={[styles.label, style]}>{children}</Text>
     );
 }
 

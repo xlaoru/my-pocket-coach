@@ -1,5 +1,6 @@
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
+import Paragraph from "@/components/Paragraph/Paragraph";
 import { colors } from "@/styles/colors";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
@@ -25,6 +26,7 @@ export default function ComponentsPreview() {
             <Heading>Typography</Heading>
             <Heading>Heading</Heading>
             <HeadingLabel>HeadingLabel</HeadingLabel>
+            <Paragraph>Paragraph</Paragraph>
         </View>
     );
 }
@@ -53,5 +55,5 @@ const styles = StyleSheet.create({
         marginVertical: 8,
         borderBottomColor: colors.white,
         borderBottomWidth: StyleSheet.hairlineWidth,
-    }
+    },
 });

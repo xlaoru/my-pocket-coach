@@ -8,7 +8,7 @@ export default function Periodization() {
     const insets = useSafeAreaInsets();
 
     return (
-        <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
+        <View style={{ paddingTop: insets.top + 24, paddingLeft: insets.left + 24, paddingBottom: insets.bottom }}>
             <View>
                 <HeadingLabel>Planning</HeadingLabel>
                 <Heading>Periodization</Heading>

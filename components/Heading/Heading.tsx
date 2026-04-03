@@ -1,10 +1,11 @@
 import { colors } from "@/styles/colors";
-import React, { ReactNode } from "react";
+import { IHeadingProps } from "@/types/props";
+import React from "react";
 import { StyleSheet, Text } from "react-native";
 
-export default function Heading({ children }: { children: ReactNode }) {
+export default function Heading({ children, style }: IHeadingProps) {
     return (
-        <Text style={styles.heading}>{children}</Text>
+        <Text style={[styles.heading, style]}>{children}</Text>
     );
 }
 

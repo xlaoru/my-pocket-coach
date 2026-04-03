@@ -1,4 +1,5 @@
-import { ReactNode } from 'react'
+import { Ionicons } from '@expo/vector-icons'
+import { ComponentProps, ReactNode } from 'react'
 import { StyleProp, TextStyle } from 'react-native'
 
 export interface IHeadingProps {
@@ -14,4 +15,9 @@ export interface IHeadingLabelProps {
 export interface IParagraphProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
+}
+
+export interface IEntityEmptyStateProps {
+  iconName: ComponentProps<typeof Ionicons>['name']
+  message: string
 }

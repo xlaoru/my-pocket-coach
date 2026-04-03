@@ -18,6 +18,13 @@ export default function TabsLayout() {
                     tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" color={color} size={size} />,
                 }}
             />
+            <Tabs.Screen
+                name="ComponentsPreview"
+                options={{
+                    title: "Components Preview",
+                    tabBarIcon: ({ color, size }) => <Ionicons name="flask-outline" color={color} size={size} />,
+                }}
+            />
         </Tabs>
     );
 }

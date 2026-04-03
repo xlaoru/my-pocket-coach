@@ -20,7 +20,7 @@ export default function Periodization() {
                     paddingTop: insets.top + 24,
                     paddingLeft: insets.left + 24,
                     paddingRight: insets.right + 24,
-                    paddingBottom: insets.bottom,
+                    paddingBottom: insets.bottom - 36,
                 },
             ]}
         >
@@ -46,6 +46,7 @@ export default function Periodization() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
+        gap: 16,
     },
     listContainer: {
         flex: 1,

@@ -1,3 +1,4 @@
+import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
@@ -21,7 +22,7 @@ export default function Programs() {
                     paddingTop: insets.top + 24,
                     paddingLeft: insets.left + 24,
                     paddingRight: insets.right + 24,
-                    paddingBottom: insets.bottom,
+                    paddingBottom: insets.bottom - 36,
                 },
             ]}
         >
@@ -40,6 +41,7 @@ export default function Programs() {
                     )
                 }
             </View>
+            <Button iconName="add-outline" onPress={() => { }}>New Program</Button>
         </View >
     );
 }
@@ -47,6 +49,7 @@ export default function Programs() {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
+        gap: 16,
     },
     listContainer: {
         flex: 1,

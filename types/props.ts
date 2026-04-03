@@ -1,7 +1,9 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, ReactNode } from 'react'
-import { StyleProp, TextStyle } from 'react-native'
+import { PressableProps, StyleProp, TextStyle } from 'react-native'
 import { IProgram } from './models'
+
+type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
 export interface IHeadingProps {
   children: ReactNode
@@ -19,7 +21,7 @@ export interface IParagraphProps {
 }
 
 export interface IEntityEmptyStateProps {
-  iconName: ComponentProps<typeof Ionicons>['name']
+  iconName: TIoniconName
   message: string
 }
 
@@ -40,6 +42,13 @@ export interface ITitleProps {
 }
 
 export interface IIconButtonProps {
-  iconName: ComponentProps<typeof Ionicons>['name']
+  iconName: TIoniconName
   onPress: VoidFunction
+}
+
+export interface IButtonProps {
+  children: ReactNode
+  iconName: TIoniconName
+  onPress: VoidFunction
+  style?: PressableProps['style']
 }

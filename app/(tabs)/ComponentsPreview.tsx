@@ -1,3 +1,4 @@
+import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
@@ -43,6 +44,7 @@ export default function ComponentsPreview() {
 
             <Heading>Buttons</Heading>
 
+            <Button iconName="checkmark-outline" onPress={() => { }} >Button</Button>
             <View style={styles.iconButtonContainer}>
                 <IconButton iconName="hourglass-outline" onPress={() => { }} />
                 <Paragraph>IconButton</Paragraph>

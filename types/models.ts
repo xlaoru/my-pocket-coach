@@ -13,10 +13,12 @@ export interface ISuperset {
   exercises: IExercise[]
 }
 
+export type TWorkout = (IExercise | ISuperset)[]
+
 export interface IProgram {
   name: string
   description?: string
-  workout: (IExercise | ISuperset)[]
+  workout: TWorkout
   date: Date
 }
 

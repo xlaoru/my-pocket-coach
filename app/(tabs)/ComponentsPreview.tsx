@@ -1,39 +1,76 @@
+import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
+import IconButton from "@/components/IconButton/IconButton";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import ProgramListItem from "@/components/ProgramList/ProgramListItem";
+import Title from "@/components/Title/Title";
 import { colors } from "@/styles/colors";
 import React from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 export default function ComponentsPreview() {
     const insets = useSafeAreaInsets()
     return (
-        <View style={[{ paddingTop: insets.top, paddingBottom: insets.bottom }, styles.outerContainer]}>
+        <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={[
+                { paddingTop: insets.top, paddingBottom: insets.bottom },
+                styles.outerContainer,
+            ]}
+        >
             <Heading>Colors</Heading>
-            <FlatList
-                data={Object.entries(colors)}
-                keyExtractor={([key]) => key}
-                renderItem={({ item: [key, value] }) => (
-                    <View style={styles.innerContainer}>
-                        <View style={[styles.box, { backgroundColor: value }]} />
-                        <Text style={styles.label}>{key}</Text>
-                    </View>
-                )}
-            />
+
+            {Object.entries(colors).map(([key, value]) => (
+                <View key={key} style={styles.innerContainer}>
+                    <View style={[styles.box, { backgroundColor: value }]} />
+                    <Text style={styles.label}>{key}</Text>
+                </View>
+            ))}
+
             <View style={styles.separator} />
+
             <Heading>Typography</Heading>
+
             <Heading>Heading</Heading>
             <HeadingLabel>HeadingLabel</HeadingLabel>
             <Paragraph>Paragraph</Paragraph>
-        </View>
+            <Title>Title</Title>
+
+            <View style={styles.separator} />
+
+            <Heading>Buttons</Heading>
+
+            <View style={styles.iconButtonContainer}>
+                <IconButton iconName="hourglass-outline" onPress={() => { }} />
+                <Paragraph>IconButton</Paragraph>
+            </View>
+
+            <View style={styles.separator} />
+
+            <Heading>Entity Empty State</Heading>
+
+            <EntityEmptyState iconName="ban-outline" message="This is an empty state" />
+
+            <View style={styles.separator} />
+
+            <Heading>Program List Item</Heading>
+
+            <ProgramListItem
+                title="Test Program"
+                description="Demo description."
+                exercises={5}
+                supersets={3}
+                total={8}
+            />
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     outerContainer: {
-        flex: 1,
         padding: 16,
         gap: 16
     },
@@ -56,4 +93,8 @@ const styles = StyleSheet.create({
         borderBottomColor: colors.white,
         borderBottomWidth: StyleSheet.hairlineWidth,
     },
+    iconButtonContainer: {
+        flexDirection: "row",
+        gap: 16,
+    }
 });

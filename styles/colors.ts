@@ -1,6 +1,6 @@
 const colors = {
   red500: '#ff2d2d',
-  red600: '#e02626',
+  red900: '#3f2323',
 
   gray400: '#a1a1aa',
   gray500: '#6b7280',

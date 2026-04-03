@@ -1,5 +1,5 @@
 import { colors } from "@/styles/colors";
-import { IProgramListItemsProps } from "@/types/props";
+import { IPeriodizationListItemProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
@@ -7,20 +7,16 @@ import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function ProgramListItem({ title, description, exercises, supersets, total, onPress }: IProgramListItemsProps) {
+export default function PeriodizationListItem({ title, description, stages, onPress }: IPeriodizationListItemProps) {
     return (
         <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.iconContainer}>
-                <Ionicons name="barbell-outline" size={24} color={colors.red500} />
+                <Ionicons name="flash-outline" size={24} color={colors.red500} />
             </View>
             <View style={styles.contentContainer}>
                 <Title>{title.length > 15 ? `${title.substring(0, 15)}...` : title}</Title>
                 <Paragraph>{description && description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>
-                <View style={styles.amountsContainer}>
-                    <Paragraph style={styles.amountTitle}>{exercises} exercise{exercises !== 1 ? 's' : ''}</Paragraph>
-                    <Paragraph style={styles.amountTitle}>{supersets} superset{supersets !== 1 ? 's' : ''}</Paragraph>
-                    <Paragraph style={[styles.amountTitle, styles.totalTitle]}>{total} total</Paragraph>
-                </View>
+                <Paragraph style={styles.stagesTitle}>{stages} stage{stages !== 1 ? "s" : ""}</Paragraph>
             </View>
             <View style={styles.buttonsContainer}>
                 <IconButton iconName="trash-bin-outline" onPress={() => { }} />
@@ -51,14 +47,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    amountsContainer: {
-        flexDirection: "row",
-        gap: 4,
-    },
-    amountTitle: {
-        fontSize: 13
-    },
-    totalTitle: {
+    stagesTitle: {
+        fontSize: 13,
         fontWeight: "bold",
         color: colors.red500
     },

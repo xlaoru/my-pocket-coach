@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, ReactNode } from 'react'
 import { PressableProps, StyleProp, TextStyle } from 'react-native'
-import { IProgram } from './models'
+import { IPeriodization, IProgram } from './models'
 
 type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
@@ -35,6 +35,7 @@ export interface IProgramListItemsProps {
   exercises: number
   supersets: number
   total: number
+  onPress: VoidFunction
 }
 
 export interface ITitleProps {
@@ -51,4 +52,15 @@ export interface IButtonProps {
   iconName: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']
+}
+
+export interface IPeriodizationListProps {
+  periodizations: IPeriodization[]
+}
+
+export interface IPeriodizationListItemProps {
+  title: string
+  description?: string
+  stages: number
+  onPress: VoidFunction
 }

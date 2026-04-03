@@ -4,6 +4,7 @@ import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import IconButton from "@/components/IconButton/IconButton";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import PeriodizationListItem from "@/components/PeriodizationList/PeriodizationListItem";
 import ProgramListItem from "@/components/ProgramList/ProgramListItem";
 import Title from "@/components/Title/Title";
 import { colors } from "@/styles/colors";
@@ -66,6 +67,18 @@ export default function ComponentsPreview() {
                 exercises={5}
                 supersets={3}
                 total={8}
+                onPress={() => { }}
+            />
+
+            <View style={styles.separator} />
+
+            <Heading>Periodization List Item</Heading>
+
+            <PeriodizationListItem
+                title="Test Periodization"
+                description="Demo description."
+                stages={3}
+                onPress={() => { }}
             />
         </ScrollView>
     );

@@ -4,11 +4,13 @@ export interface ISet {
 }
 
 export interface IExercise {
+  id: string
   name: string
   sets: ISet[]
 }
 
 export interface ISuperset {
+  id: string
   name: string
   exercises: IExercise[]
 }
@@ -16,6 +18,7 @@ export interface ISuperset {
 export type TWorkout = (IExercise | ISuperset)[]
 
 export interface IProgram {
+  id: string
   name: string
   description?: string
   workout: TWorkout
@@ -23,11 +26,13 @@ export interface IProgram {
 }
 
 export interface IStage {
+  id: string
   name: string
   description?: string
 }
 
 export interface IPeriodization {
+  id: string
   name: string
   description?: string
   stages: IStage[]

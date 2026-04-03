@@ -36,7 +36,7 @@ export default function ProgramList({ programs }: IProgramListProps) {
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
             data={programs}
-            keyExtractor={(item, index) => `${item.name}-${index}`}
+            keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
                 <ProgramListItem
                     title={item.name}
@@ -44,6 +44,7 @@ export default function ProgramList({ programs }: IProgramListProps) {
                     exercises={countExercises(item.workout)}
                     supersets={countSupersets(item.workout)}
                     total={countExercises(item.workout) + countSupersets(item.workout)}
+                    onPress={() => { }}
                 />
             )}
         />

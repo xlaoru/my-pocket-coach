@@ -1,7 +1,9 @@
+import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import PeriodizationList from "@/components/PeriodizationList/PeriodizationList";
 import { periodizations as dummyPeriodizations } from "@/dummy-data";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -35,10 +37,11 @@ export default function Periodization() {
                         <EntityEmptyState iconName="calendar-outline" message="No periodizations found. Create a new periodization to get started." />
                     )
                     : (
-                        <Paragraph>Here is some periodizations!</Paragraph>
+                        <PeriodizationList periodizations={periodizations} />
                     )
                 }
             </View>
+            <Button iconName="add-outline" onPress={() => { }} >Create Periodization</Button>
         </View>
     );
 }

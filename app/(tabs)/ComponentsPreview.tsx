@@ -1,21 +1,31 @@
+import Heading from "@/components/Heading/Heading";
+import HeadingLabel from "@/components/Heading/HeadingLabel";
 import { colors } from "@/styles/colors";
 import React from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 export default function ComponentsPreview() {
+    const insets = useSafeAreaInsets()
     return (
-        <FlatList
-            style={styles.outerContainer}
-            data={Object.entries(colors)}
-            keyExtractor={([key]) => key}
-            renderItem={({ item: [key, value] }) => (
-                <View style={styles.innerContainer}>
-                    <View style={[styles.box, { backgroundColor: value }]} />
-                    <Text style={styles.label}>{key}</Text>
-                </View>
-            )}
-        />
+        <View style={[{ paddingTop: insets.top, paddingBottom: insets.bottom }, styles.outerContainer]}>
+            <Heading>Colors</Heading>
+            <FlatList
+                data={Object.entries(colors)}
+                keyExtractor={([key]) => key}
+                renderItem={({ item: [key, value] }) => (
+                    <View style={styles.innerContainer}>
+                        <View style={[styles.box, { backgroundColor: value }]} />
+                        <Text style={styles.label}>{key}</Text>
+                    </View>
+                )}
+            />
+            <View style={styles.separator} />
+            <Heading>Typography</Heading>
+            <Heading>Heading</Heading>
+            <HeadingLabel>HeadingLabel</HeadingLabel>
+        </View>
     );
 }
 
@@ -23,6 +33,7 @@ const styles = StyleSheet.create({
     outerContainer: {
         flex: 1,
         padding: 16,
+        gap: 16
     },
     innerContainer: {
         flexDirection: "row",
@@ -36,5 +47,11 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 16,
         fontWeight: "500",
+        color: colors.white,
+    },
+    separator: {
+        marginVertical: 8,
+        borderBottomColor: colors.white,
+        borderBottomWidth: StyleSheet.hairlineWidth,
     }
 });

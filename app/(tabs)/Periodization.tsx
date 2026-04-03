@@ -4,14 +4,14 @@ import React from "react";
 import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function Programs() {
+export default function Periodization() {
     const insets = useSafeAreaInsets();
 
     return (
         <View style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
             <View>
-                <HeadingLabel>Training</HeadingLabel>
-                <Heading>Programs</Heading>
+                <HeadingLabel>Planning</HeadingLabel>
+                <Heading>Periodization</Heading>
             </View>
         </View>
     );

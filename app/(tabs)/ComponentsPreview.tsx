@@ -66,7 +66,6 @@ export default function ComponentsPreview() {
                 description="Demo description."
                 exercises={5}
                 supersets={3}
-                total={8}
                 onPress={() => { }}
             />
 

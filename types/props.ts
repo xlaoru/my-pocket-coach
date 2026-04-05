@@ -34,7 +34,6 @@ export interface IProgramListItemsProps {
   description?: string
   exercises: number
   supersets: number
-  total: number
   onPress: VoidFunction
 }
 

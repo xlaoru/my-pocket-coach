@@ -48,9 +48,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     stagesTitle: {
-        fontSize: 13,
-        fontWeight: "bold",
-        color: colors.red500
+        fontSize: 14,
     },
     buttonsContainer: {
         flexDirection: "row",

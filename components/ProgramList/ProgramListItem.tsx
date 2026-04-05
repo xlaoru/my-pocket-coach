@@ -17,8 +17,8 @@ export default function ProgramListItem({ title, description, exercises, superse
                 <Title>{title.length > 15 ? `${title.substring(0, 15)}...` : title}</Title>
                 <Paragraph>{description && description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>
                 <View style={styles.amountsContainer}>
-                    <Paragraph style={styles.amountTitle}>{exercises} exercise{exercises !== 1 ? 's' : ''}</Paragraph>
-                    <Paragraph style={styles.amountTitle}>{supersets} superset{supersets !== 1 ? 's' : ''}</Paragraph>
+                    {exercises > 0 && <Paragraph style={styles.amountTitle}>{exercises} exercise{exercises !== 1 ? 's' : ''}</Paragraph>}
+                    {supersets > 0 && <Paragraph style={styles.amountTitle}>{supersets} superset{supersets !== 1 ? 's' : ''}</Paragraph>}
                 </View>
             </View>
             <View style={styles.buttonsContainer}>

@@ -4,6 +4,7 @@ const colors = {
 
   gray400: '#a1a1aa',
   gray500: '#6b7280',
+  gray600: '#292929',
   gray700: '#202226',
 
   white: '#ffffff',

@@ -1,85 +1,120 @@
+import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
+import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import IconButton from "@/components/IconButton/IconButton";
+import Input from "@/components/Input/Input";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import PeriodizationListItem from "@/components/PeriodizationList/PeriodizationListItem";
 import ProgramListItem from "@/components/ProgramList/ProgramListItem";
 import Title from "@/components/Title/Title";
 import { colors } from "@/styles/colors";
-import React from "react";
+import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 
 export default function ComponentsPreview() {
     const insets = useSafeAreaInsets()
+
+    const [isOpen, setOpen] = useState(false)
+
     return (
-        <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={[
-                { paddingTop: insets.top, paddingBottom: insets.bottom },
-                styles.outerContainer,
-            ]}
-        >
-            <Heading>Colors</Heading>
+        <>
+            <ScrollView
+                style={{ flex: 1 }}
+                contentContainerStyle={[
+                    { paddingTop: insets.top, paddingBottom: insets.bottom },
+                    styles.outerContainer,
+                ]}
+            >
+                <Heading>Colors</Heading>
 
-            {Object.entries(colors).map(([key, value]) => (
-                <View key={key} style={styles.innerContainer}>
-                    <View style={[styles.box, { backgroundColor: value }]} />
-                    <Text style={styles.label}>{key}</Text>
+                {Object.entries(colors).map(([key, value]) => (
+                    <View key={key} style={styles.innerContainer}>
+                        <View style={[styles.box, { backgroundColor: value }]} />
+                        <Text style={styles.label}>{key}</Text>
+                    </View>
+                ))}
+
+                <View style={styles.separator} />
+
+                <Heading>Typography</Heading>
+
+                <Heading>Heading</Heading>
+                <HeadingLabel>HeadingLabel</HeadingLabel>
+                <Paragraph>Paragraph</Paragraph>
+                <Title>Title</Title>
+
+                <View style={styles.separator} />
+
+                <Heading>Buttons</Heading>
+
+                <Button iconName="checkmark-outline" onPress={() => { }} >Button</Button>
+                <View style={styles.iconButtonContainer}>
+                    <IconButton iconName="hourglass-outline" onPress={() => { }} />
+                    <Paragraph>IconButton</Paragraph>
                 </View>
-            ))}
 
-            <View style={styles.separator} />
+                <View style={styles.separator} />
 
-            <Heading>Typography</Heading>
+                <Heading>Entity Empty State</Heading>
 
-            <Heading>Heading</Heading>
-            <HeadingLabel>HeadingLabel</HeadingLabel>
-            <Paragraph>Paragraph</Paragraph>
-            <Title>Title</Title>
+                <EntityEmptyState iconName="ban-outline" message="This is an empty state" />
 
-            <View style={styles.separator} />
+                <View style={styles.separator} />
 
-            <Heading>Buttons</Heading>
+                <Heading>Program List Item</Heading>
 
-            <Button iconName="checkmark-outline" onPress={() => { }} >Button</Button>
-            <View style={styles.iconButtonContainer}>
-                <IconButton iconName="hourglass-outline" onPress={() => { }} />
-                <Paragraph>IconButton</Paragraph>
-            </View>
+                <ProgramListItem
+                    title="Test Program"
+                    description="Demo description."
+                    exercises={5}
+                    supersets={3}
+                    onPress={() => { }}
+                />
 
-            <View style={styles.separator} />
+                <View style={styles.separator} />
 
-            <Heading>Entity Empty State</Heading>
+                <Heading>Periodization List Item</Heading>
 
-            <EntityEmptyState iconName="ban-outline" message="This is an empty state" />
+                <PeriodizationListItem
+                    title="Test Periodization"
+                    description="Demo description."
+                    stages={3}
+                    onPress={() => { }}
+                />
 
-            <View style={styles.separator} />
+                <View style={styles.separator} />
 
-            <Heading>Program List Item</Heading>
+                <Heading>Inputs</Heading>
 
-            <ProgramListItem
-                title="Test Program"
-                description="Demo description."
-                exercises={5}
-                supersets={3}
-                onPress={() => { }}
-            />
+                <Input
+                    label="Label"
+                    placeholder="This is an input"
+                    value=""
+                    onChangeText={() => { }}
+                />
 
-            <View style={styles.separator} />
+                <View style={styles.separator} />
 
-            <Heading>Periodization List Item</Heading>
+                <Heading>Bottom Sheet Form</Heading>
 
-            <PeriodizationListItem
-                title="Test Periodization"
-                description="Demo description."
-                stages={3}
-                onPress={() => { }}
-            />
-        </ScrollView>
+                <Button iconName="add-outline" onPress={() => setOpen(true)}>Open Bottom Sheet</Button>
+
+            </ScrollView>
+
+            <BottomSheetForm
+                isOpen={isOpen}
+                title="Bottom Sheet Title"
+                onSubmit={() => { }}
+                onClose={() => setOpen(false)}
+            >
+                <BottomSheetInput label="Label" placeholder="This is a bottom sheet input" value="" onChangeText={() => { }} />
+            </BottomSheetForm>
+        </>
     );
 }
 

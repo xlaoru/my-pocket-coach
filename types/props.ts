@@ -63,3 +63,18 @@ export interface IPeriodizationListItemProps {
   stages: number
   onPress: VoidFunction
 }
+
+export interface IBottomSheetFormProps {
+  isOpen: boolean
+  children: ReactNode
+  title: string
+  onSubmit: VoidFunction
+  onClose: VoidFunction
+}
+
+export interface IInputProps {
+  label: string
+  placeholder: string
+  value: string
+  onChangeText: (text: string) => void
+}

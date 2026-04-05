@@ -43,7 +43,6 @@ export default function ProgramList({ programs }: IProgramListProps) {
                     description={item.description}
                     exercises={countExercises(item.workout)}
                     supersets={countSupersets(item.workout)}
-                    total={countExercises(item.workout) + countSupersets(item.workout)}
                     onPress={() => { }}
                 />
             )}

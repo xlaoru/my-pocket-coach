@@ -7,7 +7,7 @@ import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function ProgramListItem({ title, description, exercises, supersets, total, onPress }: IProgramListItemsProps) {
+export default function ProgramListItem({ title, description, exercises, supersets, onPress }: IProgramListItemsProps) {
     return (
         <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.iconContainer}>
@@ -19,7 +19,6 @@ export default function ProgramListItem({ title, description, exercises, superse
                 <View style={styles.amountsContainer}>
                     <Paragraph style={styles.amountTitle}>{exercises} exercise{exercises !== 1 ? 's' : ''}</Paragraph>
                     <Paragraph style={styles.amountTitle}>{supersets} superset{supersets !== 1 ? 's' : ''}</Paragraph>
-                    <Paragraph style={[styles.amountTitle, styles.totalTitle]}>{total} total</Paragraph>
                 </View>
             </View>
             <View style={styles.buttonsContainer}>
@@ -56,11 +55,7 @@ const styles = StyleSheet.create({
         gap: 4,
     },
     amountTitle: {
-        fontSize: 13
-    },
-    totalTitle: {
-        fontWeight: "bold",
-        color: colors.red500
+        fontSize: 14
     },
     buttonsContainer: {
         flexDirection: "row",

@@ -41,7 +41,7 @@ export default function Periodization() {
                     )
                 }
             </View>
-            <Button iconName="add-outline" onPress={() => { }} >Create Periodization</Button>
+            <Button iconName="add-outline" onPress={() => { }} >New Periodization</Button>
         </View>
     );
 }

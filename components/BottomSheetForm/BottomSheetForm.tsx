@@ -1,56 +1,64 @@
 import { IBottomSheetFormProps } from "@/types/props";
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { colors } from "@/styles/colors";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
 export default function BottomSheetForm({ isOpen, title, children, onSubmit, onClose }: IBottomSheetFormProps) {
-    const bottomSheetRef = useRef<BottomSheet>(null);
+    const insets = useSafeAreaInsets();
+
+    const bottomSheetRef = useRef<BottomSheetModal>(null);
 
     useEffect(() => {
         if (isOpen) {
-            bottomSheetRef.current?.expand();
-            return;
+            bottomSheetRef.current?.present();
+        } else {
+            bottomSheetRef.current?.dismiss();
         }
-
-        bottomSheetRef.current?.close();
     }, [isOpen]);
 
-    const handleClosePress = () => {
-        bottomSheetRef.current?.close();
-    };
+    const handleDismiss = useCallback(() => {
+        onClose();
+    }, [onClose]);
+
+    const renderBackdrop = useCallback(
+        (props: any) => (
+            <BottomSheetBackdrop
+                {...props}
+                appearsOnIndex={0}
+                disappearsOnIndex={-1}
+                opacity={0.5}
+                pressBehavior="close"
+            />
+        ),
+        []
+    );
 
     return (
-        <BottomSheet
+        <BottomSheetModal
             ref={bottomSheetRef}
-            index={-1}
-            snapPoints={["30%"]}
+            index={0}
+            bottomInset={insets.bottom}
+            enableDynamicSizing
             keyboardBehavior="interactive"
             keyboardBlurBehavior="restore"
             android_keyboardInputMode="adjustPan"
             enableBlurKeyboardOnGesture
             enablePanDownToClose
-            onClose={onClose}
-            backdropComponent={(props) => (
-                <BottomSheetBackdrop
-                    {...props}
-                    appearsOnIndex={0}
-                    disappearsOnIndex={-1}
-                    opacity={0.5}
-                    pressBehavior="close"
-                />
-            )}
+            onDismiss={handleDismiss}
+            backdropComponent={renderBackdrop}
             backgroundStyle={styles.sheetBackground}
             handleIndicatorStyle={styles.handleIndicator}
         >
             <BottomSheetView style={styles.container}>
                 <View style={styles.titleContainer}>
                     <Title>{title}</Title>
-                    <IconButton iconName="close" onPress={handleClosePress} />
+                    <IconButton iconName="close" onPress={handleDismiss} />
                 </View>
                 <View style={styles.separator} />
                 <View style={styles.childrenContainer}>
@@ -58,7 +66,7 @@ export default function BottomSheetForm({ isOpen, title, children, onSubmit, onC
                 </View>
                 <Button iconName="checkmark" onPress={onSubmit}>Submit</Button>
             </BottomSheetView>
-        </BottomSheet>
+        </BottomSheetModal>
     );
 }
 
@@ -70,7 +78,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.gray500,
     },
     container: {
-        flex: 1,
         gap: 16,
         paddingHorizontal: 20,
         paddingVertical: 12,

@@ -1,10 +1,10 @@
+import { Stack } from "expo-router";
 import React from "react";
-import { Modal, StyleSheet } from "react-native";
 
 export default function ModalLayout() {
     return (
-        <Modal />
+        <Stack>
+            <Stack.Screen name="Program" options={{ headerShown: false }} />
+        </Stack>
     );
 }
-
-const styles = StyleSheet.create({});

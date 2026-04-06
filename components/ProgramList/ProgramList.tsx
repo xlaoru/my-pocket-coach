@@ -1,5 +1,6 @@
 import { TWorkout } from "@/types/models";
 import { IProgramListProps } from "@/types/props";
+import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 import ProgramListItem from "./ProgramListItem";
@@ -31,11 +32,14 @@ function countSupersets(workout: TWorkout): number {
 }
 
 export default function ProgramList({ programs }: IProgramListProps) {
+    const router = useRouter()
+
     return (
         <FlatList
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
             data={programs}
+            showsVerticalScrollIndicator={false}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
                 <ProgramListItem
@@ -43,7 +47,7 @@ export default function ProgramList({ programs }: IProgramListProps) {
                     description={item.description}
                     exercises={countExercises(item.workout)}
                     supersets={countSupersets(item.workout)}
-                    onPress={() => { }}
+                    onPress={() => { router.push('/(modals)/Program') }}
                 />
             )}
         />

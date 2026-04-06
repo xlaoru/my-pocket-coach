@@ -13,7 +13,7 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="(modals)"
-            options={{ presentation: "modal" }}
+            options={{ headerShown: false, presentation: "modal" }}
           />
         </Stack>
       </SafeAreaProvider>

@@ -8,6 +8,7 @@ type TIoniconName = ComponentProps<typeof Ionicons>['name']
 export interface IHeadingProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
+  isEditable?: boolean
 }
 
 export interface IHeadingLabelProps {
@@ -18,10 +19,12 @@ export interface IHeadingLabelProps {
 export interface IParagraphProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
+  isEditable?: boolean
 }
 
 export interface IEntityEmptyStateProps {
   iconName: TIoniconName
+  title: string
   message: string
 }
 
@@ -39,6 +42,8 @@ export interface IProgramListItemsProps {
 
 export interface ITitleProps {
   children: ReactNode
+  style?: StyleProp<TextStyle>
+  isEditable?: boolean
 }
 
 export interface IIconButtonProps {
@@ -77,4 +82,8 @@ export interface IInputProps {
   placeholder: string
   value: string
   onChangeText: (text: string) => void
+}
+
+export interface IAttachPeriodizationButtonProps {
+  onPress: VoidFunction
 }

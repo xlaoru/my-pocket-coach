@@ -41,7 +41,7 @@ export default function Programs() {
             <View style={styles.listContainer}>
                 {programs.length === 0
                     ? (
-                        <EntityEmptyState iconName="barbell-outline" message="No programs found. Create a new program to get started." />
+                        <EntityEmptyState iconName="barbell-outline" title="No programs yet" message="Create your first training program" />
                     )
                     : (
                         <ProgramList programs={programs} />

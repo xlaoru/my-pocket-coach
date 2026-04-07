@@ -47,7 +47,12 @@ export default function ProgramList({ programs }: IProgramListProps) {
                     description={item.description}
                     exercises={countExercises(item.workout)}
                     supersets={countSupersets(item.workout)}
-                    onPress={() => { router.push('/(modals)/Program') }}
+                    onPress={() => {
+                        router.push({
+                            pathname: "/(modals)/programs/[id]",
+                            params: { id: item.id }
+                        })
+                    }}
                 />
             )}
         />

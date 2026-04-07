@@ -1,12 +1,21 @@
 import { colors } from "@/styles/colors";
 import { IParagraphProps } from "@/types/props";
-import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TextInput } from "react-native";
 
-export default function Paragraph({ children, style }: IParagraphProps) {
-    return (
-        <Text style={[styles.paragraph, style]}>{children}</Text>
-    );
+export default function Paragraph({ children, style, isEditable }: IParagraphProps) {
+
+    if (!isEditable) {
+        return <Text style={[styles.paragraph, style]}>{children}</Text>;
+    } else {
+        return (
+            <TextInput
+                style={[styles.paragraph, style]}
+                value={String(children)}
+                multiline
+                scrollEnabled={false}
+            />
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -14,5 +23,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 24,
         color: colors.gray400,
+        padding: 0
     }
 });

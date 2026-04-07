@@ -34,7 +34,7 @@ export default function Periodization() {
             <View style={styles.listContainer}>
                 {periodizations.length === 0
                     ? (
-                        <EntityEmptyState iconName="calendar-outline" message="No periodizations found. Create a new periodization to get started." />
+                        <EntityEmptyState iconName="calendar-outline" title="No periods yet" message="Create a periodization period with stages" />
                     )
                     : (
                         <PeriodizationList periodizations={periodizations} />

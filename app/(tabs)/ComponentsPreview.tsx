@@ -1,3 +1,4 @@
+import AttachPeriodizationButton from "@/components/AttachPeriodizationButton/AttachPeriodizationButton";
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
@@ -57,12 +58,13 @@ export default function ComponentsPreview() {
                     <IconButton iconName="hourglass-outline" onPress={() => { }} />
                     <Paragraph>IconButton</Paragraph>
                 </View>
+                <AttachPeriodizationButton onPress={() => { }} />
 
                 <View style={styles.separator} />
 
                 <Heading>Entity Empty State</Heading>
 
-                <EntityEmptyState iconName="ban-outline" message="This is an empty state" />
+                <EntityEmptyState iconName="ban-outline" title="Empty State" message="This is an empty state" />
 
                 <View style={styles.separator} />
 

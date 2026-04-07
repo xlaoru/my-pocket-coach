@@ -4,27 +4,19 @@ import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
+import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
 import { programs } from "@/dummy-data";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
 
     const { id } = useLocalSearchParams<{ id: string }>()
-
-    const tempCurrentProgram = programs.find(program => program.id === id)
-    const tempProgramExercisesAmount = tempCurrentProgram?.workout.reduce((acc, item) => {
-        if ('sets' in item) {
-            return acc + 1;
-        } else if ('exercises' in item) {
-            return acc + item.exercises.length;
-        }
-        return acc;
-    }, 0) ?? 0;
 
     const navigation = useNavigation()
 
@@ -34,6 +26,23 @@ export default function Program() {
         })
     }, [id, navigation])
 
+    const tempCurrentProgram = programs.find(program => program.id === id)
+
+    const [program, setProgram] = useState(tempCurrentProgram)
+
+    const programExercisesAmount = program?.workout.reduce((acc, item) => {
+        if ('sets' in item) {
+            return acc + 1;
+        } else if ('exercises' in item) {
+            return acc + item.exercises.length;
+        }
+        return acc;
+    }, 0) ?? 0;
+
+    const [isOpen, setOpen] = useState(false)
+
+    const [exerciseName, setExerciseName] = useState("")
+
     return (
         <ScrollView
             contentContainerStyle={[
@@ -42,18 +51,21 @@ export default function Program() {
             ]}
         >
             <View style={styles.header}>
-                <Heading isEditable>{tempCurrentProgram?.name}</Heading>
-                <Paragraph isEditable>{tempCurrentProgram?.description}</Paragraph>
+                <Heading isEditable>{program?.name}</Heading>
+                <Paragraph isEditable>{program?.description}</Paragraph>
                 <AttachPeriodizationButton onPress={() => { }} />
             </View>
             <View style={styles.listContainer}>
                 {
-                    tempProgramExercisesAmount === 0
+                    programExercisesAmount === 0
                         ? <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
                         : null
                 }
             </View>
-            <Button iconName="add" onPress={() => { }}>New Exercise</Button>
+            <Button iconName="add" onPress={() => setOpen(true)}>New Exercise</Button>
+            <BottomSheetForm isOpen={isOpen} onClose={() => setOpen(false)} onSubmit={() => { }} title="Add Exercise">
+                <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} />
+            </BottomSheetForm>
         </ScrollView>
     );
 }

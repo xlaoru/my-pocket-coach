@@ -3,6 +3,8 @@ import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
+import AddExerciseOutlineButton from "@/components/ExerciseForm/AddExerciseOutlineButton";
+import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import IconButton from "@/components/IconButton/IconButton";
@@ -20,7 +22,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function ComponentsPreview() {
     const insets = useSafeAreaInsets()
 
-    const [isOpen, setOpen] = useState(false)
+    const [isOpenSimpleBottomSheet, setOpenSimpleBottomSheet] = useState(false)
+
+    const [isOpenExerciseBottomSheet, setOpenExerciseBottomSheet] = useState(false)
 
     return (
         <>
@@ -59,6 +63,7 @@ export default function ComponentsPreview() {
                     <Paragraph>IconButton</Paragraph>
                 </View>
                 <AttachPeriodizationButton onPress={() => { }} />
+                <AddExerciseOutlineButton onPress={() => { }} />
 
                 <View style={styles.separator} />
 
@@ -104,17 +109,31 @@ export default function ComponentsPreview() {
 
                 <Heading>Bottom Sheet Form</Heading>
 
-                <Button iconName="add-outline" onPress={() => setOpen(true)}>Open Bottom Sheet</Button>
+                <Button iconName="add-outline" onPress={() => setOpenSimpleBottomSheet(true)}>Open Bottom Sheet</Button>
 
+                <View style={styles.separator} />
+
+                <Heading>Bottom Sheet Form for Exercise</Heading>
+
+                <Button iconName="add-outline" onPress={() => setOpenExerciseBottomSheet(true)}>Open Exercise Bottom Sheet</Button>
             </ScrollView>
 
             <BottomSheetForm
-                isOpen={isOpen}
-                title="Bottom Sheet Title"
+                isOpen={isOpenSimpleBottomSheet}
+                title="Simple Bottom Sheet Title"
                 onSubmit={() => { }}
-                onClose={() => setOpen(false)}
+                onClose={() => setOpenSimpleBottomSheet(false)}
             >
                 <BottomSheetInput label="Label" placeholder="This is a bottom sheet input" value="" onChangeText={() => { }} />
+            </BottomSheetForm>
+
+            <BottomSheetForm
+                isOpen={isOpenExerciseBottomSheet}
+                title="Exercise Bottom Sheet Title"
+                onSubmit={() => { }}
+                onClose={() => setOpenExerciseBottomSheet(false)}
+            >
+                <ExerciseForm exerciseName="" setExerciseName={() => { }} />
             </BottomSheetForm>
         </>
     );

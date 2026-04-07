@@ -87,3 +87,22 @@ export interface IInputProps {
 export interface IAttachPeriodizationButtonProps {
   onPress: VoidFunction
 }
+
+export interface IExerciseFormProps {
+  exerciseName: string
+  setExerciseName: (name: string) => void
+}
+
+export interface IExerciseFormRowProps {
+  index: number
+}
+
+export interface IExerciseFormRowInputProps {
+  placeholder: string
+  value: string
+  onChangeText: (text: string) => void
+}
+
+export interface IAddExerciseOutlineButtonProps {
+  onPress: VoidFunction
+}

@@ -11,6 +11,7 @@ import ProgramList from "@/components/ProgramList/ProgramList";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Loader from "@/components/Loader/Loader";
 
 export default function Programs() {
     const insets = useSafeAreaInsets();
@@ -62,21 +63,26 @@ export default function Programs() {
                 </Paragraph>
             </View>
             <View style={styles.listContainer}>
-                {isError
-                    ? (
-                        <EntityEmptyState
-                            iconName="alert-circle-outline"
-                            title="Failed to load programs"
-                            message="Please check the API connection and try again."
-                        />
-                    )
-                    : programs.length === 0
-                    ? (
-                        <EntityEmptyState iconName="barbell-outline" title="No programs yet" message="Create your first training program" />
-                    )
-                    : (
-                        <ProgramList programs={programs} />
-                    )
+                {
+                    isError
+                        ? (
+                            <EntityEmptyState
+                                iconName="alert-circle-outline"
+                                title="Failed to load programs"
+                                message="Please check the API connection and try again."
+                            />
+                        )
+                        : isLoading
+                            ? (
+                                <Loader />
+                            )
+                            : programs.length === 0
+                                ? (
+                                    <EntityEmptyState iconName="barbell-outline" title="No programs yet" message="Create your first training program" />
+                                )
+                                : (
+                                    <ProgramList programs={programs} />
+                                )
                 }
             </View>
             <Button iconName="add-outline" onPress={() => setIsBottomSheetOpen(true)}>New Program</Button>

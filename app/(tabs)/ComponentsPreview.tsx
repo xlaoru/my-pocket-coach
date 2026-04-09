@@ -9,6 +9,7 @@ import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import IconButton from "@/components/IconButton/IconButton";
 import Input from "@/components/Input/Input";
+import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import PeriodizationListItem from "@/components/PeriodizationList/PeriodizationListItem";
 import ProgramListItem from "@/components/ProgramList/ProgramListItem";
@@ -116,6 +117,12 @@ export default function ComponentsPreview() {
                 <Heading>Bottom Sheet Form for Exercise</Heading>
 
                 <Button iconName="add-outline" onPress={() => setOpenExerciseBottomSheet(true)}>Open Exercise Bottom Sheet</Button>
+
+                <View style={styles.separator} />
+
+                <Heading>Loader</Heading>
+
+                <Loader />
             </ScrollView>
 
             <BottomSheetForm

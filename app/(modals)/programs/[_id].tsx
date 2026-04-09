@@ -12,13 +12,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
 import { useProgram } from "@/features/programs/hooks/use-program";
+import Loader from "@/components/Loader/Loader";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
 
     const { _id } = useLocalSearchParams<{ _id: string }>()
 
-    const { data: program, isLoading, error } = useProgram(_id)
+    const { data: program, isLoading, isError } = useProgram(_id)
 
     const navigation = useNavigation()
 
@@ -50,15 +51,29 @@ export default function Program() {
             ]}
         >
             <View style={styles.header}>
-                <Heading isEditable>{program?.name}</Heading>
-                <Paragraph isEditable>{program?.description}</Paragraph>
+                <Heading isEditable>{isLoading ? "Loading..." : program?.name}</Heading>
+                <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>
                 <AttachPeriodizationButton onPress={() => { }} />
             </View>
             <View style={styles.listContainer}>
                 {
-                    programExercisesAmount === 0
-                        ? <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
-                        : null
+                    isError
+                        ? (
+                            <EntityEmptyState
+                                iconName="alert-circle-outline"
+                                title="Failed to load programs"
+                                message="Please check the API connection and try again."
+                            />
+                        )
+                        : isLoading
+                            ? (
+                                <Loader />
+                            )
+                            : programExercisesAmount === 0
+                                ? (
+                                    <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
+                                )
+                                : null
                 }
             </View>
             <Button iconName="add" onPress={() => setOpen(true)}>New Exercise</Button>

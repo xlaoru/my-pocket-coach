@@ -11,33 +11,32 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
-import { programs } from "@/dummy-data";
+import { useProgram } from "@/features/programs/hooks/use-program";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
 
-    const { id } = useLocalSearchParams<{ id: string }>()
+    const { _id } = useLocalSearchParams<{ _id: string }>()
+
+    const { data: program, isLoading, error } = useProgram(_id)
 
     const navigation = useNavigation()
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: tempCurrentProgram?.name,
+            title: "Programs"
         })
-    }, [id, navigation])
-
-    const tempCurrentProgram = programs.find(program => program.id === id)
-
-    const [program, setProgram] = useState(tempCurrentProgram)
+    }, [program, navigation])
 
     const programExercisesAmount = program?.workout.reduce((acc, item) => {
-        if ('sets' in item) {
-            return acc + 1;
-        } else if ('exercises' in item) {
-            return acc + item.exercises.length;
+        if (item.type === "exercise") {
+            return acc + 1
+        } else if (item.type === "superset") {
+            return acc + item.components.length
         }
-        return acc;
-    }, 0) ?? 0;
+
+        return acc
+    }, 0) || 0
 
     const [isOpen, setOpen] = useState(false)
 

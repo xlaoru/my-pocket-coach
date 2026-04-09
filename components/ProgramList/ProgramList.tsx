@@ -1,29 +1,29 @@
-import { TWorkout } from "@/types/models";
+import { IWorkoutItem } from "@/types/models";
 import { IProgramListProps } from "@/types/props";
 import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 import ProgramListItem from "./ProgramListItem";
 
-function countExercises(workout: TWorkout): number {
+function countExercises(workout: IWorkoutItem[]): number {
     let count = 0;
 
-    workout.forEach(item => {
-        if ('sets' in item) {
+    workout.forEach((item: IWorkoutItem) => {
+        if (item.type === "exercise") {
             count += 1;
-        } else if ('exercises' in item) {
-            count += item.exercises.length;
+        } else if (item.type === "superset") {
+            count += item.components.length
         }
     });
 
     return count;
 }
 
-function countSupersets(workout: TWorkout): number {
+function countSupersets(workout: IWorkoutItem[]): number {
     let count = 0;
 
-    workout.forEach(item => {
-        if ('exercises' in item) {
+    workout.forEach((item: IWorkoutItem) => {
+        if (item.type === "superset") {
             count += 1;
         }
     });
@@ -40,7 +40,7 @@ export default function ProgramList({ programs }: IProgramListProps) {
             contentContainerStyle={styles.contentContainer}
             data={programs}
             showsVerticalScrollIndicator={false}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
                 <ProgramListItem
                     title={item.name}
@@ -49,8 +49,8 @@ export default function ProgramList({ programs }: IProgramListProps) {
                     supersets={countSupersets(item.workout)}
                     onPress={() => {
                         router.push({
-                            pathname: "/(modals)/programs/[id]",
-                            params: { id: item.id }
+                            pathname: "/(modals)/programs/[_id]",
+                            params: { _id: item._id }
                         })
                     }}
                 />

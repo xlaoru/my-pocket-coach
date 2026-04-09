@@ -16,7 +16,7 @@ export default function ModalLayout() {
                 headerTintColor: colors.gray400
             }}
         >
-            <Stack.Screen name="programs/[id]" />
+            <Stack.Screen name="programs/[_id]" />
         </Stack>
     );
 }

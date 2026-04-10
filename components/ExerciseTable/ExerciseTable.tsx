@@ -17,7 +17,7 @@ export default function ExerciseTable({ index, exercise }: IExerciseTableProps) 
                 <View style={styles.indexBox}>
                     <Paragraph>{index + 1}</Paragraph>
                 </View>
-                <Title>{exercise.name}</Title>
+                <Title isEditable>{exercise.name}</Title>
             </View>
             <IconButton iconName="trash-bin-outline" onPress={() => {}} />
         </View>
@@ -47,12 +47,12 @@ export default function ExerciseTable({ index, exercise }: IExerciseTableProps) 
 
 const styles = StyleSheet.create({
     outterContainer: {
-        padding: 12,
-        backgroundColor: colors.gray700,
-        borderWidth: 1,
-        borderColor: colors.gray500,
+        padding: 16,
+        backgroundColor: colors.gray900,
         borderRadius: 14,
         gap: 12,
+        borderWidth: 1,
+        borderColor: colors.gray500,
     },
     headerContainer: {
         flexDirection: "row",
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         width: 28,
         height: 28,
         borderRadius: 10,
-        backgroundColor: colors.gray600,
+        backgroundColor: colors.gray500,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -76,14 +76,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         borderColor: colors.gray500,
-        overflow: "hidden",
     },
     setsHeaderContainer: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: colors.gray600,
-        paddingVertical: 8,
-        paddingLeft: 0,
+        backgroundColor: colors.gray500,
+        paddingVertical: 2,
         paddingRight: 16,
     },
     dataCell: {

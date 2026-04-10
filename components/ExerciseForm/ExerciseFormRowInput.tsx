@@ -10,7 +10,7 @@ export default function ExerciseFormRowInput({ placeholder, value, onChangeText 
             placeholder={placeholder}
             value={value}
             onChangeText={onChangeText}
-            placeholderTextColor={colors.gray400}
+            placeholderTextColor={colors.gray100}
         />
     );
 }
@@ -19,9 +19,7 @@ const styles = StyleSheet.create({
     input: {
         color: colors.white,
         borderRadius: 8,
-        borderWidth: .25,
-        borderColor: colors.gray500,
-        backgroundColor: colors.gray600,
+        backgroundColor: colors.gray500,
         padding: 12,
         textAlign: "center",
         flex: 1,

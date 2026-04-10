@@ -135,9 +135,9 @@ const styles = StyleSheet.create({
     width: 122,
     height: 122,
     borderRadius: 999,
-    borderWidth: 2,
-    borderColor: colors.gray600,
-    backgroundColor: colors.gray700,
+    borderWidth: 1,
+    borderColor: colors.gray500,
+    backgroundColor: colors.gray900,
   },
   barbell: {
     flexDirection: "row",
@@ -175,10 +175,10 @@ const styles = StyleSheet.create({
   knurl: {
     height: 2,
     borderRadius: 999,
-    backgroundColor: colors.gray500,
+    backgroundColor: colors.gray100,
   },
   label: {
-    color: colors.gray400,
+    color: colors.gray100,
     textAlign: "center",
   },
 });

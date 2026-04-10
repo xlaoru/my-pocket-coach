@@ -5,6 +5,7 @@ import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import AddSetOutlineButton from "@/components/ExerciseForm/AddSetOutlineButton";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
+import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import IconButton from "@/components/IconButton/IconButton";
@@ -33,7 +34,7 @@ export default function ComponentsPreview() {
                 style={{ flex: 1 }}
                 contentContainerStyle={[
                     { paddingTop: insets.top, paddingBottom: insets.bottom },
-                    styles.outerContainer,
+                    styles.outterContainer,
                 ]}
             >
                 <Heading>Colors</Heading>
@@ -123,6 +124,12 @@ export default function ComponentsPreview() {
                 <Heading>Loader</Heading>
 
                 <Loader />
+
+                <View style={styles.separator} />
+
+                <Heading>Exercise Table</Heading>
+
+                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} />
             </ScrollView>
 
             <BottomSheetForm
@@ -147,7 +154,7 @@ export default function ComponentsPreview() {
 }
 
 const styles = StyleSheet.create({
-    outerContainer: {
+    outterContainer: {
         padding: 16,
         gap: 16
     },
@@ -159,6 +166,8 @@ const styles = StyleSheet.create({
     box: {
         width: 100,
         height: 100,
+        borderWidth: 1,
+        borderColor: colors.gray500,
     },
     label: {
         fontSize: 16,

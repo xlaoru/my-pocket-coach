@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     paragraph: {
         fontSize: 16,
         lineHeight: 24,
-        color: colors.gray400,
+        color: colors.gray100,
         padding: 0
     }
 });

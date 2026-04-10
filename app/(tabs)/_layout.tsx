@@ -9,7 +9,7 @@ export default function TabsLayout() {
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
-                    backgroundColor: colors.gray700,
+                    backgroundColor: colors.gray900,
                 },
                 tabBarActiveTintColor: colors.red500,
                 sceneStyle: {

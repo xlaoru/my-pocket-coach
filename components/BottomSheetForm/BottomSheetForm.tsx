@@ -72,10 +72,10 @@ export default function BottomSheetForm({ isOpen, title, children, onSubmit, onC
 
 const styles = StyleSheet.create({
     sheetBackground: {
-        backgroundColor: colors.gray700,
+        backgroundColor: colors.gray900,
     },
     handleIndicator: {
-        backgroundColor: colors.gray500,
+        backgroundColor: colors.gray100,
     },
     container: {
         gap: 16,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     },
     separator: {
         height: 1,
-        backgroundColor: colors.gray500,
+        backgroundColor: colors.gray100,
     },
     childrenContainer: {
         gap: 8

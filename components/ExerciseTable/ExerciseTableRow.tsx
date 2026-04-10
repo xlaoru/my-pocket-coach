@@ -12,10 +12,10 @@ export default function ExerciseTableRow({ index, set }: IExerciseTableRowProps)
         <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title style={styles.title}>{set.weight}</Title>
+        <Title isEditable style={styles.title}>{set.weight}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title style={styles.title}>{set.reps}</Title>
+        <Title isEditable style={styles.title}>{set.reps}</Title>
       </View>
       <View style={styles.actionCell}>
         <IconButton iconName="remove-circle-outline" onPress={() => {}} />

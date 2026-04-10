@@ -11,5 +11,4 @@ export interface IProgramDto {
 export interface ICreateProgramPayload {
   name: string;
   description?: string;
-  workout: IWorkoutItem[];
 }

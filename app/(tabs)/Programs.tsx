@@ -33,7 +33,6 @@ export default function Programs() {
         await createProgramMutation.mutateAsync({
             name: trimmedProgramName,
             description: trimmedProgramDescription || undefined,
-            workout: [],
         });
 
         setProgramName("");

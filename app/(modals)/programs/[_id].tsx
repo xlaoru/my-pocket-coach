@@ -5,14 +5,15 @@ import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useLayoutEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { FlatList, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
 import { useProgram } from "@/features/programs/hooks/use-program";
 import Loader from "@/components/Loader/Loader";
+
+import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -44,8 +45,8 @@ export default function Program() {
     const [exerciseName, setExerciseName] = useState("")
 
     return (
-        <ScrollView
-            contentContainerStyle={[
+        <View
+            style={[
                 { paddingBottom: insets.bottom + 12 },
                 styles.outerContainer,
             ]}
@@ -73,14 +74,20 @@ export default function Program() {
                                 ? (
                                     <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
                                 )
-                                : null
+                                : <FlatList
+                                    showsVerticalScrollIndicator={false}
+                                    data={program?.workout}
+                                    renderItem={({ item, index }) => item.type === "exercise" ? <ExerciseTable index={index} exercise={item.components[0]} /> : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
+                                    keyExtractor={(item) => item._id}
+                                    contentContainerStyle={styles.componentsList}
+                                />
                 }
             </View>
             <Button iconName="add" onPress={() => setOpen(true)}>New Exercise</Button>
             <BottomSheetForm isOpen={isOpen} onClose={() => setOpen(false)} onSubmit={() => { }} title="Add Exercise">
                 <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} />
             </BottomSheetForm>
-        </ScrollView>
+        </View>
     );
 }
 
@@ -96,9 +103,11 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         flex: 1,
-        marginTop: 16,
     },
     attachment: {
         fontWeight: "bold"
+    },
+    componentsList: {
+        gap: 12,
     }
 });

@@ -1,11 +1,11 @@
 import { colors } from "@/styles/colors";
-import { IAddExerciseOutlineButtonProps } from "@/types/props";
+import { IAddSetOutlineButtonProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
 
-export default function AddExerciseOutlineButton({ onPress }: IAddExerciseOutlineButtonProps) {
+export default function AddSetOutlineButton({ onPress }: IAddSetOutlineButtonProps) {
     return (
         <Pressable style={({ pressed }) => [styles.container, pressed && styles.pressed]} onPress={onPress}>
             <Ionicons name="add-circle-outline" size={14} color={colors.red500} />
@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 4,
-        marginTop: 8,
         alignSelf: "flex-start",
     },
     text: {

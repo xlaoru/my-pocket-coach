@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import Paragraph from "../Paragraph/Paragraph";
-import AddExerciseOutlineButton from "./AddExerciseOutlineButton";
+import AddSetOutlineButton from "./AddSetOutlineButton";
 import ExerciseFormRow from "./ExerciseFormRow";
 
 export default function ExerciseForm({ exerciseName, setExerciseName }: IExerciseFormProps) {
@@ -27,7 +27,9 @@ export default function ExerciseForm({ exerciseName, setExerciseName }: IExercis
                         ))
                     }
                 </ScrollView>
-                <AddExerciseOutlineButton onPress={() => { }} />
+                <View style={styles.addButtonContainer}>
+                    <AddSetOutlineButton onPress={() => { }} />
+                </View>
             </View >
         </View >
     );
@@ -59,5 +61,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "bold",
         textAlign: "center",
+    },
+    addButtonContainer: {
+        marginTop: 12,
     }
 });

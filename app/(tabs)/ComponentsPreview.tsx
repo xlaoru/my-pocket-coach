@@ -3,7 +3,7 @@ import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
-import AddExerciseOutlineButton from "@/components/ExerciseForm/AddExerciseOutlineButton";
+import AddSetOutlineButton from "@/components/ExerciseForm/AddSetOutlineButton";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
@@ -64,7 +64,7 @@ export default function ComponentsPreview() {
                     <Paragraph>IconButton</Paragraph>
                 </View>
                 <AttachPeriodizationButton onPress={() => { }} />
-                <AddExerciseOutlineButton onPress={() => { }} />
+                <AddSetOutlineButton onPress={() => { }} />
 
                 <View style={styles.separator} />
 

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, ReactNode } from 'react'
 import { PressableProps, StyleProp, TextStyle } from 'react-native'
-import { IPeriodization, IProgram } from './models'
+import { IExercise, IPeriodization, IProgram, ISet } from './models'
 
 type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
@@ -103,6 +103,16 @@ export interface IExerciseFormRowInputProps {
   onChangeText: (text: string) => void
 }
 
-export interface IAddExerciseOutlineButtonProps {
+export interface IAddSetOutlineButtonProps {
   onPress: VoidFunction
+}
+
+export interface IExerciseTableProps {
+  index: number
+  exercise: IExercise
+}
+
+export interface IExerciseTableRowProps {
+  index: number
+  set: ISet
 }

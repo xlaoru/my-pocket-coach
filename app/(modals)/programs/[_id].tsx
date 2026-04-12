@@ -5,7 +5,7 @@ import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useLayoutEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { Alert, FlatList, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
@@ -14,6 +14,7 @@ import { useProgram } from "@/features/programs/hooks/use-program";
 import Loader from "@/components/Loader/Loader";
 
 import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
+import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -21,6 +22,7 @@ export default function Program() {
     const { _id } = useLocalSearchParams<{ _id: string }>()
 
     const { data: program, isLoading, isError } = useProgram(_id)
+    const createExerciseMutation = useCreateExercise()
 
     const navigation = useNavigation()
 
@@ -40,9 +42,36 @@ export default function Program() {
         return acc
     }, 0) || 0
 
-    const [isOpen, setOpen] = useState(false)
+    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
     const [exerciseName, setExerciseName] = useState("")
+
+    const handleCreateExercise = async () => {
+        const trimmedExerciseName = exerciseName.trim()
+
+        if (!trimmedExerciseName) return;
+
+        if (createExerciseMutation.isPending) return;
+
+        try {
+            await createExerciseMutation.mutateAsync({
+                programId: _id,
+                payload: {
+                    name: trimmedExerciseName,
+                    sets: [
+                        { reps: 1, weight: 1 },
+                        { reps: 1, weight: 1 },
+                        { reps: 1, weight: 1 }
+                    ]
+                }
+            })
+
+            setExerciseName("")
+            setIsBottomSheetOpen(false)
+        } catch {
+            Alert.alert("Failed to create exercise", "Please try again.")
+        }
+    }
 
     return (
         <View
@@ -83,8 +112,8 @@ export default function Program() {
                                 />
                 }
             </View>
-            <Button iconName="add" onPress={() => setOpen(true)}>New Exercise</Button>
-            <BottomSheetForm isOpen={isOpen} onClose={() => setOpen(false)} onSubmit={() => { }} title="Add Exercise">
+            <Button iconName="add" onPress={() => setIsBottomSheetOpen(true)}>New Exercise</Button>
+            <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                 <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} />
             </BottomSheetForm>
         </View>

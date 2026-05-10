@@ -4,7 +4,7 @@ import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import { Alert, FlatList, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -15,6 +15,7 @@ import Loader from "@/components/Loader/Loader";
 
 import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
 import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
+import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
 import { ISet } from "@/types/models";
 
 export default function Program() {
@@ -24,6 +25,7 @@ export default function Program() {
 
     const { data: program, isLoading, isError } = useProgram(_id)
     const createExerciseMutation = useCreateExercise()
+    const editExerciseNameMutation = useEditExerciseName()
 
     const navigation = useNavigation()
 
@@ -51,7 +53,7 @@ export default function Program() {
         { weight: 0, reps: 0 },
     ])
     
-    function handleSetChange(index: number, field: "weight" | "reps", value: string) {
+    const handleSetChange = (index: number, field: "weight" | "reps", value: string) => {
         const parsed = parseInt(value, 10);
         const numeric = isNaN(parsed) ? 0 : parsed;
         setSets((prevSets) => {
@@ -61,11 +63,11 @@ export default function Program() {
         });
     }
 
-    function addSet() {
+    const addSet = () => {
         setSets((prevSets) => [...prevSets, { weight: 0, reps: 0 }]);
     }
 
-    function removeSet(index: number) {
+    const removeSet = (index: number) => {
         setSets((prevSets) => prevSets.filter((_, i) => i !== index));
     }
 
@@ -94,6 +96,24 @@ export default function Program() {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
     }
+
+    const handleEditExerciseName = useCallback(async (exerciseId: string, newName: string) => {
+        const trimmedExerciseName = newName.trim();
+
+        if (!trimmedExerciseName) return;
+
+        try {
+            await editExerciseNameMutation.mutateAsync({
+                programId: _id,
+                exerciseId,
+                payload: {
+                    name: trimmedExerciseName,
+                },
+            });
+        } catch {
+            Alert.alert("Failed to edit exercise name", "Please try again.");
+        }
+    }, [_id, editExerciseNameMutation])
 
     return (
         <KeyboardAvoidingView
@@ -132,7 +152,7 @@ export default function Program() {
                                 : <FlatList
                                     showsVerticalScrollIndicator={false}
                                     data={program?.workout}
-                                    renderItem={({ item, index }) => item.type === "exercise" ? <ExerciseTable index={index} exercise={item.components[0]} /> : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
+                                    renderItem={({ item, index }) => item.type === "exercise" ? <ExerciseTable index={index} exercise={item.components[0]} onExerciseNameChange={handleEditExerciseName} /> : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
                                     keyExtractor={(item) => item._id}
                                     contentContainerStyle={styles.componentsList}
                                 />

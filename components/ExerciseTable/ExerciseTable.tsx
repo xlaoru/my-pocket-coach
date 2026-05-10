@@ -1,48 +1,69 @@
-import { ScrollView, StyleSheet, View } from "react-native";
-import React from "react";
+import { ScrollView, StyleSheet, TextInput, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import { IExerciseTableProps } from "@/types/props";
 import Paragraph from "../Paragraph/Paragraph";
 import IconButton from "../IconButton/IconButton";
-import Title from "../Title/Title";
 import { colors } from "@/styles/colors";
 import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import ExerciseTableRow from "./ExerciseTableRow";
+import Title from "../Title/Title";
 
-export default function ExerciseTable({ index, exercise }: IExerciseTableProps) {
-  return (
-    <View style={styles.outterContainer}>
-        <View style={styles.headerContainer}>
-            <View style={styles.headingContainer}>
-                <IconButton iconName="reorder-two" onPress={() => {}} />
-                <View style={styles.indexBox}>
-                    <Paragraph>{index + 1}</Paragraph>
+function ExerciseTableComponent({ index, exercise, onExerciseNameChange }: IExerciseTableProps) {
+    const [editableName, setEditableName] = useState(exercise.name);
+
+    useEffect(() => {
+        setEditableName(exercise.name);
+    }, [exercise.name]);
+
+    const handleNameBlur = useCallback(() => {
+        const trimmedName = editableName.trim();
+
+        if (!trimmedName) {
+            setEditableName(exercise.name);
+            return;
+        }
+
+        if (trimmedName === exercise.name) {
+            return;
+        }
+
+        void onExerciseNameChange(exercise._id, trimmedName);
+    }, [editableName, exercise._id, exercise.name, onExerciseNameChange]);
+
+    return (
+        <View style={styles.outterContainer}>
+            <View style={styles.headerContainer}>
+                <View style={styles.headingContainer}>
+                    <IconButton iconName="reorder-two" onPress={() => {}} />
+                    <View style={styles.indexBox}>
+                        <Paragraph>{index + 1}</Paragraph>
+                    </View>
+                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
-                <Title isEditable>{exercise.name}</Title>
+                <IconButton iconName="trash-bin-outline" onPress={() => {}} />
             </View>
-            <IconButton iconName="trash-bin-outline" onPress={() => {}} />
+                <ScrollView
+                    style={styles.setsContainer}
+                >
+                    <View style={styles.setsHeaderContainer}>
+                        <View style={styles.dataCell}>
+                            <Paragraph style={styles.headerTitle}>Set</Paragraph>
+                        </View>
+                        <View style={styles.dataCell}>
+                            <Paragraph style={styles.headerTitle}>kg</Paragraph>
+                        </View>
+                        <View style={styles.dataCell}>
+                            <Paragraph style={styles.headerTitle}>Reps</Paragraph>
+                        </View>
+                        <View style={styles.actionPlaceholder} />
+                    </View>
+                    {
+                        exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} index={setIndex} set={set} />)
+                    }
+                </ScrollView>
+            <AddSetOutlineButton onPress={() => {}} />
         </View>
-            <ScrollView
-                style={styles.setsContainer}
-            >
-                <View style={styles.setsHeaderContainer}>
-                    <View style={styles.dataCell}>
-                        <Paragraph style={styles.headerTitle}>Set</Paragraph>
-                    </View>
-                    <View style={styles.dataCell}>
-                        <Paragraph style={styles.headerTitle}>kg</Paragraph>
-                    </View>
-                    <View style={styles.dataCell}>
-                        <Paragraph style={styles.headerTitle}>Reps</Paragraph>
-                    </View>
-                    <View style={styles.actionPlaceholder} />
-                </View>
-                {
-                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} index={setIndex} set={set} />)
-                }
-            </ScrollView>
-        <AddSetOutlineButton onPress={() => {}} />
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
@@ -96,5 +117,15 @@ const styles = StyleSheet.create({
     },
     actionPlaceholder: {
         width: 22,
+    },
+    nameInput: {
+        flexShrink: 1,
+        minWidth: 0,
+        fontSize: 18,
+        fontWeight: "bold",
+        color: colors.white,
+        padding: 0,
     }
 });
+
+export default React.memo(ExerciseTableComponent);

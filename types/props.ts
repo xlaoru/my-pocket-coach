@@ -44,6 +44,9 @@ export interface ITitleProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
   isEditable?: boolean
+  onChangeText?: (text: string) => void
+  onBlur?: VoidFunction
+  onSubmitEditing?: VoidFunction
 }
 
 export interface IIconButtonProps {
@@ -117,6 +120,7 @@ export interface IAddSetOutlineButtonProps {
 export interface IExerciseTableProps {
   index: number
   exercise: IExercise
+  onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
 }
 
 export interface IExerciseTableRowProps {

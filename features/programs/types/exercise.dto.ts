@@ -10,3 +10,7 @@ export interface ICreateExercisePayload {
   name: string;
   sets: ISet[]
 }
+
+export interface IEditExerciseNamePayload {
+  name: string;
+}

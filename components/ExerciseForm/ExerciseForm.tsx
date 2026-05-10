@@ -1,5 +1,4 @@
 import { IExerciseFormProps } from "@/types/props";
-import React from "react";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
@@ -7,7 +6,9 @@ import Paragraph from "../Paragraph/Paragraph";
 import AddSetOutlineButton from "./AddSetOutlineButton";
 import ExerciseFormRow from "./ExerciseFormRow";
 
-export default function ExerciseForm({ exerciseName, setExerciseName }: IExerciseFormProps) {
+export default function ExerciseForm({ exerciseName, setExerciseName, sets, onSetChange, onAddSet, onRemoveSet }: IExerciseFormProps) {
+    
+
     return (
         <View style={styles.outterContainer}>
             <BottomSheetInput label="Exercise Name" placeholder="e.g. Bench Press" value={exerciseName} onChangeText={setExerciseName} />
@@ -22,13 +23,13 @@ export default function ExerciseForm({ exerciseName, setExerciseName }: IExercis
                         <Paragraph style={styles.measurementTitle}>reps</Paragraph>
                     </View>
                     {
-                        [1, 2, 3].map((setNumber) => (
-                            <ExerciseFormRow key={setNumber} index={setNumber} />
+                        sets.map((set, index) => (
+                            <ExerciseFormRow key={index} index={index} set={set} onChange={onSetChange} onRemove={onRemoveSet} />
                         ))
                     }
                 </ScrollView>
                 <View style={styles.addButtonContainer}>
-                    <AddSetOutlineButton onPress={() => { }} />
+                    <AddSetOutlineButton onPress={onAddSet} />
                 </View>
             </View >
         </View >

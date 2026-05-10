@@ -91,10 +91,17 @@ export interface IAttachPeriodizationButtonProps {
 export interface IExerciseFormProps {
   exerciseName: string
   setExerciseName: (name: string) => void
+  sets: ISet[]
+  onSetChange: (index: number, field: "weight" | "reps", value: string) => void
+  onAddSet: VoidFunction
+  onRemoveSet: (index: number) => void
 }
 
 export interface IExerciseFormRowProps {
   index: number
+  set: ISet
+  onChange: (index: number, field: "weight" | "reps", value: string) => void
+  onRemove: (index: number) => void
 }
 
 export interface IExerciseFormRowInputProps {

@@ -6,15 +6,15 @@ import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import ExerciseFormRowInput from "./ExerciseFormRowInput";
 
-export default function ExerciseFormRow({ index }: IExerciseFormRowProps) {
+export default function ExerciseFormRow({ index, set, onChange, onRemove }: IExerciseFormRowProps) {
     return (
         <View style={styles.outterContainer}>
-            <Paragraph style={styles.index}>{index}</Paragraph>
+            <Paragraph style={styles.index}>{index + 1}</Paragraph>
             <View style={styles.inputsContainer}>
-                <ExerciseFormRowInput placeholder="0" value="" onChangeText={() => { }} />
-                <ExerciseFormRowInput placeholder="0" value="" onChangeText={() => { }} />
+                <ExerciseFormRowInput placeholder="0" value={set.weight.toString()} onChangeText={(text) => onChange(index, "weight", text)} />
+                <ExerciseFormRowInput placeholder="0" value={set.reps.toString()} onChangeText={(text) => onChange(index, "reps", text)} />
             </View>
-            <IconButton iconName="remove" onPress={() => { }} />
+            <IconButton iconName="remove" onPress={() => onRemove(index)} />
         </View>
     );
 }

@@ -5,7 +5,7 @@ import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useLayoutEffect, useState } from "react";
-import { Alert, FlatList, StyleSheet, View } from "react-native";
+import { Alert, FlatList, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
@@ -15,6 +15,7 @@ import Loader from "@/components/Loader/Loader";
 
 import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
 import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
+import { ISet } from "@/types/models";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -46,6 +47,28 @@ export default function Program() {
 
     const [exerciseName, setExerciseName] = useState("")
 
+    const [sets, setSets] = useState<ISet[]>([
+        { weight: 0, reps: 0 },
+    ])
+    
+    function handleSetChange(index: number, field: "weight" | "reps", value: string) {
+        const parsed = parseInt(value, 10);
+        const numeric = isNaN(parsed) ? 0 : parsed;
+        setSets((prevSets) => {
+            const newSets = [...prevSets];
+            newSets[index] = { ...newSets[index], [field]: numeric };
+            return newSets;
+        });
+    }
+
+    function addSet() {
+        setSets((prevSets) => [...prevSets, { weight: 0, reps: 0 }]);
+    }
+
+    function removeSet(index: number) {
+        setSets((prevSets) => prevSets.filter((_, i) => i !== index));
+    }
+
     const handleCreateExercise = async () => {
         const trimmedExerciseName = exerciseName.trim()
 
@@ -58,15 +81,14 @@ export default function Program() {
                 programId: _id,
                 payload: {
                     name: trimmedExerciseName,
-                    sets: [
-                        { reps: 1, weight: 1 },
-                        { reps: 1, weight: 1 },
-                        { reps: 1, weight: 1 }
-                    ]
+                    sets: sets
                 }
             })
 
             setExerciseName("")
+            setSets([
+                { weight: 0, reps: 0 },
+            ])
             setIsBottomSheetOpen(false)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
@@ -74,6 +96,10 @@ export default function Program() {
     }
 
     return (
+        <KeyboardAvoidingView
+            style={styles.keyboardAvoidingContainer}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
         <View
             style={[
                 { paddingBottom: insets.bottom + 12 },
@@ -114,13 +140,17 @@ export default function Program() {
             </View>
             <Button iconName="add" onPress={() => setIsBottomSheetOpen(true)}>New Exercise</Button>
             <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
-                <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} />
+                <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
             </BottomSheetForm>
         </View>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
+    keyboardAvoidingContainer: {
+        flex: 1,
+    },
     outerContainer: {
         flex: 1,
         padding: 16,

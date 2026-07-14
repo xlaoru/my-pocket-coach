@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, TextInput, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { IExerciseTableProps } from "@/types/props";
 import Paragraph from "../Paragraph/Paragraph";
@@ -8,7 +8,7 @@ import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import ExerciseTableRow from "./ExerciseTableRow";
 import Title from "../Title/Title";
 
-function ExerciseTableComponent({ index, exercise, onExerciseNameChange }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddExerciseSet }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
 
     useEffect(() => {
@@ -61,7 +61,7 @@ function ExerciseTableComponent({ index, exercise, onExerciseNameChange }: IExer
                         exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} index={setIndex} set={set} />)
                     }
                 </ScrollView>
-            <AddSetOutlineButton onPress={() => {}} />
+            <AddSetOutlineButton onPress={() => onAddExerciseSet(exercise._id)} />
         </View>
     );
 }

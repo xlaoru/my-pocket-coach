@@ -121,6 +121,7 @@ export interface IExerciseTableProps {
   index: number
   exercise: IExercise
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
+  onAddExerciseSet: (exerciseId: string) => Promise<void>
 }
 
 export interface IExerciseTableRowProps {

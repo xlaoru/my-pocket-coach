@@ -14,3 +14,8 @@ export interface ICreateExercisePayload {
 export interface IEditExerciseNamePayload {
   name: string;
 }
+
+export interface IAddExerciseSetPayload {
+  weight: number 
+  reps: number
+}

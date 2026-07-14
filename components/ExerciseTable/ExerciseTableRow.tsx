@@ -1,17 +1,25 @@
 import { StyleSheet, View } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { IExerciseTableRowProps } from "@/types/props";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 import { colors } from "@/styles/colors";
 import { ISet } from "@/types/models";
 
-export default function ExerciseTableRow({ exerciseId, index, set, onEditExerciseSet }: IExerciseTableRowProps) {
+export default function ExerciseTableRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet }: IExerciseTableRowProps) {
   const [exerciseSet, setExerciseSet] = useState<ISet>(set)
+
+  useEffect(() => {
+    setExerciseSet(set)
+  }, [set])
 
   const handleSetBlur = useCallback(() => {
     void onEditExerciseSet(exerciseId, index, exerciseSet)
   }, [exerciseSet, exerciseId, index, onEditExerciseSet])
+
+  const handleDeleteExerciseSet = useCallback(() => {
+    void onDeleteExerciseSet(exerciseId, index)
+  }, [exerciseId, index, onDeleteExerciseSet])
 
   return (
     <View style={styles.container}>
@@ -25,7 +33,7 @@ export default function ExerciseTableRow({ exerciseId, index, set, onEditExercis
         <Title isEditable style={styles.title} onChangeText={(text) => setExerciseSet({...exerciseSet, reps: Number(text)})} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
       </View>
       <View style={styles.actionCell}>
-        <IconButton iconName="remove-circle-outline" onPress={() => {}} />
+        <IconButton iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
       </View>
     </View>
   );

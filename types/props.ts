@@ -123,6 +123,7 @@ export interface IExerciseTableProps {
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
   onAddExerciseSet: (exerciseId: string) => Promise<void>
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
+  onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
 }
 
 export interface IExerciseTableRowProps {
@@ -130,4 +131,5 @@ export interface IExerciseTableRowProps {
   index: number
   set: ISet
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
+  onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
 }

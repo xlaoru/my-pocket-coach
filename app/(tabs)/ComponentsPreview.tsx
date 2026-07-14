@@ -3,10 +3,14 @@ import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
+import AddSetOutlineButton from "@/components/ExerciseForm/AddSetOutlineButton";
+import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
+import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import IconButton from "@/components/IconButton/IconButton";
 import Input from "@/components/Input/Input";
+import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import PeriodizationListItem from "@/components/PeriodizationList/PeriodizationListItem";
 import ProgramListItem from "@/components/ProgramList/ProgramListItem";
@@ -20,7 +24,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function ComponentsPreview() {
     const insets = useSafeAreaInsets()
 
-    const [isOpen, setOpen] = useState(false)
+    const [isOpenSimpleBottomSheet, setOpenSimpleBottomSheet] = useState(false)
+
+    const [isOpenExerciseBottomSheet, setOpenExerciseBottomSheet] = useState(false)
 
     return (
         <>
@@ -28,7 +34,7 @@ export default function ComponentsPreview() {
                 style={{ flex: 1 }}
                 contentContainerStyle={[
                     { paddingTop: insets.top, paddingBottom: insets.bottom },
-                    styles.outerContainer,
+                    styles.outterContainer,
                 ]}
             >
                 <Heading>Colors</Heading>
@@ -59,6 +65,7 @@ export default function ComponentsPreview() {
                     <Paragraph>IconButton</Paragraph>
                 </View>
                 <AttachPeriodizationButton onPress={() => { }} />
+                <AddSetOutlineButton onPress={() => { }} />
 
                 <View style={styles.separator} />
 
@@ -104,24 +111,50 @@ export default function ComponentsPreview() {
 
                 <Heading>Bottom Sheet Form</Heading>
 
-                <Button iconName="add-outline" onPress={() => setOpen(true)}>Open Bottom Sheet</Button>
+                <Button iconName="add-outline" onPress={() => setOpenSimpleBottomSheet(true)}>Open Bottom Sheet</Button>
 
+                <View style={styles.separator} />
+
+                <Heading>Bottom Sheet Form for Exercise</Heading>
+
+                <Button iconName="add-outline" onPress={() => setOpenExerciseBottomSheet(true)}>Open Exercise Bottom Sheet</Button>
+
+                <View style={styles.separator} />
+
+                <Heading>Loader</Heading>
+
+                <Loader />
+
+                <View style={styles.separator} />
+
+                <Heading>Exercise Table</Heading>
+
+                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} />
             </ScrollView>
 
             <BottomSheetForm
-                isOpen={isOpen}
-                title="Bottom Sheet Title"
+                isOpen={isOpenSimpleBottomSheet}
+                title="Simple Bottom Sheet Title"
                 onSubmit={() => { }}
-                onClose={() => setOpen(false)}
+                onClose={() => setOpenSimpleBottomSheet(false)}
             >
                 <BottomSheetInput label="Label" placeholder="This is a bottom sheet input" value="" onChangeText={() => { }} />
+            </BottomSheetForm>
+
+            <BottomSheetForm
+                isOpen={isOpenExerciseBottomSheet}
+                title="Exercise Bottom Sheet Title"
+                onSubmit={() => { }}
+                onClose={() => setOpenExerciseBottomSheet(false)}
+            >
+                <ExerciseForm exerciseName="" setExerciseName={() => { }} />
             </BottomSheetForm>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-    outerContainer: {
+    outterContainer: {
         padding: 16,
         gap: 16
     },
@@ -133,6 +166,8 @@ const styles = StyleSheet.create({
     box: {
         width: 100,
         height: 100,
+        borderWidth: 1,
+        borderColor: colors.gray500,
     },
     label: {
         fontSize: 16,

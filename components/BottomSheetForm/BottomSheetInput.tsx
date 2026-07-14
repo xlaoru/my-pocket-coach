@@ -14,7 +14,7 @@ export default function BottomSheetInput({ label, placeholder, value, onChangeTe
                 placeholder={placeholder}
                 value={value}
                 onChangeText={onChangeText}
-                placeholderTextColor={colors.gray400}
+                placeholderTextColor={colors.gray100}
             />
         </View>
     );
@@ -29,9 +29,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
     },
     input: {
-        borderWidth: .25,
-        borderColor: colors.gray500,
-        backgroundColor: colors.gray600,
+        backgroundColor: colors.gray500,
         borderRadius: 8,
         padding: 12,
         color: colors.white,

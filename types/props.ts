@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, ReactNode } from 'react'
 import { PressableProps, StyleProp, TextStyle } from 'react-native'
-import { IPeriodization, IProgram } from './models'
+import { IExercise, IPeriodization, IProgram, ISet } from './models'
 
 type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
@@ -44,6 +44,9 @@ export interface ITitleProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
   isEditable?: boolean
+  onChangeText?: (text: string) => void
+  onBlur?: VoidFunction
+  onSubmitEditing?: VoidFunction
 }
 
 export interface IIconButtonProps {
@@ -86,4 +89,49 @@ export interface IInputProps {
 
 export interface IAttachPeriodizationButtonProps {
   onPress: VoidFunction
+}
+
+export interface IExerciseFormProps {
+  exerciseName: string
+  setExerciseName: (name: string) => void
+  sets: ISet[]
+  onSetChange: (index: number, field: "weight" | "reps", value: string) => void
+  onAddSet: VoidFunction
+  onRemoveSet: (index: number) => void
+}
+
+export interface IExerciseFormRowProps {
+  index: number
+  set: ISet
+  onChange: (index: number, field: "weight" | "reps", value: string) => void
+  onRemove: (index: number) => void
+}
+
+export interface IExerciseFormRowInputProps {
+  placeholder: string
+  value: string
+  onChangeText: (text: string) => void
+}
+
+export interface IAddSetOutlineButtonProps {
+  onPress: VoidFunction
+}
+
+export interface IExerciseTableProps {
+  index: number
+  exercise: IExercise
+  onDrag: () => void
+  onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
+  onAddExerciseSet: (exerciseId: string) => Promise<void>
+  onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
+  onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+  onDeleteExercise: (exerciseId: string) => Promise<void>
+}
+
+export interface IExerciseTableRowProps {
+  exerciseId: string
+  index: number
+  set: ISet
+  onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
+  onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
 }

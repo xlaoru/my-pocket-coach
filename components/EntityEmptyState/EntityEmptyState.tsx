@@ -10,7 +10,7 @@ export default function EntityEmptyState({ iconName, title, message }: IEntityEm
     return (
         <View style={styles.infoContainer}>
             <View style={styles.iconContainer}>
-                <Ionicons name={iconName} color={colors.gray500} size={24} />
+                <Ionicons name={iconName} color={colors.gray100} size={24} />
             </View>
             <View>
                 <Title style={styles.text}>{title}</Title>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     },
     iconContainer: {
         padding: 24,
-        backgroundColor: colors.gray700,
+        backgroundColor: colors.gray900,
         borderRadius: 50,
         alignSelf: "center",
     },

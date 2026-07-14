@@ -3,16 +3,19 @@ import { ITitleProps } from "@/types/props";
 import { StyleSheet, Text, TextInput } from "react-native";
 
 
-export default function Title({ children, style, isEditable }: ITitleProps) {
+export default function Title({ children, style, isEditable, onChangeText, onBlur, onSubmitEditing }: ITitleProps) {
     if (!isEditable) {
         return <Text style={[styles.title, style]}>{children}</Text>;
     } else {
         return (
             <TextInput
                 style={[styles.title, style]}
-                value={String(children)}
                 multiline
                 scrollEnabled={false}
+                value={String(children)}
+                onChangeText={onChangeText}
+                onBlur={onBlur}
+                onSubmitEditing={onSubmitEditing}
             />
         )
     }

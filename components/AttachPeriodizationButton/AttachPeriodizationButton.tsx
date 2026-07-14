@@ -8,7 +8,7 @@ import Paragraph from "../Paragraph/Paragraph";
 export default function AttachPeriodizationButton({ onPress }: IAttachPeriodizationButtonProps) {
     return (
         <Pressable onPress={onPress} style={({ pressed }) => pressed ? styles.pressed : undefined}>
-            <Paragraph style={styles.attachment}><Ionicons name="flash" size={12} color={colors.gray400} /> Attach Periodization</Paragraph>
+            <Paragraph style={styles.attachment}><Ionicons name="flash" size={12} color={colors.gray100} /> Attach Periodization</Paragraph>
         </Pressable>
     );
 }

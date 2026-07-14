@@ -3,7 +3,6 @@ import { IParagraphProps } from "@/types/props";
 import { StyleSheet, Text, TextInput } from "react-native";
 
 export default function Paragraph({ children, style, isEditable }: IParagraphProps) {
-
     if (!isEditable) {
         return <Text style={[styles.paragraph, style]}>{children}</Text>;
     } else {
@@ -22,7 +21,7 @@ const styles = StyleSheet.create({
     paragraph: {
         fontSize: 16,
         lineHeight: 24,
-        color: colors.gray400,
+        color: colors.gray100,
         padding: 0
     }
 });

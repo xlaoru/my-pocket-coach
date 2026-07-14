@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import { IExerciseTableProps } from "@/types/props";
 import Paragraph from "../Paragraph/Paragraph";
@@ -7,8 +7,9 @@ import { colors } from "@/styles/colors";
 import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import ExerciseTableRow from "./ExerciseTableRow";
 import Title from "../Title/Title";
+import { Ionicons } from "@expo/vector-icons";
 
-function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
 
     useEffect(() => {
@@ -38,7 +39,9 @@ function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddEx
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <IconButton iconName="reorder-two" onPress={() => {}} />
+                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                        <Ionicons name="reorder-two" size={22} color={colors.gray100} />
+                    </Pressable>
                     <View style={styles.indexBox}>
                         <Paragraph>{index + 1}</Paragraph>
                     </View>
@@ -46,7 +49,7 @@ function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddEx
                 </View>
                 <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
             </View>
-                <ScrollView
+                <View
                     style={styles.setsContainer}
                 >
                     <View style={styles.setsHeaderContainer}>
@@ -64,7 +67,7 @@ function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddEx
                     {
                         exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
                     }
-                </ScrollView>
+                </View>
             <AddSetOutlineButton onPress={() => onAddExerciseSet(exercise._id)} />
         </View>
     );
@@ -129,6 +132,9 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: colors.white,
         padding: 0,
+    },
+    pressed: {
+        opacity: 0.5,
     }
 });
 

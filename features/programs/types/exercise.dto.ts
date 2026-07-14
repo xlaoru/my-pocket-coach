@@ -21,6 +21,12 @@ export interface IAddExerciseSetPayload {
 }
 
 export interface IEditExerciseSetPayload {
-  weight?: number 
+  weight?: number
   reps?: number
+}
+
+export interface IMoveExercisePayload {
+  containerId: string;
+  sourceIndex: number;
+  destinationIndex: number;
 }

@@ -5,8 +5,10 @@ import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useLayoutEffect, useState } from "react";
-import { Alert, FlatList, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import DraggableFlatList from "react-native-draggable-flatlist" 
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
@@ -21,6 +23,7 @@ import { useAddExerciseSet } from "@/features/programs/hooks/use-add-exercise-se
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
 import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
 import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
+import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -34,6 +37,7 @@ export default function Program() {
     const editExerciseSetMutation = useEditExerciseSet()
     const deleteExerciseSetMutation = useDeleteExerciseSet()
     const deleteExerciseMutation = useDeleteExercise()
+    const moveExerciseMutation = useMoveExercise()
 
     const navigation = useNavigation()
 
@@ -177,6 +181,21 @@ export default function Program() {
         }
     }, [_id, deleteExerciseMutation])
 
+    const handleMoveExercise = useCallback(async(containerId: string, sourceIndex: number, destinationIndex: number ) => {
+        try {
+            await moveExerciseMutation.mutateAsync({
+                programId: _id,
+                payload: {
+                    containerId,
+                    sourceIndex,
+                    destinationIndex
+                }
+            })
+        } catch {
+            Alert.alert("Failed to move exercise", "Please try again.");
+        }
+    }, [_id, moveExerciseMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -211,12 +230,39 @@ export default function Program() {
                                 ? (
                                     <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
                                 )
-                                : <FlatList
+                                : <DraggableFlatList
                                     showsVerticalScrollIndicator={false}
-                                    data={program?.workout}
-                                    renderItem={({ item, index }) => item.type === "exercise" ? <ExerciseTable index={index} exercise={item.components[0]} onExerciseNameChange={handleEditExerciseName} onAddExerciseSet={handleAddExerciseSet} onEditExerciseSet={handleEditExerciseSet} onDeleteExerciseSet={handleDeleteExerciseSet} onDeleteExercise={handleDeleteExercise} /> : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
+                                    autoscrollThreshold={80}
+                                    autoscrollSpeed={150}
+                                    data={program!.workout ?? []}
+                                    renderItem={({ item, getIndex, drag, isActive }) => {
+                                        const index = getIndex()
+                                        return (
+                                            <View style={styles.itemWrapper}>
+                                                {item.type === "exercise"
+                                                    ? <ExerciseTable
+                                                            index={index ?? 0}
+                                                            exercise={item.components[0]}
+                                                            onDrag={drag}
+                                                            onExerciseNameChange={handleEditExerciseName}
+                                                            onAddExerciseSet={handleAddExerciseSet}
+                                                            onEditExerciseSet={handleEditExerciseSet}
+                                                            onDeleteExerciseSet={handleDeleteExerciseSet}
+                                                            onDeleteExercise={handleDeleteExercise}
+                                                        />
+                                                    : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
+                                            </View>
+                                        )
+                                    }}
                                     keyExtractor={(item) => item._id}
                                     contentContainerStyle={styles.componentsList}
+                                    onDragEnd={({ from, to }) => {
+                                        if (from === to) {
+                                            return
+                                        }
+
+                                        handleMoveExercise(_id, from, to)
+                                    }}
                                 />
                 }
             </View>
@@ -248,7 +294,8 @@ const styles = StyleSheet.create({
     attachment: {
         fontWeight: "bold"
     },
-    componentsList: {
-        gap: 12,
+    componentsList: {},
+    itemWrapper: {
+        paddingBottom: 12,
     }
 });

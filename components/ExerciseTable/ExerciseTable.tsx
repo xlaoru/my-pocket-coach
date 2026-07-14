@@ -8,7 +8,7 @@ import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import ExerciseTableRow from "./ExerciseTableRow";
 import Title from "../Title/Title";
 
-function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddExerciseSet }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
 
     useEffect(() => {
@@ -58,7 +58,7 @@ function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddEx
                         <View style={styles.actionPlaceholder} />
                     </View>
                     {
-                        exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} index={setIndex} set={set} />)
+                        exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} />)
                     }
                 </ScrollView>
             <AddSetOutlineButton onPress={() => onAddExerciseSet(exercise._id)} />

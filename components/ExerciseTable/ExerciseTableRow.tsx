@@ -1,21 +1,28 @@
 import { StyleSheet, View } from "react-native";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { IExerciseTableRowProps } from "@/types/props";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 import { colors } from "@/styles/colors";
+import { ISet } from "@/types/models";
 
-export default function ExerciseTableRow({ index, set }: IExerciseTableRowProps) {
+export default function ExerciseTableRow({ exerciseId, index, set, onEditExerciseSet }: IExerciseTableRowProps) {
+  const [exerciseSet, setExerciseSet] = useState<ISet>(set)
+
+  const handleSetBlur = useCallback(() => {
+    void onEditExerciseSet(exerciseId, index, exerciseSet)
+  }, [exerciseSet, exerciseId, index, onEditExerciseSet])
+
   return (
     <View style={styles.container}>
       <View style={styles.dataCell}>
         <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title isEditable style={styles.title}>{set.weight}</Title>
+        <Title isEditable style={styles.title} onChangeText={(text) => setExerciseSet({...exerciseSet, weight: Number(text)})} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title isEditable style={styles.title}>{set.reps}</Title>
+        <Title isEditable style={styles.title} onChangeText={(text) => setExerciseSet({...exerciseSet, reps: Number(text)})} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
       </View>
       <View style={styles.actionCell}>
         <IconButton iconName="remove-circle-outline" onPress={() => {}} />

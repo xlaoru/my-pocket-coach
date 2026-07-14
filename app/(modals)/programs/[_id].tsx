@@ -18,6 +18,7 @@ import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise
 import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
 import { ISet } from "@/types/models";
 import { useAddExerciseSet } from "@/features/programs/hooks/use-add-exercise-set";
+import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -28,6 +29,7 @@ export default function Program() {
     const createExerciseMutation = useCreateExercise()
     const editExerciseNameMutation = useEditExerciseName()
     const addExerciseSetMutation = useAddExerciseSet()
+    const editExerciseSetMutation = useEditExerciseSet()
 
     const navigation = useNavigation()
 
@@ -132,6 +134,22 @@ export default function Program() {
         }
     }, [_id, addExerciseSetMutation])
 
+    const handleEditExerciseSet = useCallback(async (exerciseId: string, setIndex: number, set: ISet) => {
+        try {
+            await editExerciseSetMutation.mutateAsync({
+                programId: _id,
+                exerciseId: exerciseId,
+                setIndex,
+                payload: {
+                    weight: set.weight ?? 0,
+                    reps: set.reps ?? 0
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit exercise set", "Please try again.");
+        }
+    }, [_id, editExerciseSetMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -169,7 +187,7 @@ export default function Program() {
                                 : <FlatList
                                     showsVerticalScrollIndicator={false}
                                     data={program?.workout}
-                                    renderItem={({ item, index }) => item.type === "exercise" ? <ExerciseTable index={index} exercise={item.components[0]} onExerciseNameChange={handleEditExerciseName} onAddExerciseSet={handleAddExerciseSet} /> : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
+                                    renderItem={({ item, index }) => item.type === "exercise" ? <ExerciseTable index={index} exercise={item.components[0]} onExerciseNameChange={handleEditExerciseName} onAddExerciseSet={handleAddExerciseSet} onEditExerciseSet={handleEditExerciseSet} /> : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
                                     keyExtractor={(item) => item._id}
                                     contentContainerStyle={styles.componentsList}
                                 />

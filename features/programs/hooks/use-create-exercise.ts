@@ -17,6 +17,9 @@ export function useCreateExercise() {
         queryClient.invalidateQueries({
             queryKey: queryKeys.programs.byId(variables.programId),
         });
+        queryClient.invalidateQueries({
+            queryKey: queryKeys.programs.all,
+        });
     },
   });
 }

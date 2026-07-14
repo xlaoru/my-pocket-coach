@@ -8,7 +8,7 @@ import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import ExerciseTableRow from "./ExerciseTableRow";
 import Title from "../Title/Title";
 
-function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
 
     useEffect(() => {
@@ -30,6 +30,10 @@ function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddEx
         void onExerciseNameChange(exercise._id, trimmedName);
     }, [editableName, exercise._id, exercise.name, onExerciseNameChange]);
 
+    const handleDeleteExercise = useCallback(() => {
+        void onDeleteExercise(exercise._id)
+    }, [exercise, onDeleteExercise])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -40,7 +44,7 @@ function ExerciseTableComponent({ index, exercise, onExerciseNameChange, onAddEx
                     </View>
                     <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
-                <IconButton iconName="trash-bin-outline" onPress={() => {}} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
             </View>
                 <ScrollView
                     style={styles.setsContainer}

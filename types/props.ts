@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons'
-import { ComponentProps, ReactNode } from 'react'
+import { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react'
 import { PressableProps, StyleProp, TextStyle } from 'react-native'
 import { IExercise, IPeriodization, IProgram, ISet } from './models'
 
@@ -56,8 +56,8 @@ export interface IIconButtonProps {
 
 export interface IButtonProps {
   children: ReactNode
-  variant?: "primary" | "secondary"
-  iconName: TIoniconName
+  variant?: "primary" | "secondary" | "outlined"
+  iconName?: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']
 }
@@ -127,6 +127,10 @@ export interface IExerciseTableProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
+  isSupersetCombiningMode: boolean
+  setSupersetCombiningMode: (value: boolean) => void
+  selectedExercises: string[]
+  setSelectedExercises: Dispatch<SetStateAction<string[]>>
 }
 
 export interface IExerciseTableRowProps {
@@ -135,4 +139,9 @@ export interface IExerciseTableRowProps {
   set: ISet
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+}
+
+export interface ICheckboxProps {
+  isSelected: boolean
+  toggleSelect: () => void
 }

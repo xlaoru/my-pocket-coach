@@ -8,14 +8,15 @@ import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import ExerciseTableRow from "./ExerciseTableRow";
 import Title from "../Title/Title";
 import { Ionicons } from "@expo/vector-icons";
+import Checkbox from "../Checkbox/Checkbox";
 
-function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, setSupersetCombiningMode, selectedExercises, setSelectedExercises }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
-
+    
     useEffect(() => {
         setEditableName(exercise.name);
     }, [exercise.name]);
-
+   
     const handleNameBlur = useCallback(() => {
         const trimmedName = editableName.trim();
 
@@ -35,20 +36,37 @@ function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange,
         void onDeleteExercise(exercise._id)
     }, [exercise, onDeleteExercise])
 
+    const toggleSelect = useCallback(() => {
+        setSelectedExercises((prev) => prev.includes(exercise._id) ? prev.filter((id) => id !== exercise._id) : [...prev, exercise._id])
+    }, [exercise, setSelectedExercises])
+
     return (
-        <View style={styles.outterContainer}>
-            <View style={styles.headerContainer}>
-                <View style={styles.headingContainer}>
-                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
-                        <Ionicons name="reorder-two" size={22} color={colors.gray100} />
-                    </Pressable>
-                    <View style={styles.indexBox}>
-                        <Paragraph>{index + 1}</Paragraph>
-                    </View>
-                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
-                </View>
-                <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
-            </View>
+        <View style={[styles.outterContainer, selectedExercises.includes(exercise._id) && styles.selected]}>
+            {
+                isSupersetCombiningMode
+                ?
+                    (
+                        <View style={styles.combiningCheckboxContainer}>
+                            <Checkbox isSelected={selectedExercises.includes(exercise._id)} toggleSelect={toggleSelect} />
+                            <Title>{editableName}</Title>
+                        </View>
+                    )
+                : 
+                    (
+                        <View style={styles.headerContainer}>
+                            <View style={styles.headingContainer}>
+                                <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                                    <Ionicons name="reorder-two" size={22} color={colors.gray100} />
+                                </Pressable>
+                                <View style={styles.indexBox}>
+                                    <Paragraph>{index + 1}</Paragraph>
+                                </View>
+                                <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                            </View>
+                            <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
+                        </View>
+                    )
+            }
                 <View
                     style={styles.setsContainer}
                 >
@@ -135,6 +153,16 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.5,
+    },
+    combiningCheckboxContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8
+    },
+    selected: {
+        borderWidth: 2,
+        borderColor: colors.red500
     }
 });
 

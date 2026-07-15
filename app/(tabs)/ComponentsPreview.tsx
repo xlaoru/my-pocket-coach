@@ -130,7 +130,7 @@ export default function ComponentsPreview() {
 
                 <Heading>Exercise Table</Heading>
 
-                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} onDrag={() => {}} onExerciseNameChange={async () => {}} onAddExerciseSet={async () => {}} onEditExerciseSet={async () => {}} onDeleteExerciseSet={async () => {}} onDeleteExercise={async () => {}} />
+                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} onDrag={() => { } } onExerciseNameChange={async () => { } } onAddExerciseSet={async () => { } } onEditExerciseSet={async () => { } } onDeleteExerciseSet={async () => { } } onDeleteExercise={async () => { } } isSupersetCombiningMode={false} setSupersetCombiningMode={() => { } } selectedExercises={[]} setSelectedExercises={() => {}} />
             </ScrollView>
 
             <BottomSheetForm

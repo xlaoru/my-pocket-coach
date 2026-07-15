@@ -4,7 +4,7 @@ import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -24,6 +24,8 @@ import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-
 import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
 import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
+import Title from "@/components/Title/Title";
+import { colors } from "@/styles/colors";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -58,6 +60,9 @@ export default function Program() {
     }, 0) || 0
 
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+    const [isSupersetCombiningMode, setSupersetCombiningMode] = useState(false)
+    const [selectedExercises, setSelectedExercises] = useState<string[]>([])
 
     const [exerciseName, setExerciseName] = useState("")
 
@@ -196,6 +201,12 @@ export default function Program() {
         }
     }, [_id, moveExerciseMutation])
 
+    useEffect(() => {
+        if (!isSupersetCombiningMode) {
+            setSelectedExercises([])
+        }
+    }, [isSupersetCombiningMode])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -212,6 +223,18 @@ export default function Program() {
                 <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>
                 <AttachPeriodizationButton onPress={() => { }} />
             </View>
+            {isSupersetCombiningMode && (
+                <View style={styles.combiningPanelContainer}>
+                    <View>
+                        <Title style={styles.combiningPanelTitle}>Combining mode</Title>
+                        <Paragraph>Select at least 2</Paragraph>
+                    </View>
+                    <View style={styles.combiningPanelButtonsContainer}>
+                        <Button variant="outlined" onPress={() => {setSupersetCombiningMode(false)}} style={styles.combiningPanelButton}>Cancel</Button>
+                        {selectedExercises.length >= 2 && <Button onPress={() => { console.log(selectedExercises) }} style={styles.combiningPanelButton}>Combine</Button>}
+                    </View>
+                </View>
+            )}
             <View style={styles.listContainer}>
                 {
                     isError
@@ -249,13 +272,16 @@ export default function Program() {
                                                             onEditExerciseSet={handleEditExerciseSet}
                                                             onDeleteExerciseSet={handleDeleteExerciseSet}
                                                             onDeleteExercise={handleDeleteExercise}
+                                                            isSupersetCombiningMode={isSupersetCombiningMode}
+                                                            setSupersetCombiningMode={setSupersetCombiningMode}
+                                                            selectedExercises={selectedExercises}
+                                                            setSelectedExercises={setSelectedExercises}
                                                         />
                                                     : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
                                             </View>
                                         )
                                     }}
                                     keyExtractor={(item) => item._id}
-                                    contentContainerStyle={styles.componentsList}
                                     onDragEnd={({ from, to }) => {
                                         if (from === to) {
                                             return
@@ -266,7 +292,10 @@ export default function Program() {
                                 />
                 }
             </View>
-            <Button iconName="add" onPress={() => setIsBottomSheetOpen(true)}>New Exercise</Button>
+            <View style={styles.buttonContainer}>
+                <Button iconName="add" onPress={() => setIsBottomSheetOpen(true)} style={styles.button}>New Exercise</Button>
+                {program?.workout && program?.workout.length >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+            </View>
             <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                 <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
             </BottomSheetForm>
@@ -294,8 +323,38 @@ const styles = StyleSheet.create({
     attachment: {
         fontWeight: "bold"
     },
-    componentsList: {},
     itemWrapper: {
         paddingBottom: 12,
+    },
+    buttonContainer: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 8
+    },
+    button: {
+        flex: 1
+    },
+    combiningPanelContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: colors.red900,
+        borderWidth: 1,
+        borderColor: colors.red500,
+        borderRadius: 10,
+        padding: 15
+    },
+    combiningPanelTitle: {
+        color: colors.red500
+    },
+    combiningPanelButtonsContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8
+    },
+    combiningPanelButton: {
+        paddingVertical: 8,
+        borderRadius: 16
     }
 });

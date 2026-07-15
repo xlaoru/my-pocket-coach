@@ -10,11 +10,11 @@ export default function Button({ children, variant = "primary", iconName, onPres
             onPress={onPress}
             style={(state) => {
                 const resolvedStyle = typeof style === "function" ? style(state) : style;
-                return [styles.buttonContainer, state.pressed && styles.pressed, resolvedStyle, variant === "primary" ? styles.primaryContainer : styles.secondaryContainer];
+                return [styles.buttonContainer, state.pressed && styles.pressed, resolvedStyle, variant === "primary" ? styles.primaryContainer : variant === "secondary" ? styles.secondaryContainer : styles.outlinedContainer];
             }}
         >
-            <Ionicons name={iconName} color={variant === "primary" ? styles.primaryText.color : styles.secondaryText.color} size={22} />
-            <Text style={[styles.buttonText, variant === "primary" ? styles.primaryText : styles.secondaryText]}>{children}</Text>
+            {iconName && <Ionicons name={iconName} color={variant === "primary" ? styles.primaryText.color : variant === "secondary" ? styles.secondaryText.color : styles.outlinedText.color} size={22} />}
+            <Text style={[styles.buttonText, variant === "primary" ? styles.primaryText : variant === "secondary" ? styles.secondaryText : styles.outlinedText ]}>{children}</Text>
         </Pressable>
     );
 }
@@ -49,5 +49,12 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.85,
-    }
+    },
+    outlinedContainer: {
+        borderWidth: 1,
+        borderColor: colors.gray500
+    },
+    outlinedText: {
+        color: colors.gray100
+    },
 });

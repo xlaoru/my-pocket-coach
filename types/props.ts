@@ -56,6 +56,7 @@ export interface IIconButtonProps {
 
 export interface IButtonProps {
   children: ReactNode
+  variant?: "primary" | "secondary"
   iconName: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']

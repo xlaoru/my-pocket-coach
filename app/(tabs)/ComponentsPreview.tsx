@@ -59,7 +59,8 @@ export default function ComponentsPreview() {
 
                 <Heading>Buttons</Heading>
 
-                <Button iconName="checkmark-outline" onPress={() => { }} >Button</Button>
+                <Button iconName="checkmark-outline" onPress={() => { }}>Primary Button</Button>
+                <Button iconName="layers" variant="secondary" onPress={() => { }}>Secondary Button</Button>
                 <View style={styles.iconButtonContainer}>
                     <IconButton iconName="hourglass-outline" onPress={() => { }} />
                     <Paragraph>IconButton</Paragraph>

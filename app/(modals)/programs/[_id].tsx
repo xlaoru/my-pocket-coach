@@ -20,6 +20,7 @@ import SupersetForm from "@/components/SupersetForm/SupersetForm";
 import Title from "@/components/Title/Title";
 import { useAddExerciseSet } from "@/features/programs/hooks/use-add-exercise-set";
 import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
+import { useCreateSuperset } from "@/features/programs/hooks/use-create-superset";
 import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
 import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
 import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
@@ -41,6 +42,7 @@ export default function Program() {
     const deleteExerciseSetMutation = useDeleteExerciseSet()
     const deleteExerciseMutation = useDeleteExercise()
     const moveExerciseMutation = useMoveExercise()
+    const createSupersetMutation = useCreateSuperset()
 
     const navigation = useNavigation()
 
@@ -219,7 +221,13 @@ export default function Program() {
                 return
             }
 
-            console.log({ supersetName, selectedExercises });
+            await createSupersetMutation.mutateAsync({
+                programId: _id,
+                payload: {
+                    name: supersetName,
+                    workoutItemIds: selectedExercises
+                }
+            })
 
             setSupersetName("")
             setSelectedExercises([])
@@ -229,7 +237,7 @@ export default function Program() {
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
         }
-    }, [])
+    }, [_id, createSupersetMutation, selectedExercises, supersetName])
 
     return (
         <KeyboardAvoidingView
@@ -324,7 +332,7 @@ export default function Program() {
                 <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                     <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
                 </BottomSheetForm>
-                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={() => { console.log({ supersetName, selectedExercises }) }} onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
             </View>

@@ -1,22 +1,22 @@
-import { Pressable, StyleSheet, View } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { IExerciseTableProps } from "@/types/props";
-import Paragraph from "../Paragraph/Paragraph";
-import IconButton from "../IconButton/IconButton";
 import { colors } from "@/styles/colors";
-import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
-import ExerciseTableRow from "./ExerciseTableRow";
-import Title from "../Title/Title";
+import { IExerciseTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
 import Checkbox from "../Checkbox/Checkbox";
+import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
+import IconButton from "../IconButton/IconButton";
+import Paragraph from "../Paragraph/Paragraph";
+import Title from "../Title/Title";
+import ExerciseTableRow from "./ExerciseTableRow";
 
-function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, setSupersetCombiningMode, selectedExercises, setSelectedExercises }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, selectedExercises, setSelectedExercises, setSelectedExercisesData }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
-    
+
     useEffect(() => {
         setEditableName(exercise.name);
     }, [exercise.name]);
-   
+
     const handleNameBlur = useCallback(() => {
         const trimmedName = editableName.trim();
 
@@ -38,20 +38,25 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
 
     const toggleSelect = useCallback(() => {
         setSelectedExercises((prev) => prev.includes(workoutItemId) ? prev.filter((id) => id !== workoutItemId) : [...prev, workoutItemId])
-    }, [workoutItemId, setSelectedExercises])
+        setSelectedExercisesData((prev) =>
+            prev.some((currentExercise) => currentExercise._id === exercise._id)
+                ? prev.filter((currentExercise) => currentExercise._id !== exercise._id)
+                : [...prev, exercise]
+        )
+    }, [workoutItemId, setSelectedExercises, setSelectedExercisesData, exercise])
 
     return (
         <View style={[styles.outterContainer, selectedExercises.includes(workoutItemId) && styles.selected]}>
             {
                 isSupersetCombiningMode
-                ?
+                    ?
                     (
                         <View style={styles.combiningCheckboxContainer}>
                             <Checkbox isSelected={selectedExercises.includes(workoutItemId)} toggleSelect={toggleSelect} />
                             <Title>{editableName}</Title>
                         </View>
                     )
-                : 
+                    :
                     (
                         <View style={styles.headerContainer}>
                             <View style={styles.headingContainer}>
@@ -67,25 +72,25 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
                         </View>
                     )
             }
-                <View
-                    style={styles.setsContainer}
-                >
-                    <View style={styles.setsHeaderContainer}>
-                        <View style={styles.dataCell}>
-                            <Paragraph style={styles.headerTitle}>Set</Paragraph>
-                        </View>
-                        <View style={styles.dataCell}>
-                            <Paragraph style={styles.headerTitle}>kg</Paragraph>
-                        </View>
-                        <View style={styles.dataCell}>
-                            <Paragraph style={styles.headerTitle}>Reps</Paragraph>
-                        </View>
-                        <View style={styles.actionPlaceholder} />
+            <View
+                style={styles.setsContainer}
+            >
+                <View style={styles.setsHeaderContainer}>
+                    <View style={styles.dataCell}>
+                        <Paragraph style={styles.headerTitle}>Set</Paragraph>
                     </View>
-                    {
-                        exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
-                    }
+                    <View style={styles.dataCell}>
+                        <Paragraph style={styles.headerTitle}>kg</Paragraph>
+                    </View>
+                    <View style={styles.dataCell}>
+                        <Paragraph style={styles.headerTitle}>Reps</Paragraph>
+                    </View>
+                    <View style={styles.actionPlaceholder} />
                 </View>
+                {
+                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
+                }
+            </View>
             <AddSetOutlineButton onPress={() => onAddExerciseSet(exercise._id)} />
         </View>
     );

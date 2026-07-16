@@ -26,7 +26,7 @@ import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 import { colors } from "@/styles/colors";
-import { ISet } from "@/types/models";
+import { IExercise, ISet } from "@/types/models";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -65,6 +65,7 @@ export default function Program() {
 
     const [isSupersetCombiningMode, setSupersetCombiningMode] = useState(false)
     const [selectedExercises, setSelectedExercises] = useState<string[]>([])
+    const [selectedExercisesData, setSelectedExercisesData] = useState<IExercise[]>([])
 
     const [exerciseName, setExerciseName] = useState("")
     const [supersetName, setSupersetName] = useState("")
@@ -218,10 +219,13 @@ export default function Program() {
                 return
             }
 
+            console.log({ supersetName, selectedExercises });
+
             setSupersetName("")
             setSelectedExercises([])
             setSupersetCombiningMode(false)
             setSupersetCombiningFormOpen(false)
+            setSelectedExercisesData([])
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
         }
@@ -294,9 +298,9 @@ export default function Program() {
                                                             onDeleteExerciseSet={handleDeleteExerciseSet}
                                                             onDeleteExercise={handleDeleteExercise}
                                                             isSupersetCombiningMode={isSupersetCombiningMode}
-                                                            setSupersetCombiningMode={setSupersetCombiningMode}
                                                             selectedExercises={selectedExercises}
                                                             setSelectedExercises={setSelectedExercises}
+                                                            setSelectedExercisesData={setSelectedExercisesData}
                                                         />
                                                         : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
                                                 </View>
@@ -321,7 +325,7 @@ export default function Program() {
                     <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
                 </BottomSheetForm>
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={() => { console.log({ supersetName, selectedExercises }) }} onClose={() => { setSupersetCombiningFormOpen(false) }}>
-                    <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} />
+                    <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
             </View>
         </KeyboardAvoidingView>

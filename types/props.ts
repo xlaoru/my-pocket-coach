@@ -129,9 +129,9 @@ export interface IExerciseTableProps {
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
   isSupersetCombiningMode: boolean
-  setSupersetCombiningMode: (value: boolean) => void
   selectedExercises: string[]
   setSelectedExercises: Dispatch<SetStateAction<string[]>>
+  setSelectedExercisesData: Dispatch<SetStateAction<IExercise[]>>
 }
 
 export interface IExerciseTableRowProps {
@@ -150,4 +150,5 @@ export interface ICheckboxProps {
 export interface ISupersetFormProps {
   supersetName: string
   setSupersetName: Dispatch<SetStateAction<string>>
+  selectedExercisesData: IExercise[]
 }

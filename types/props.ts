@@ -121,6 +121,7 @@ export interface IAddSetOutlineButtonProps {
 export interface IExerciseTableProps {
   index: number
   exercise: IExercise
+  workoutItemId: string
   onDrag: () => void
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
   onAddExerciseSet: (exerciseId: string) => Promise<void>

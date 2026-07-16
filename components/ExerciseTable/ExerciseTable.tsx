@@ -10,7 +10,7 @@ import Title from "../Title/Title";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "../Checkbox/Checkbox";
 
-function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, setSupersetCombiningMode, selectedExercises, setSelectedExercises }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, setSupersetCombiningMode, selectedExercises, setSelectedExercises }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     
     useEffect(() => {
@@ -37,17 +37,17 @@ function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange,
     }, [exercise, onDeleteExercise])
 
     const toggleSelect = useCallback(() => {
-        setSelectedExercises((prev) => prev.includes(exercise._id) ? prev.filter((id) => id !== exercise._id) : [...prev, exercise._id])
-    }, [exercise, setSelectedExercises])
+        setSelectedExercises((prev) => prev.includes(workoutItemId) ? prev.filter((id) => id !== workoutItemId) : [...prev, workoutItemId])
+    }, [workoutItemId, setSelectedExercises])
 
     return (
-        <View style={[styles.outterContainer, selectedExercises.includes(exercise._id) && styles.selected]}>
+        <View style={[styles.outterContainer, selectedExercises.includes(workoutItemId) && styles.selected]}>
             {
                 isSupersetCombiningMode
                 ?
                     (
                         <View style={styles.combiningCheckboxContainer}>
-                            <Checkbox isSelected={selectedExercises.includes(exercise._id)} toggleSelect={toggleSelect} />
+                            <Checkbox isSelected={selectedExercises.includes(workoutItemId)} toggleSelect={toggleSelect} />
                             <Title>{editableName}</Title>
                         </View>
                     )

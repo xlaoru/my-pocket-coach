@@ -258,7 +258,7 @@ export default function Program() {
                                     autoscrollThreshold={80}
                                     autoscrollSpeed={150}
                                     data={program!.workout ?? []}
-                                    renderItem={({ item, getIndex, drag, isActive }) => {
+                                    renderItem={({ item, getIndex, drag }) => {
                                         const index = getIndex()
                                         return (
                                             <View style={styles.itemWrapper}>
@@ -266,6 +266,7 @@ export default function Program() {
                                                     ? <ExerciseTable
                                                             index={index ?? 0}
                                                             exercise={item.components[0]}
+                                                            workoutItemId={item._id}
                                                             onDrag={drag}
                                                             onExerciseNameChange={handleEditExerciseName}
                                                             onAddExerciseSet={handleAddExerciseSet}

@@ -56,7 +56,7 @@ export interface IIconButtonProps {
 
 export interface IButtonProps {
   children: ReactNode
-  variant?: "primary" | "secondary" | "outlined"
+  variant?: 'primary' | 'secondary' | 'outlined'
   iconName?: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']
@@ -96,7 +96,7 @@ export interface IExerciseFormProps {
   exerciseName: string
   setExerciseName: (name: string) => void
   sets: ISet[]
-  onSetChange: (index: number, field: "weight" | "reps", value: string) => void
+  onSetChange: (index: number, field: 'weight' | 'reps', value: string) => void
   onAddSet: VoidFunction
   onRemoveSet: (index: number) => void
 }
@@ -104,7 +104,7 @@ export interface IExerciseFormProps {
 export interface IExerciseFormRowProps {
   index: number
   set: ISet
-  onChange: (index: number, field: "weight" | "reps", value: string) => void
+  onChange: (index: number, field: 'weight' | 'reps', value: string) => void
   onRemove: (index: number) => void
 }
 
@@ -145,4 +145,9 @@ export interface IExerciseTableRowProps {
 export interface ICheckboxProps {
   isSelected: boolean
   toggleSelect: () => void
+}
+
+export interface ISupersetFormProps {
+  supersetName: string
+  setSupersetName: Dispatch<SetStateAction<string>>
 }

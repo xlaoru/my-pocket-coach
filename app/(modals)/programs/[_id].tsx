@@ -8,24 +8,25 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from "react"
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import DraggableFlatList from "react-native-draggable-flatlist" 
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
-import { useProgram } from "@/features/programs/hooks/use-program";
 import Loader from "@/components/Loader/Loader";
+import { useProgram } from "@/features/programs/hooks/use-program";
 
 import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
-import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
-import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
-import { ISet } from "@/types/models";
-import { useAddExerciseSet } from "@/features/programs/hooks/use-add-exercise-set";
-import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
-import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
-import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
-import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
+import SupersetForm from "@/components/SupersetForm/SupersetForm";
 import Title from "@/components/Title/Title";
+import { useAddExerciseSet } from "@/features/programs/hooks/use-add-exercise-set";
+import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
+import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
+import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
+import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
+import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
+import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 import { colors } from "@/styles/colors";
+import { ISet } from "@/types/models";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -59,17 +60,19 @@ export default function Program() {
         return acc
     }, 0) || 0
 
-    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+    const [isExerciseFormOpen, setExerciseFormOpen] = useState(false);
+    const [isSupersetCombiningFormOpen, setSupersetCombiningFormOpen] = useState(false);
 
     const [isSupersetCombiningMode, setSupersetCombiningMode] = useState(false)
     const [selectedExercises, setSelectedExercises] = useState<string[]>([])
 
     const [exerciseName, setExerciseName] = useState("")
+    const [supersetName, setSupersetName] = useState("")
 
     const [sets, setSets] = useState<ISet[]>([
         { weight: 0, reps: 0 },
     ])
-    
+
     const handleSetChange = (index: number, field: "weight" | "reps", value: string) => {
         const parsed = parseInt(value, 10);
         const numeric = isNaN(parsed) ? 0 : parsed;
@@ -88,7 +91,7 @@ export default function Program() {
         setSets((prevSets) => prevSets.filter((_, i) => i !== index));
     }
 
-    const handleCreateExercise = async () => {
+    const handleCreateExercise = useCallback(async () => {
         const trimmedExerciseName = exerciseName.trim()
 
         if (!trimmedExerciseName) return;
@@ -108,11 +111,11 @@ export default function Program() {
             setSets([
                 { weight: 0, reps: 0 },
             ])
-            setIsBottomSheetOpen(false)
+            setExerciseFormOpen(false)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
-    }
+    }, [_id, createExerciseMutation, exerciseName, sets])
 
     const handleEditExerciseName = useCallback(async (exerciseId: string, newName: string) => {
         const trimmedExerciseName = newName.trim();
@@ -163,7 +166,7 @@ export default function Program() {
         }
     }, [_id, editExerciseSetMutation])
 
-    const handleDeleteExerciseSet = useCallback(async(exerciseId: string, setIndex: number) => {
+    const handleDeleteExerciseSet = useCallback(async (exerciseId: string, setIndex: number) => {
         try {
             await deleteExerciseSetMutation.mutateAsync({
                 programId: _id,
@@ -175,7 +178,7 @@ export default function Program() {
         }
     }, [_id, deleteExerciseSetMutation])
 
-    const handleDeleteExercise = useCallback(async(exerciseId: string) => {
+    const handleDeleteExercise = useCallback(async (exerciseId: string) => {
         try {
             await deleteExerciseMutation.mutateAsync({
                 programId: _id,
@@ -186,7 +189,7 @@ export default function Program() {
         }
     }, [_id, deleteExerciseMutation])
 
-    const handleMoveExercise = useCallback(async(containerId: string, sourceIndex: number, destinationIndex: number ) => {
+    const handleMoveExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
         try {
             await moveExerciseMutation.mutateAsync({
                 programId: _id,
@@ -207,63 +210,80 @@ export default function Program() {
         }
     }, [isSupersetCombiningMode])
 
+    const handleCreateSuperset = useCallback(async () => {
+        try {
+            const trimmedSupertsetName = supersetName.trim()
+
+            if (!trimmedSupertsetName) {
+                return
+            }
+
+            setSupersetName("")
+            setSelectedExercises([])
+            setSupersetCombiningMode(false)
+            setSupersetCombiningFormOpen(false)
+        } catch {
+            Alert.alert("Failed to create superset", "Please try again.")
+        }
+    }, [])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-        <View
-            style={[
-                { paddingBottom: insets.bottom + 12 },
-                styles.outerContainer,
-            ]}
-        >
-            <View style={styles.header}>
-                <Heading isEditable>{isLoading ? "Loading..." : program?.name}</Heading>
-                <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>
-                <AttachPeriodizationButton onPress={() => { }} />
-            </View>
-            {isSupersetCombiningMode && (
-                <View style={styles.combiningPanelContainer}>
-                    <View>
-                        <Title style={styles.combiningPanelTitle}>Combining mode</Title>
-                        <Paragraph>Select at least 2</Paragraph>
-                    </View>
-                    <View style={styles.combiningPanelButtonsContainer}>
-                        <Button variant="outlined" onPress={() => {setSupersetCombiningMode(false)}} style={styles.combiningPanelButton}>Cancel</Button>
-                        {selectedExercises.length >= 2 && <Button onPress={() => { console.log(selectedExercises) }} style={styles.combiningPanelButton}>Combine</Button>}
-                    </View>
+            <View
+                style={[
+                    { paddingBottom: insets.bottom + 12 },
+                    styles.outerContainer,
+                ]}
+            >
+                <View style={styles.header}>
+                    <Heading isEditable>{isLoading ? "Loading..." : program?.name}</Heading>
+                    <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>
+                    <AttachPeriodizationButton onPress={() => { }} />
                 </View>
-            )}
-            <View style={styles.listContainer}>
-                {
-                    isError
-                        ? (
-                            <EntityEmptyState
-                                iconName="alert-circle-outline"
-                                title="Failed to load programs"
-                                message="Please check the API connection and try again."
-                            />
-                        )
-                        : isLoading
+                {isSupersetCombiningMode && (
+                    <View style={styles.combiningPanelContainer}>
+                        <View>
+                            <Title style={styles.combiningPanelTitle}>Combining mode</Title>
+                            <Paragraph>Select at least 2</Paragraph>
+                        </View>
+                        <View style={styles.combiningPanelButtonsContainer}>
+                            <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false) }} style={styles.combiningPanelButton}>Cancel</Button>
+                            {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
+                        </View>
+                    </View>
+                )}
+                <View style={styles.listContainer}>
+                    {
+                        isError
                             ? (
-                                <Loader />
+                                <EntityEmptyState
+                                    iconName="alert-circle-outline"
+                                    title="Failed to load programs"
+                                    message="Please check the API connection and try again."
+                                />
                             )
-                            : programExercisesAmount === 0
+                            : isLoading
                                 ? (
-                                    <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
+                                    <Loader />
                                 )
-                                : <DraggableFlatList
-                                    showsVerticalScrollIndicator={false}
-                                    autoscrollThreshold={80}
-                                    autoscrollSpeed={150}
-                                    data={program!.workout ?? []}
-                                    renderItem={({ item, getIndex, drag }) => {
-                                        const index = getIndex()
-                                        return (
-                                            <View style={styles.itemWrapper}>
-                                                {item.type === "exercise"
-                                                    ? <ExerciseTable
+                                : programExercisesAmount === 0
+                                    ? (
+                                        <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
+                                    )
+                                    : <DraggableFlatList
+                                        showsVerticalScrollIndicator={false}
+                                        autoscrollThreshold={80}
+                                        autoscrollSpeed={150}
+                                        data={program!.workout ?? []}
+                                        renderItem={({ item, getIndex, drag }) => {
+                                            const index = getIndex()
+                                            return (
+                                                <View style={styles.itemWrapper}>
+                                                    {item.type === "exercise"
+                                                        ? <ExerciseTable
                                                             index={index ?? 0}
                                                             exercise={item.components[0]}
                                                             workoutItemId={item._id}
@@ -278,29 +298,32 @@ export default function Program() {
                                                             selectedExercises={selectedExercises}
                                                             setSelectedExercises={setSelectedExercises}
                                                         />
-                                                    : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
-                                            </View>
-                                        )
-                                    }}
-                                    keyExtractor={(item) => item._id}
-                                    onDragEnd={({ from, to }) => {
-                                        if (from === to) {
-                                            return
-                                        }
+                                                        : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
+                                                </View>
+                                            )
+                                        }}
+                                        keyExtractor={(item) => item._id}
+                                        onDragEnd={({ from, to }) => {
+                                            if (from === to) {
+                                                return
+                                            }
 
-                                        handleMoveExercise(_id, from, to)
-                                    }}
-                                />
-                }
+                                            handleMoveExercise(_id, from, to)
+                                        }}
+                                    />
+                    }
+                </View>
+                <View style={styles.buttonContainer}>
+                    <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    {program?.workout && program?.workout.length >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+                </View>
+                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
+                    <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
+                </BottomSheetForm>
+                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={() => { console.log({ supersetName, selectedExercises }) }} onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                    <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} />
+                </BottomSheetForm>
             </View>
-            <View style={styles.buttonContainer}>
-                <Button iconName="add" onPress={() => setIsBottomSheetOpen(true)} style={styles.button}>New Exercise</Button>
-                {program?.workout && program?.workout.length >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
-            </View>
-            <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
-                <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
-            </BottomSheetForm>
-        </View>
         </KeyboardAvoidingView>
     );
 }

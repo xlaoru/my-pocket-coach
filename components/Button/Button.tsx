@@ -5,16 +5,18 @@ import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
 export default function Button({ children, variant = "primary", iconName, onPress, style }: IButtonProps) {
+    const variantStyle = variantStyles[variant as keyof typeof variantStyles] ?? variantStyles.outlined;
+
     return (
         <Pressable
             onPress={onPress}
             style={(state) => {
                 const resolvedStyle = typeof style === "function" ? style(state) : style;
-                return [styles.buttonContainer, state.pressed && styles.pressed, resolvedStyle, variant === "primary" ? styles.primaryContainer : variant === "secondary" ? styles.secondaryContainer : styles.outlinedContainer];
+                return [styles.buttonContainer, state.pressed && styles.pressed, resolvedStyle, variantStyle.container];
             }}
         >
-            {iconName && <Ionicons name={iconName} color={variant === "primary" ? styles.primaryText.color : variant === "secondary" ? styles.secondaryText.color : styles.outlinedText.color} size={22} />}
-            <Text style={[styles.buttonText, variant === "primary" ? styles.primaryText : variant === "secondary" ? styles.secondaryText : styles.outlinedText ]}>{children}</Text>
+            {iconName && <Ionicons name={iconName} color={variantStyle.text.color} size={22} />}
+            <Text style={[styles.buttonText, variantStyle.text]}>{children}</Text>
         </Pressable>
     );
 }
@@ -57,4 +59,19 @@ const styles = StyleSheet.create({
     outlinedText: {
         color: colors.gray100
     },
+    dashedContainer: {
+        borderWidth: 1,
+        borderStyle: "dashed",
+        borderColor: colors.red500
+    },
+    dashedText: {
+        color: colors.red500
+    }
 });
+
+const variantStyles = {
+    primary: { container: styles.primaryContainer, text: styles.primaryText },
+    secondary: { container: styles.secondaryContainer, text: styles.secondaryText },
+    outlined: { container: styles.outlinedContainer, text: styles.outlinedText },
+    dashed: { container: styles.dashedContainer, text: styles.dashedText }
+} satisfies Record<string, { container: object; text: { color: string } }>;

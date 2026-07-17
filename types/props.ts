@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react'
 import { PressableProps, StyleProp, TextStyle } from 'react-native'
-import { IExercise, IPeriodization, IProgram, ISet } from './models'
+import { IExercise, IPeriodization, IProgram, ISet, IWorkoutItem } from './models'
 
 type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
@@ -56,7 +56,7 @@ export interface IIconButtonProps {
 
 export interface IButtonProps {
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'outlined'
+  variant?: 'primary' | 'secondary' | 'outlined' | 'dashed'
   iconName?: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']
@@ -151,4 +151,20 @@ export interface ISupersetFormProps {
   supersetName: string
   setSupersetName: Dispatch<SetStateAction<string>>
   selectedExercisesData: IExercise[]
+}
+
+export interface ISupersetTableProps {
+  index: number
+  superset: IWorkoutItem
+  workoutItemId: string
+  onDrag: () => void
+}
+
+export interface ISubExerciseTabelProps {
+  exercise: IExercise
+}
+
+export interface ISubExerciseTabelRowProps {
+  index: number
+  set: ISet
 }

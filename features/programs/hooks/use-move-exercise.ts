@@ -30,6 +30,23 @@ export function useMoveExercise() {
                     ...previousProgram,
                     workout,
                 })
+            } else if (previousProgram) {
+                const workout = previousProgram.workout.map((item) => {
+                    if (item._id !== payload.containerId || item.type !== "superset") {
+                        return item
+                    }
+
+                    const components = [...item.components]
+                    const [movedComponent] = components.splice(payload.sourceIndex, 1)
+                    components.splice(payload.destinationIndex, 0, movedComponent)
+
+                    return { ...item, components }
+                })
+
+                queryClient.setQueryData<IProgram>(queryKey, {
+                    ...previousProgram,
+                    workout,
+                })
             }
 
             return { previousProgram }

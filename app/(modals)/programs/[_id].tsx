@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useState } from "react"
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import DraggableFlatList from "react-native-draggable-flatlist";
+import { NestableDraggableFlatList, NestableScrollContainer } from "react-native-draggable-flatlist";
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
@@ -286,12 +286,12 @@ export default function Program() {
                                     ? (
                                         <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
                                     )
-                                    : <DraggableFlatList
-                                        showsVerticalScrollIndicator={false}
-                                        autoscrollThreshold={80}
-                                        autoscrollSpeed={150}
-                                        data={program!.workout ?? []}
-                                        renderItem={({ item, getIndex, drag }) => {
+                                    : <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                        <NestableDraggableFlatList
+                                            autoscrollThreshold={80}
+                                            autoscrollSpeed={150}
+                                            data={program!.workout ?? []}
+                                            renderItem={({ item, getIndex, drag }) => {
                                             const index = getIndex()
                                             return (
                                                 <View style={styles.itemWrapper}>
@@ -325,21 +325,23 @@ export default function Program() {
                                                                     onEditExerciseSet={handleEditExerciseSet}
                                                                     onDeleteExerciseSet={handleDeleteExerciseSet}
                                                                     onDeleteExercise={handleDeleteExercise}
+                                                                    onMoveExercise={handleMoveExercise}
                                                                 />
                                                             )
                                                     }
                                                 </View>
                                             )
                                         }}
-                                        keyExtractor={(item) => item._id}
-                                        onDragEnd={({ from, to }) => {
-                                            if (from === to) {
-                                                return
-                                            }
+                                            keyExtractor={(item) => item._id}
+                                            onDragEnd={({ from, to }) => {
+                                                if (from === to) {
+                                                    return
+                                                }
 
-                                            handleMoveExercise(_id, from, to)
-                                        }}
-                                    />
+                                                handleMoveExercise(_id, from, to)
+                                            }}
+                                        />
+                                    </NestableScrollContainer>
                     }
                 </View>
                 <View style={styles.buttonContainer}>

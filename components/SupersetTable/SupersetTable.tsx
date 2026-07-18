@@ -3,13 +3,14 @@ import { ISupersetTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
+import { NestableDraggableFlatList } from "react-native-draggable-flatlist";
 import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise }: ISupersetTableProps) {
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -27,21 +28,27 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onExer
                     <IconButton iconName="trash-bin-outline" onPress={() => { }} />
                 </View>
             </View>
-            <View style={styles.subExercisesContainer}>
-                {
-                    superset.components.map((exercise) => (
-                        <SubExerciseTabel
-                            key={exercise._id}
-                            exercise={exercise}
-                            onExerciseNameChange={onExerciseNameChange}
-                            onAddExerciseSet={onAddExerciseSet}
-                            onEditExerciseSet={onEditExerciseSet}
-                            onDeleteExerciseSet={onDeleteExerciseSet}
-                            onDeleteExercise={onDeleteExercise}
-                        />
-                    ))
-                }
-            </View>
+            <NestableDraggableFlatList
+                data={superset.components}
+                keyExtractor={(exercise) => exercise._id}
+                containerStyle={styles.subExercisesContainer}
+                contentContainerStyle={styles.subExercisesContent}
+                renderItem={({ item: exercise, drag }) => (
+                    <SubExerciseTabel
+                        exercise={exercise}
+                        onDrag={drag}
+                        onExerciseNameChange={onExerciseNameChange}
+                        onAddExerciseSet={onAddExerciseSet}
+                        onEditExerciseSet={onEditExerciseSet}
+                        onDeleteExerciseSet={onDeleteExerciseSet}
+                        onDeleteExercise={onDeleteExercise}
+                    />
+                )}
+                onDragEnd={({ from, to }) => {
+                    if (from === to) return;
+                    void onMoveExercise(workoutItemId, from, to);
+                }}
+            />
             <View style={styles.buttonsContainer}>
                 <Button iconName="add-circle-outline" variant="dashed" onPress={() => { }} style={styles.buttons}>New Exercise</Button>
                 <Button iconName="barbell-outline" variant="dashed" onPress={() => { }} style={styles.buttons}>Pick existing</Button>
@@ -89,11 +96,13 @@ const styles = StyleSheet.create({
         gap: 16
     },
     subExercisesContainer: {
-        display: "flex",
-        gap: 16,
         borderLeftWidth: 1,
         borderLeftColor: colors.red500,
         paddingHorizontal: 8,
+    },
+    subExercisesContent: {
+        display: "flex",
+        gap: 16,
     },
     buttonsContainer: {
         paddingTop: 16,

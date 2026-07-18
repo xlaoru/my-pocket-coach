@@ -9,7 +9,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabelRow from "./SubExerciseTabelRow";
 
-function SubExerciseTabel({ exercise, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: ISubExerciseTabelProps) {
+function SubExerciseTabel({ exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: ISubExerciseTabelProps) {
     const [editableName, setEditableName] = useState(exercise.name);
 
     useEffect(() => {
@@ -39,7 +39,7 @@ function SubExerciseTabel({ exercise, onExerciseNameChange, onAddExerciseSet, on
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable onLongPress={() => { }} style={({ pressed }) => pressed && styles.pressed}>
+                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
                     <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>

@@ -163,10 +163,16 @@ export interface ISupersetTableProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
+  onMoveExercise: (
+    containerId: string,
+    sourceIndex: number,
+    destinationIndex: number,
+  ) => Promise<void>
 }
 
 export interface ISubExerciseTabelProps {
   exercise: IExercise
+  onDrag: () => void
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
   onAddExerciseSet: (exerciseId: string) => Promise<void>
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>

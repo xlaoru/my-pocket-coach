@@ -311,8 +311,8 @@ export default function Program() {
                                     )
                                     : <NestableScrollContainer showsVerticalScrollIndicator={false}>
                                         <NestableDraggableFlatList
-                                            autoscrollThreshold={80}
-                                            autoscrollSpeed={150}
+                                            autoscrollThreshold={30}
+                                            autoscrollSpeed={100}
                                             data={program!.workout ?? []}
                                             renderItem={({ item, getIndex, drag }) => {
                                                 const index = getIndex()

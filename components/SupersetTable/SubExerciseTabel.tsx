@@ -1,6 +1,7 @@
 import { colors } from "@/styles/colors";
 import { ISubExerciseTabelProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import IconButton from "../IconButton/IconButton";
@@ -8,7 +9,32 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabelRow from "./SubExerciseTabelRow";
 
-export default function SubExerciseTabel({ exercise }: ISubExerciseTabelProps) {
+function SubExerciseTabel({ exercise, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: ISubExerciseTabelProps) {
+    const [editableName, setEditableName] = useState(exercise.name);
+
+    useEffect(() => {
+        setEditableName(exercise.name);
+    }, [exercise.name]);
+
+    const handleNameBlur = useCallback(() => {
+        const trimmedName = editableName.trim();
+
+        if (!trimmedName) {
+            setEditableName(exercise.name);
+            return;
+        }
+
+        if (trimmedName === exercise.name) {
+            return;
+        }
+
+        void onExerciseNameChange(exercise._id, trimmedName);
+    }, [editableName, exercise._id, exercise.name, onExerciseNameChange]);
+
+    const handleDeleteExercise = useCallback(() => {
+        void onDeleteExercise(exercise._id)
+    }, [exercise, onDeleteExercise])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -16,11 +42,11 @@ export default function SubExerciseTabel({ exercise }: ISubExerciseTabelProps) {
                     <Pressable onLongPress={() => { }} style={({ pressed }) => pressed && styles.pressed}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title isEditable onChangeText={() => { }} onBlur={() => { }}>{exercise.name}</Title>
+                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={() => { }} />
-                    <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
                 </View>
             </View>
             <View style={styles.tableContainer}>
@@ -41,10 +67,10 @@ export default function SubExerciseTabel({ exercise }: ISubExerciseTabelProps) {
                     </View>
                 </View>
                 {exercise.sets.map((set, index) => (
-                    <SubExerciseTabelRow key={index} index={index} set={set} />
+                    <SubExerciseTabelRow key={index} index={index} exerciseId={exercise._id} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />
                 ))}
             </View>
-            <AddSetOutlineButton onPress={() => { }} />
+            <AddSetOutlineButton onPress={() => { onAddExerciseSet(exercise._id) }} />
         </View>
     )
 }
@@ -109,3 +135,5 @@ const styles = StyleSheet.create({
         gap: 8
     },
 })
+
+export default React.memo(SubExerciseTabel)

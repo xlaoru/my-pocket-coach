@@ -320,6 +320,11 @@ export default function Program() {
                                                                     superset={item}
                                                                     workoutItemId={item._id}
                                                                     onDrag={drag}
+                                                                    onExerciseNameChange={handleEditExerciseName}
+                                                                    onAddExerciseSet={handleAddExerciseSet}
+                                                                    onEditExerciseSet={handleEditExerciseSet}
+                                                                    onDeleteExerciseSet={handleDeleteExerciseSet}
+                                                                    onDeleteExercise={handleDeleteExercise}
                                                                 />
                                                             )
                                                     }

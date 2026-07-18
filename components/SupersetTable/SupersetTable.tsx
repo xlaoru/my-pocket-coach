@@ -1,6 +1,7 @@
 import { colors } from "@/styles/colors";
 import { ISupersetTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
@@ -8,7 +9,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-export default function SupersetTable({ index, superset, workoutItemId, onDrag }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: ISupersetTableProps) {
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -28,8 +29,16 @@ export default function SupersetTable({ index, superset, workoutItemId, onDrag }
             </View>
             <View style={styles.subExercisesContainer}>
                 {
-                    superset.components.map((exercise, index) => (
-                        <SubExerciseTabel key={exercise._id} exercise={exercise} />
+                    superset.components.map((exercise) => (
+                        <SubExerciseTabel
+                            key={exercise._id}
+                            exercise={exercise}
+                            onExerciseNameChange={onExerciseNameChange}
+                            onAddExerciseSet={onAddExerciseSet}
+                            onEditExerciseSet={onEditExerciseSet}
+                            onDeleteExerciseSet={onDeleteExerciseSet}
+                            onDeleteExercise={onDeleteExercise}
+                        />
                     ))
                 }
             </View>
@@ -101,3 +110,5 @@ const styles = StyleSheet.create({
         flex: 1
     }
 })
+
+export default React.memo(SupersetTableComponent)

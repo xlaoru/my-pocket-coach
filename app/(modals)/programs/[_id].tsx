@@ -26,6 +26,7 @@ import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise
 import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
 import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
+import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 import { colors } from "@/styles/colors";
 import { IExercise, ISet } from "@/types/models";
@@ -44,6 +45,7 @@ export default function Program() {
     const deleteExerciseMutation = useDeleteExercise()
     const moveExerciseMutation = useMoveExercise()
     const createSupersetMutation = useCreateSuperset()
+    const editSupersetNameMutation = useEditSupersetName()
 
     const navigation = useNavigation()
 
@@ -240,6 +242,27 @@ export default function Program() {
         }
     }, [_id, createSupersetMutation, selectedExercises, supersetName])
 
+
+    const handleEditSupersetName = useCallback(async (supersetId: string, newName: string) => {
+        const trimmedSupersetName = newName.trim()
+
+        if (!trimmedSupersetName) {
+            return
+        }
+
+        try {
+            await editSupersetNameMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                payload: {
+                    name: trimmedSupersetName
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit superset name", "Please try again.");
+        }
+    }, [_id, editSupersetNameMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -292,46 +315,47 @@ export default function Program() {
                                             autoscrollSpeed={150}
                                             data={program!.workout ?? []}
                                             renderItem={({ item, getIndex, drag }) => {
-                                            const index = getIndex()
-                                            return (
-                                                <View style={styles.itemWrapper}>
-                                                    {
-                                                        item.type === "exercise"
-                                                            ? (
-                                                                <ExerciseTable
-                                                                    index={index ?? 0}
-                                                                    exercise={item.components[0]}
-                                                                    workoutItemId={item._id}
-                                                                    onDrag={drag}
-                                                                    onExerciseNameChange={handleEditExerciseName}
-                                                                    onAddExerciseSet={handleAddExerciseSet}
-                                                                    onEditExerciseSet={handleEditExerciseSet}
-                                                                    onDeleteExerciseSet={handleDeleteExerciseSet}
-                                                                    onDeleteExercise={handleDeleteExercise}
-                                                                    isSupersetCombiningMode={isSupersetCombiningMode}
-                                                                    selectedExercises={selectedExercises}
-                                                                    setSelectedExercises={setSelectedExercises}
-                                                                    setSelectedExercisesData={setSelectedExercisesData}
-                                                                />
-                                                            )
-                                                            : (
-                                                                <SupersetTable
-                                                                    index={index ?? 0}
-                                                                    superset={item}
-                                                                    workoutItemId={item._id}
-                                                                    onDrag={drag}
-                                                                    onExerciseNameChange={handleEditExerciseName}
-                                                                    onAddExerciseSet={handleAddExerciseSet}
-                                                                    onEditExerciseSet={handleEditExerciseSet}
-                                                                    onDeleteExerciseSet={handleDeleteExerciseSet}
-                                                                    onDeleteExercise={handleDeleteExercise}
-                                                                    onMoveExercise={handleMoveExercise}
-                                                                />
-                                                            )
-                                                    }
-                                                </View>
-                                            )
-                                        }}
+                                                const index = getIndex()
+                                                return (
+                                                    <View style={styles.itemWrapper}>
+                                                        {
+                                                            item.type === "exercise"
+                                                                ? (
+                                                                    <ExerciseTable
+                                                                        index={index ?? 0}
+                                                                        exercise={item.components[0]}
+                                                                        workoutItemId={item._id}
+                                                                        onDrag={drag}
+                                                                        onExerciseNameChange={handleEditExerciseName}
+                                                                        onAddExerciseSet={handleAddExerciseSet}
+                                                                        onEditExerciseSet={handleEditExerciseSet}
+                                                                        onDeleteExerciseSet={handleDeleteExerciseSet}
+                                                                        onDeleteExercise={handleDeleteExercise}
+                                                                        isSupersetCombiningMode={isSupersetCombiningMode}
+                                                                        selectedExercises={selectedExercises}
+                                                                        setSelectedExercises={setSelectedExercises}
+                                                                        setSelectedExercisesData={setSelectedExercisesData}
+                                                                    />
+                                                                )
+                                                                : (
+                                                                    <SupersetTable
+                                                                        index={index ?? 0}
+                                                                        superset={item}
+                                                                        workoutItemId={item._id}
+                                                                        onDrag={drag}
+                                                                        onSupersetNameChange={handleEditSupersetName}
+                                                                        onExerciseNameChange={handleEditExerciseName}
+                                                                        onAddExerciseSet={handleAddExerciseSet}
+                                                                        onEditExerciseSet={handleEditExerciseSet}
+                                                                        onDeleteExerciseSet={handleDeleteExerciseSet}
+                                                                        onDeleteExercise={handleDeleteExercise}
+                                                                        onMoveExercise={handleMoveExercise}
+                                                                    />
+                                                                )
+                                                        }
+                                                    </View>
+                                                )
+                                            }}
                                             keyExtractor={(item) => item._id}
                                             onDragEnd={({ from, to }) => {
                                                 if (from === to) {

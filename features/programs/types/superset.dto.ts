@@ -11,3 +11,7 @@ export interface ICreateSupersetPayload {
   name?: string
   workoutItemIds: string[]
 }
+
+export interface IEditSupersetNamePayload {
+  name: string
+}

@@ -1,7 +1,7 @@
 import { colors } from "@/styles/colors";
 import { ISupersetTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { NestableDraggableFlatList } from "react-native-draggable-flatlist";
 import Button from "../Button/Button";
@@ -10,7 +10,28 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise }: ISupersetTableProps) {
+    const [editableName, setEditableName] = useState(superset.name)
+
+    useEffect(() => {
+        setEditableName(superset.name)
+    }, [superset.name])
+
+    const handleNameBlur = useCallback(() => {
+        const trimmedName = editableName.trim()
+
+        if (!trimmedName) {
+            setEditableName(superset.name)
+            return
+        }
+
+        if (trimmedName === superset.name) {
+            return
+        }
+
+        void onSupersetNameChange(superset._id, trimmedName)
+    }, [editableName, superset._id, superset.name, onSupersetNameChange])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -21,7 +42,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onExer
                     <View style={styles.indexBox}>
                         <Paragraph style={styles.indexText}>{index + 1}</Paragraph>
                     </View>
-                    <Title isEditable onChangeText={() => { }} onBlur={() => { }}>{superset.name}</Title>
+                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={() => { }} />

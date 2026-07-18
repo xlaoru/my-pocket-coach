@@ -158,6 +158,7 @@ export interface ISupersetTableProps {
   superset: IWorkoutItem
   workoutItemId: string
   onDrag: () => void
+  onSupersetNameChange: (supersetId: string, name: string) => Promise<void>
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
   onAddExerciseSet: (exerciseId: string) => Promise<void>
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>

@@ -4,26 +4,37 @@ import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import DraggableFlatList from "react-native-draggable-flatlist" 
+import { NestableDraggableFlatList, NestableScrollContainer } from "react-native-draggable-flatlist";
 
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
-import { useProgram } from "@/features/programs/hooks/use-program";
 import Loader from "@/components/Loader/Loader";
+import { useProgram } from "@/features/programs/hooks/use-program";
 
 import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
-import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
-import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
-import { ISet } from "@/types/models";
+import SupersetForm from "@/components/SupersetForm/SupersetForm";
+import SupersetTable from "@/components/SupersetTable/SupersetTable";
+import Title from "@/components/Title/Title";
 import { useAddExerciseSet } from "@/features/programs/hooks/use-add-exercise-set";
-import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
-import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
+import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
+import { useCreateNewExercise } from "@/features/programs/hooks/use-create-new-exercise";
+import { useCreateSuperset } from "@/features/programs/hooks/use-create-superset";
 import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
+import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
+import { useDeleteSuperset } from "@/features/programs/hooks/use-delete-superset";
+import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
+import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
+import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
+import { useLinkExercises } from "@/features/programs/hooks/use-link-exercise";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
+import { useUnlinkAllExercises } from "@/features/programs/hooks/use-unlink-all-exercises";
+import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
+import { colors } from "@/styles/colors";
+import { IExercise, ISet } from "@/types/models";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -38,6 +49,13 @@ export default function Program() {
     const deleteExerciseSetMutation = useDeleteExerciseSet()
     const deleteExerciseMutation = useDeleteExercise()
     const moveExerciseMutation = useMoveExercise()
+    const createSupersetMutation = useCreateSuperset()
+    const editSupersetNameMutation = useEditSupersetName()
+    const deleteSupersetMutation = useDeleteSuperset()
+    const unlinkExerciseMutation = useUnlinkExercise()
+    const unlinkAllExercisesMutation = useUnlinkAllExercises()
+    const createNewExerciseMutation = useCreateNewExercise()
+    const linkExerciseMutation = useLinkExercises()
 
     const navigation = useNavigation()
 
@@ -57,14 +75,22 @@ export default function Program() {
         return acc
     }, 0) || 0
 
-    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+    const [isExerciseFormOpen, setExerciseFormOpen] = useState(false);
+    const [isSupersetCombiningFormOpen, setSupersetCombiningFormOpen] = useState(false);
+
+    const [isSupersetCombiningMode, setSupersetCombiningMode] = useState(false)
+    const [selectedExercises, setSelectedExercises] = useState<string[]>([])
+    const [selectedExercisesData, setSelectedExercisesData] = useState<IExercise[]>([])
 
     const [exerciseName, setExerciseName] = useState("")
+    const [supersetName, setSupersetName] = useState("")
 
     const [sets, setSets] = useState<ISet[]>([
         { weight: 0, reps: 0 },
     ])
-    
+
+    const outsideSupersetExercises = program?.workout.filter(item => item.type === "exercise") || []
+
     const handleSetChange = (index: number, field: "weight" | "reps", value: string) => {
         const parsed = parseInt(value, 10);
         const numeric = isNaN(parsed) ? 0 : parsed;
@@ -83,7 +109,7 @@ export default function Program() {
         setSets((prevSets) => prevSets.filter((_, i) => i !== index));
     }
 
-    const handleCreateExercise = async () => {
+    const handleCreateExercise = useCallback(async () => {
         const trimmedExerciseName = exerciseName.trim()
 
         if (!trimmedExerciseName) return;
@@ -103,11 +129,11 @@ export default function Program() {
             setSets([
                 { weight: 0, reps: 0 },
             ])
-            setIsBottomSheetOpen(false)
+            setExerciseFormOpen(false)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
-    }
+    }, [_id, createExerciseMutation, exerciseName, sets])
 
     const handleEditExerciseName = useCallback(async (exerciseId: string, newName: string) => {
         const trimmedExerciseName = newName.trim();
@@ -158,7 +184,7 @@ export default function Program() {
         }
     }, [_id, editExerciseSetMutation])
 
-    const handleDeleteExerciseSet = useCallback(async(exerciseId: string, setIndex: number) => {
+    const handleDeleteExerciseSet = useCallback(async (exerciseId: string, setIndex: number) => {
         try {
             await deleteExerciseSetMutation.mutateAsync({
                 programId: _id,
@@ -170,7 +196,7 @@ export default function Program() {
         }
     }, [_id, deleteExerciseSetMutation])
 
-    const handleDeleteExercise = useCallback(async(exerciseId: string) => {
+    const handleDeleteExercise = useCallback(async (exerciseId: string) => {
         try {
             await deleteExerciseMutation.mutateAsync({
                 programId: _id,
@@ -181,7 +207,7 @@ export default function Program() {
         }
     }, [_id, deleteExerciseMutation])
 
-    const handleMoveExercise = useCallback(async(containerId: string, sourceIndex: number, destinationIndex: number ) => {
+    const handleMoveExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
         try {
             await moveExerciseMutation.mutateAsync({
                 programId: _id,
@@ -196,81 +222,245 @@ export default function Program() {
         }
     }, [_id, moveExerciseMutation])
 
+    useEffect(() => {
+        if (!isSupersetCombiningMode) {
+            setSelectedExercises([])
+        }
+    }, [isSupersetCombiningMode])
+
+    const handleCreateSuperset = useCallback(async () => {
+        try {
+            const trimmedSupertsetName = supersetName.trim()
+
+            if (!trimmedSupertsetName) {
+                return
+            }
+
+            await createSupersetMutation.mutateAsync({
+                programId: _id,
+                payload: {
+                    name: supersetName,
+                    workoutItemIds: selectedExercises
+                }
+            })
+
+            setSupersetName("")
+            setSelectedExercises([])
+            setSupersetCombiningMode(false)
+            setSupersetCombiningFormOpen(false)
+            setSelectedExercisesData([])
+        } catch {
+            Alert.alert("Failed to create superset", "Please try again.")
+        }
+    }, [_id, createSupersetMutation, selectedExercises, supersetName])
+
+    const handleEditSupersetName = useCallback(async (supersetId: string, newName: string) => {
+        const trimmedSupersetName = newName.trim()
+
+        if (!trimmedSupersetName) {
+            return
+        }
+
+        try {
+            await editSupersetNameMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                payload: {
+                    name: trimmedSupersetName
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit superset name", "Please try again.");
+        }
+    }, [_id, editSupersetNameMutation])
+
+    const handleDeleteSuperset = useCallback(async (supersetId: string) => {
+        try {
+            await deleteSupersetMutation.mutateAsync({
+                programId: _id,
+                supersetId
+            })
+        } catch {
+            Alert.alert("Failed to delete superset", "Please try again.");
+        }
+    }, [_id, deleteSupersetMutation])
+
+    const handleUnlinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
+        try {
+            await unlinkExerciseMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                exerciseId
+            })
+        } catch {
+            Alert.alert("Failed to unlink exercise", "Please try again.");
+        }
+    }, [_id, unlinkExerciseMutation])
+
+    const handleUnlinkAllExercises = useCallback(async (supersetId: string) => {
+        try {
+            await unlinkAllExercisesMutation.mutateAsync({
+                programId: _id,
+                supersetId
+            })
+        } catch {
+            Alert.alert("Failed to unlink exercises", "Please try again.");
+        }
+    }, [_id, unlinkAllExercisesMutation])
+
+    const handleCreateNewExercise = useCallback(async (supersetId: string, newName: string) => {
+        try {
+            await createNewExerciseMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                payload: {
+                    name: newName,
+                    sets: [
+                        {
+                            weight: 0, reps: 0
+                        }
+                    ]
+                }
+            })
+        } catch {
+            Alert.alert("Failed to create exercise", "Please try again.");
+        }
+    }, [_id, createNewExerciseMutation])
+
+    const handleLinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
+        try {
+            await linkExerciseMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                exerciseId
+            })
+        } catch {
+            Alert.alert("Failed to link exercise", "Please try again.");
+        }
+    }, [_id, linkExerciseMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-        <View
-            style={[
-                { paddingBottom: insets.bottom + 12 },
-                styles.outerContainer,
-            ]}
-        >
-            <View style={styles.header}>
-                <Heading isEditable>{isLoading ? "Loading..." : program?.name}</Heading>
-                <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>
-                <AttachPeriodizationButton onPress={() => { }} />
-            </View>
-            <View style={styles.listContainer}>
-                {
-                    isError
-                        ? (
-                            <EntityEmptyState
-                                iconName="alert-circle-outline"
-                                title="Failed to load programs"
-                                message="Please check the API connection and try again."
-                            />
-                        )
-                        : isLoading
+            <View
+                style={[
+                    { paddingBottom: insets.bottom + 12 },
+                    styles.outerContainer,
+                ]}
+            >
+                <View style={styles.header}>
+                    <Heading isEditable>{isLoading ? "Loading..." : program?.name}</Heading>
+                    <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>
+                    <AttachPeriodizationButton onPress={() => { }} />
+                </View>
+                {isSupersetCombiningMode && (
+                    <View style={styles.combiningPanelContainer}>
+                        <View>
+                            <Title style={styles.combiningPanelTitle}>Combining mode</Title>
+                            <Paragraph>Select at least 2</Paragraph>
+                        </View>
+                        <View style={styles.combiningPanelButtonsContainer}>
+                            <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false) }} style={styles.combiningPanelButton}>Cancel</Button>
+                            {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
+                        </View>
+                    </View>
+                )}
+                <View style={styles.listContainer}>
+                    {
+                        isError
                             ? (
-                                <Loader />
-                            )
-                            : programExercisesAmount === 0
-                                ? (
-                                    <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
-                                )
-                                : <DraggableFlatList
-                                    showsVerticalScrollIndicator={false}
-                                    autoscrollThreshold={80}
-                                    autoscrollSpeed={150}
-                                    data={program!.workout ?? []}
-                                    renderItem={({ item, getIndex, drag, isActive }) => {
-                                        const index = getIndex()
-                                        return (
-                                            <View style={styles.itemWrapper}>
-                                                {item.type === "exercise"
-                                                    ? <ExerciseTable
-                                                            index={index ?? 0}
-                                                            exercise={item.components[0]}
-                                                            onDrag={drag}
-                                                            onExerciseNameChange={handleEditExerciseName}
-                                                            onAddExerciseSet={handleAddExerciseSet}
-                                                            onEditExerciseSet={handleEditExerciseSet}
-                                                            onDeleteExerciseSet={handleDeleteExerciseSet}
-                                                            onDeleteExercise={handleDeleteExercise}
-                                                        />
-                                                    : <View><Heading>{item.name}</Heading><Paragraph>Superset</Paragraph></View>}
-                                            </View>
-                                        )
-                                    }}
-                                    keyExtractor={(item) => item._id}
-                                    contentContainerStyle={styles.componentsList}
-                                    onDragEnd={({ from, to }) => {
-                                        if (from === to) {
-                                            return
-                                        }
-
-                                        handleMoveExercise(_id, from, to)
-                                    }}
+                                <EntityEmptyState
+                                    iconName="alert-circle-outline"
+                                    title="Failed to load programs"
+                                    message="Please check the API connection and try again."
                                 />
-                }
+                            )
+                            : isLoading
+                                ? (
+                                    <Loader />
+                                )
+                                : programExercisesAmount === 0
+                                    ? (
+                                        <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
+                                    )
+                                    : <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                        <NestableDraggableFlatList
+                                            autoscrollThreshold={30}
+                                            autoscrollSpeed={100}
+                                            data={program!.workout ?? []}
+                                            renderItem={({ item, getIndex, drag }) => {
+                                                const index = getIndex()
+                                                return (
+                                                    <View style={styles.itemWrapper}>
+                                                        {
+                                                            item.type === "exercise"
+                                                                ? (
+                                                                    <ExerciseTable
+                                                                        index={index ?? 0}
+                                                                        exercise={item.components[0]}
+                                                                        workoutItemId={item._id}
+                                                                        onDrag={drag}
+                                                                        onExerciseNameChange={handleEditExerciseName}
+                                                                        onAddExerciseSet={handleAddExerciseSet}
+                                                                        onEditExerciseSet={handleEditExerciseSet}
+                                                                        onDeleteExerciseSet={handleDeleteExerciseSet}
+                                                                        onDeleteExercise={handleDeleteExercise}
+                                                                        isSupersetCombiningMode={isSupersetCombiningMode}
+                                                                        selectedExercises={selectedExercises}
+                                                                        setSelectedExercises={setSelectedExercises}
+                                                                        setSelectedExercisesData={setSelectedExercisesData}
+                                                                    />
+                                                                )
+                                                                : (
+                                                                    <SupersetTable
+                                                                        index={index ?? 0}
+                                                                        superset={item}
+                                                                        workoutItemId={item._id}
+                                                                        outsideSupersetExercises={outsideSupersetExercises}
+                                                                        onDrag={drag}
+                                                                        onSupersetNameChange={handleEditSupersetName}
+                                                                        onDeleteSuperset={handleDeleteSuperset}
+                                                                        onExerciseNameChange={handleEditExerciseName}
+                                                                        onAddExerciseSet={handleAddExerciseSet}
+                                                                        onEditExerciseSet={handleEditExerciseSet}
+                                                                        onDeleteExerciseSet={handleDeleteExerciseSet}
+                                                                        onDeleteExercise={handleDeleteExercise}
+                                                                        onMoveExercise={handleMoveExercise}
+                                                                        onUnlinkExercise={handleUnlinkExercise}
+                                                                        onUnlinkAllExercises={handleUnlinkAllExercises}
+                                                                        onCreateNewExercise={handleCreateNewExercise}
+                                                                        onLinkExercise={handleLinkExercise}
+                                                                    />
+                                                                )
+                                                        }
+                                                    </View>
+                                                )
+                                            }}
+                                            keyExtractor={(item) => item._id}
+                                            onDragEnd={({ from, to }) => {
+                                                if (from === to) {
+                                                    return
+                                                }
+
+                                                handleMoveExercise(_id, from, to)
+                                            }}
+                                        />
+                                    </NestableScrollContainer>
+                    }
+                </View>
+                <View style={styles.buttonContainer}>
+                    <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    {program?.workout && program?.workout.length >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+                </View>
+                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
+                    <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
+                </BottomSheetForm>
+                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                    <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
+                </BottomSheetForm>
             </View>
-            <Button iconName="add" onPress={() => setIsBottomSheetOpen(true)}>New Exercise</Button>
-            <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setIsBottomSheetOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
-                <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
-            </BottomSheetForm>
-        </View>
         </KeyboardAvoidingView>
     );
 }
@@ -294,8 +484,38 @@ const styles = StyleSheet.create({
     attachment: {
         fontWeight: "bold"
     },
-    componentsList: {},
     itemWrapper: {
         paddingBottom: 12,
+    },
+    buttonContainer: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 8
+    },
+    button: {
+        flex: 1
+    },
+    combiningPanelContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: colors.red900,
+        borderWidth: 1,
+        borderColor: colors.red500,
+        borderRadius: 10,
+        padding: 15
+    },
+    combiningPanelTitle: {
+        color: colors.red500
+    },
+    combiningPanelButtonsContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8
+    },
+    combiningPanelButton: {
+        paddingVertical: 8,
+        borderRadius: 16
     }
 });

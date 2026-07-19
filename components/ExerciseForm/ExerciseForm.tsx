@@ -7,8 +7,6 @@ import AddSetOutlineButton from "./AddSetOutlineButton";
 import ExerciseFormRow from "./ExerciseFormRow";
 
 export default function ExerciseForm({ exerciseName, setExerciseName, sets, onSetChange, onAddSet, onRemoveSet }: IExerciseFormProps) {
-    
-
     return (
         <View style={styles.outterContainer}>
             <BottomSheetInput label="Exercise Name" placeholder="e.g. Bench Press" value={exerciseName} onChangeText={setExerciseName} />

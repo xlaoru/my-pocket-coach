@@ -59,7 +59,8 @@ export default function ComponentsPreview() {
 
                 <Heading>Buttons</Heading>
 
-                <Button iconName="checkmark-outline" onPress={() => { }} >Button</Button>
+                <Button iconName="checkmark-outline" onPress={() => { }}>Primary Button</Button>
+                <Button iconName="layers" variant="secondary" onPress={() => { }}>Secondary Button</Button>
                 <View style={styles.iconButtonContainer}>
                     <IconButton iconName="hourglass-outline" onPress={() => { }} />
                     <Paragraph>IconButton</Paragraph>
@@ -129,7 +130,7 @@ export default function ComponentsPreview() {
 
                 <Heading>Exercise Table</Heading>
 
-                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} />
+                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} onDrag={() => { } } onExerciseNameChange={async () => { } } onAddExerciseSet={async () => { } } onEditExerciseSet={async () => { } } onDeleteExerciseSet={async () => { } } onDeleteExercise={async () => { } } isSupersetCombiningMode={false} setSupersetCombiningMode={() => { } } selectedExercises={[]} setSelectedExercises={() => {}} />
             </ScrollView>
 
             <BottomSheetForm
@@ -147,7 +148,7 @@ export default function ComponentsPreview() {
                 onSubmit={() => { }}
                 onClose={() => setOpenExerciseBottomSheet(false)}
             >
-                <ExerciseForm exerciseName="" setExerciseName={() => { }} />
+                <ExerciseForm exerciseName="" setExerciseName={() => { } } sets={[]} onSetChange={() => {}} onAddSet={() => {}} onRemoveSet={() => {}} />
             </BottomSheetForm>
         </>
     );

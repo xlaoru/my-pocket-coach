@@ -1,15 +1,16 @@
-import { Pressable, StyleSheet, View } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
-import { IExerciseTableProps } from "@/types/props";
-import Paragraph from "../Paragraph/Paragraph";
-import IconButton from "../IconButton/IconButton";
 import { colors } from "@/styles/colors";
-import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
-import ExerciseTableRow from "./ExerciseTableRow";
-import Title from "../Title/Title";
+import { IExerciseTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
+import React, { useCallback, useEffect, useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import Checkbox from "../Checkbox/Checkbox";
+import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
+import IconButton from "../IconButton/IconButton";
+import Paragraph from "../Paragraph/Paragraph";
+import Title from "../Title/Title";
+import ExerciseTableRow from "./ExerciseTableRow";
 
-function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, selectedExercises, setSelectedExercises, setSelectedExercisesData }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
 
     useEffect(() => {
@@ -35,39 +36,61 @@ function ExerciseTableComponent({ index, exercise, onDrag, onExerciseNameChange,
         void onDeleteExercise(exercise._id)
     }, [exercise, onDeleteExercise])
 
+    const toggleSelect = useCallback(() => {
+        setSelectedExercises((prev) => prev.includes(workoutItemId) ? prev.filter((id) => id !== workoutItemId) : [...prev, workoutItemId])
+        setSelectedExercisesData((prev) =>
+            prev.some((currentExercise) => currentExercise._id === exercise._id)
+                ? prev.filter((currentExercise) => currentExercise._id !== exercise._id)
+                : [...prev, exercise]
+        )
+    }, [workoutItemId, setSelectedExercises, setSelectedExercisesData, exercise])
+
     return (
-        <View style={styles.outterContainer}>
-            <View style={styles.headerContainer}>
-                <View style={styles.headingContainer}>
-                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
-                        <Ionicons name="reorder-two" size={22} color={colors.gray100} />
-                    </Pressable>
-                    <View style={styles.indexBox}>
-                        <Paragraph>{index + 1}</Paragraph>
+        <View style={[styles.outterContainer, selectedExercises.includes(workoutItemId) && styles.selected]}>
+            {
+                isSupersetCombiningMode
+                    ?
+                    (
+                        <View style={styles.combiningCheckboxContainer}>
+                            <Checkbox isSelected={selectedExercises.includes(workoutItemId)} toggleSelect={toggleSelect} />
+                            <Title>{editableName}</Title>
+                        </View>
+                    )
+                    :
+                    (
+                        <View style={styles.headerContainer}>
+                            <View style={styles.headingContainer}>
+                                <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                                    <Ionicons name="reorder-two" size={22} color={colors.gray100} />
+                                </Pressable>
+                                <View style={styles.indexBox}>
+                                    <Paragraph>{index + 1}</Paragraph>
+                                </View>
+                                <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                            </View>
+                            <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
+                        </View>
+                    )
+            }
+            <View
+                style={styles.setsContainer}
+            >
+                <View style={styles.setsHeaderContainer}>
+                    <View style={styles.dataCell}>
+                        <Paragraph style={styles.headerTitle}>Set</Paragraph>
                     </View>
-                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <View style={styles.dataCell}>
+                        <Paragraph style={styles.headerTitle}>kg</Paragraph>
+                    </View>
+                    <View style={styles.dataCell}>
+                        <Paragraph style={styles.headerTitle}>Reps</Paragraph>
+                    </View>
+                    <View style={styles.actionPlaceholder} />
                 </View>
-                <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
+                {
+                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
+                }
             </View>
-                <View
-                    style={styles.setsContainer}
-                >
-                    <View style={styles.setsHeaderContainer}>
-                        <View style={styles.dataCell}>
-                            <Paragraph style={styles.headerTitle}>Set</Paragraph>
-                        </View>
-                        <View style={styles.dataCell}>
-                            <Paragraph style={styles.headerTitle}>kg</Paragraph>
-                        </View>
-                        <View style={styles.dataCell}>
-                            <Paragraph style={styles.headerTitle}>Reps</Paragraph>
-                        </View>
-                        <View style={styles.actionPlaceholder} />
-                    </View>
-                    {
-                        exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
-                    }
-                </View>
             <AddSetOutlineButton onPress={() => onAddExerciseSet(exercise._id)} />
         </View>
     );
@@ -135,6 +158,16 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.5,
+    },
+    combiningCheckboxContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8
+    },
+    selected: {
+        borderWidth: 2,
+        borderColor: colors.red500
     }
 });
 

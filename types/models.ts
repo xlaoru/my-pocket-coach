@@ -36,3 +36,10 @@ export interface IPeriodization {
   description?: string
   stages: IStage[]
 }
+
+export interface ISuperset {
+  _id: string
+  name: string
+  type: 'superset'
+  components: IExercise[]
+}

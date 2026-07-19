@@ -1,4 +1,5 @@
 const colors = {
+  red100: '#ed2c2c33',
   red500: '#ff2d2d',
   red900: '#3f2323',
 

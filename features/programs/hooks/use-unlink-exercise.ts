@@ -1,18 +1,19 @@
 import { queryKeys } from '@/lib/query/query-keys'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { deleteExercise } from '../api/delete-exercise'
+import { unlinkExercise } from '../api/unlink-exercise'
 
-interface DeleteExerciseVariables {
+interface UnlinkExerciseVariables {
   programId: string
+  supersetId: string
   exerciseId: string
 }
 
-export function useDeleteExercise() {
+export function useUnlinkExercise() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ programId, exerciseId }: DeleteExerciseVariables) =>
-      deleteExercise(programId, exerciseId),
+    mutationFn: ({ programId, supersetId, exerciseId }: UnlinkExerciseVariables) =>
+      unlinkExercise(programId, supersetId, exerciseId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.programs.byId(variables.programId),

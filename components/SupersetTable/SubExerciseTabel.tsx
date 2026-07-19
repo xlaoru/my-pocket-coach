@@ -9,7 +9,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabelRow from "./SubExerciseTabelRow";
 
-function SubExerciseTabel({ exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise }: ISubExerciseTabelProps) {
+function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise }: ISubExerciseTabelProps) {
     const [editableName, setEditableName] = useState(exercise.name);
 
     useEffect(() => {
@@ -35,6 +35,10 @@ function SubExerciseTabel({ exercise, onDrag, onExerciseNameChange, onAddExercis
         void onDeleteExercise(exercise._id)
     }, [exercise, onDeleteExercise])
 
+    const handleUnlinkExercise = useCallback(() => {
+        void onUnlinkExercise(supersetId, exercise._id)
+    }, [supersetId, exercise._id, onUnlinkExercise])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -45,7 +49,7 @@ function SubExerciseTabel({ exercise, onDrag, onExerciseNameChange, onAddExercis
                     <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={() => { }} />
+                    <IconButton iconName="unlink-outline" onPress={handleUnlinkExercise} />
                     <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
                 </View>
             </View>

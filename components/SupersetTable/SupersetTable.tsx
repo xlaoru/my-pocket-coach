@@ -10,7 +10,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
 
     useEffect(() => {
@@ -60,6 +60,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupe
                 contentContainerStyle={styles.subExercisesContent}
                 renderItem={({ item: exercise, drag }) => (
                     <SubExerciseTabel
+                        supersetId={superset._id}
                         exercise={exercise}
                         onDrag={drag}
                         onExerciseNameChange={onExerciseNameChange}
@@ -67,6 +68,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupe
                         onEditExerciseSet={onEditExerciseSet}
                         onDeleteExerciseSet={onDeleteExerciseSet}
                         onDeleteExercise={onDeleteExercise}
+                        onUnlinkExercise={onUnlinkExercise}
                     />
                 )}
                 onDragEnd={({ from, to }) => {

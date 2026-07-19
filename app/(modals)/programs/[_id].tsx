@@ -29,6 +29,7 @@ import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
 import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
+import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
 import { colors } from "@/styles/colors";
 import { IExercise, ISet } from "@/types/models";
 
@@ -48,6 +49,7 @@ export default function Program() {
     const createSupersetMutation = useCreateSuperset()
     const editSupersetNameMutation = useEditSupersetName()
     const deleteSupersetMutation = useDeleteSuperset()
+    const unlinkExerciseMutation = useUnlinkExercise()
 
     const navigation = useNavigation()
 
@@ -244,7 +246,6 @@ export default function Program() {
         }
     }, [_id, createSupersetMutation, selectedExercises, supersetName])
 
-
     const handleEditSupersetName = useCallback(async (supersetId: string, newName: string) => {
         const trimmedSupersetName = newName.trim()
 
@@ -275,6 +276,18 @@ export default function Program() {
             Alert.alert("Failed to delete superset", "Please try again.");
         }
     }, [_id, deleteSupersetMutation])
+
+    const handleUnlinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
+        try {
+            await unlinkExerciseMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                exerciseId
+            })
+        } catch {
+            Alert.alert("Failed to unlink exercise", "Please try again.");
+        }
+    }, [_id, unlinkExerciseMutation])
 
     return (
         <KeyboardAvoidingView
@@ -364,6 +377,7 @@ export default function Program() {
                                                                         onDeleteExerciseSet={handleDeleteExerciseSet}
                                                                         onDeleteExercise={handleDeleteExercise}
                                                                         onMoveExercise={handleMoveExercise}
+                                                                        onUnlinkExercise={handleUnlinkExercise}
                                                                     />
                                                                 )
                                                         }

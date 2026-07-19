@@ -170,9 +170,11 @@ export interface ISupersetTableProps {
     sourceIndex: number,
     destinationIndex: number,
   ) => Promise<void>
+  onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
 }
 
 export interface ISubExerciseTabelProps {
+  supersetId: string
   exercise: IExercise
   onDrag: () => void
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
@@ -180,6 +182,7 @@ export interface ISubExerciseTabelProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
+  onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
 }
 
 export interface ISubExerciseTabelRowProps {

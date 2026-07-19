@@ -110,7 +110,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                         <Input label="New exercise name:" placeholder="E.g. Arnold Press" value={newExerciseName} onChangeText={setNewExerciseName} style={styles.input} />
                         <View style={styles.createNewExerciseButtonsContainer}>
                             <Button iconName="checkmark-outline" onPress={handleCreateNewExercise} style={styles.buttons}>Add</Button>
-                            <Button variant="outlined" onPress={() => { setCreateNewExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
+                            <Button variant="outlined" onPress={() => { setCreateNewExerciseMode(false); setNewExerciseName("") }} style={styles.buttons}>Cancel</Button>
                         </View>
                     </View>
                 ) : isPickExistingExerciseMode ? (

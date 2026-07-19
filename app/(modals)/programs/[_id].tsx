@@ -42,6 +42,7 @@ export default function Program() {
     const { _id } = useLocalSearchParams<{ _id: string }>()
 
     const { data: program, isLoading, isError } = useProgram(_id)
+
     const createExerciseMutation = useCreateExercise()
     const editExerciseNameMutation = useEditExerciseName()
     const addExerciseSetMutation = useAddExerciseSet()
@@ -352,7 +353,7 @@ export default function Program() {
             >
                 <View style={styles.header}>
                     <Heading isEditable>{isLoading ? "Loading..." : program?.name}</Heading>
-                    <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>
+                    {program?.description && <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>}
                     <AttachPeriodizationButton onPress={() => { }} />
                 </View>
                 {isSupersetCombiningMode && (

@@ -21,6 +21,7 @@ import SupersetTable from "@/components/SupersetTable/SupersetTable";
 import Title from "@/components/Title/Title";
 import { useAddExerciseSet } from "@/features/programs/hooks/use-add-exercise-set";
 import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise";
+import { useCreateNewExercise } from "@/features/programs/hooks/use-create-new-exercise";
 import { useCreateSuperset } from "@/features/programs/hooks/use-create-superset";
 import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
 import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
@@ -52,6 +53,7 @@ export default function Program() {
     const deleteSupersetMutation = useDeleteSuperset()
     const unlinkExerciseMutation = useUnlinkExercise()
     const unlinkAllExercises = useUnlinkAllExercises()
+    const createNewExercise = useCreateNewExercise()
 
     const navigation = useNavigation()
 
@@ -304,6 +306,25 @@ export default function Program() {
         }
     }, [_id, unlinkAllExercises])
 
+    const handleCreateNewExercise = useCallback(async (supersetId: string, newName: string) => {
+        try {
+            await createNewExercise.mutateAsync({
+                programId: _id,
+                supersetId,
+                payload: {
+                    name: newName,
+                    sets: [
+                        {
+                            weight: 0, reps: 0
+                        }
+                    ]
+                }
+            })
+        } catch {
+            Alert.alert("Failed to create exercise", "Please try again.");
+        }
+    }, [_id, createNewExercise])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -395,6 +416,7 @@ export default function Program() {
                                                                         onMoveExercise={handleMoveExercise}
                                                                         onUnlinkExercise={handleUnlinkExercise}
                                                                         onUnlinkAllExercises={handleUnlinkAllExercises}
+                                                                        onCreateNewExercise={handleCreateNewExercise}
                                                                     />
                                                                 )
                                                         }

@@ -11,7 +11,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises, onCreateNewExercise }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
     const [newExerciseName, setNewExerciseName] = useState("")
 
@@ -21,6 +21,12 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
     useEffect(() => {
         setEditableName(superset.name)
     }, [superset.name])
+
+    useEffect(() => {
+        if (outsideSupersetExercises.length === 0) {
+            setPickExistingExerciseMode(false)
+        }
+    }, [outsideSupersetExercises.length])
 
     const handleNameBlur = useCallback(() => {
         const trimmedName = editableName.trim()
@@ -44,6 +50,19 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
     const handleUnlinkAllExercises = useCallback(() => {
         void onUnlinkAllExercises(superset._id)
     }, [superset._id, onUnlinkAllExercises])
+
+    const handleCreateNewExercise = useCallback(() => {
+        const trimmedNewExerciseName = newExerciseName.trim()
+
+        if (!trimmedNewExerciseName) {
+            return
+        }
+
+        void onCreateNewExercise(superset._id, newExerciseName)
+
+        setNewExerciseName("")
+        setCreateNewExerciseMode(false)
+    }, [newExerciseName, onCreateNewExercise, superset._id])
 
     return (
         <View style={styles.outterContainer}>
@@ -90,7 +109,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                     <View style={styles.createNewExerciseContainer}>
                         <Input label="New exercise name:" placeholder="E.g. Arnold Press" value={newExerciseName} onChangeText={setNewExerciseName} style={styles.input} />
                         <View style={styles.createNewExerciseButtonsContainer}>
-                            <Button iconName="checkmark-outline" onPress={() => { }} style={styles.buttons}>Add</Button>
+                            <Button iconName="checkmark-outline" onPress={handleCreateNewExercise} style={styles.buttons}>Add</Button>
                             <Button variant="outlined" onPress={() => { setCreateNewExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
                         </View>
                     </View>

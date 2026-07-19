@@ -174,6 +174,7 @@ export interface ISupersetTableProps {
   ) => Promise<void>
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
   onUnlinkAllExercises: (supersetId: string) => Promise<void>
+  onCreateNewExercise: (supersetId: string, newName: string) => Promise<void>
 }
 
 export interface ISubExerciseTabelProps {

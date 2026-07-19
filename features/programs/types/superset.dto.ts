@@ -1,3 +1,4 @@
+import { ISet } from '@/types/models'
 import { IExerciseDto } from './exercise.dto'
 
 export interface ISupersetDTO {
@@ -14,4 +15,9 @@ export interface ICreateSupersetPayload {
 
 export interface IEditSupersetNamePayload {
   name: string
+}
+
+export interface ICreateNewExercisePayload {
+  name: string
+  sets: ISet[]
 }

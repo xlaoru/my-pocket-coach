@@ -6,12 +6,17 @@ import { Pressable, StyleSheet, View } from "react-native";
 import { NestableDraggableFlatList } from "react-native-draggable-flatlist";
 import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
+import Input from "../Input/Input";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
+    const [newExerciseName, setNewExerciseName] = useState("")
+
+    const [isCreateNewExerciseMode, setCreateNewExerciseMode] = useState(false)
+    const [isPickExistingExerciseMode, setPickExistingExerciseMode] = useState(false)
 
     useEffect(() => {
         setEditableName(superset.name)
@@ -81,8 +86,30 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupe
                 }}
             />
             <View style={styles.buttonsContainer}>
-                <Button iconName="add-circle-outline" variant="dashed" onPress={() => { }} style={styles.buttons}>New Exercise</Button>
-                <Button iconName="barbell-outline" variant="dashed" onPress={() => { }} style={styles.buttons}>Pick existing</Button>
+                {isCreateNewExerciseMode ? (
+                    <View style={styles.createNewExerciseContainer}>
+                        <Input label="New exercise name:" placeholder="E.g. Arnold Press" value={newExerciseName} onChangeText={setNewExerciseName} style={styles.input} />
+                        <View style={styles.createNewExerciseButtonsContainer}>
+                            <Button iconName="checkmark-outline" onPress={() => { }} style={styles.buttons}>Add</Button>
+                            <Button variant="outlined" onPress={() => { setCreateNewExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
+                        </View>
+                    </View>
+                ) : isPickExistingExerciseMode ? (
+                    <View style={styles.pickExistingExerciseContainer}>
+                        {outsideSupersetExercises.map((exercise) => (
+                            <Pressable key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed] : styles.pickExistingExerciseCard} onPress={() => { }}>
+                                <Ionicons name="barbell-outline" size={22} color={colors.red500} />
+                                <Title>{exercise.name}</Title>
+                            </Pressable>
+                        ))}
+                        <Button variant="outlined" onPress={() => { setPickExistingExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
+                    </View>
+                ) : (
+                    <>
+                        <Button iconName="add-circle-outline" variant="dashed" onPress={() => { setCreateNewExerciseMode(true) }} style={styles.buttons}>New Exercise</Button>
+                        {outsideSupersetExercises.length >= 2 && <Button iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
+                    </>
+                )}
             </View>
         </View>
     )
@@ -148,6 +175,33 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 16,
         flex: 1
+    },
+    input: {
+        flex: 1
+    },
+    createNewExerciseContainer: {
+        display: "flex",
+        flex: 1,
+        gap: 8
+    },
+    createNewExerciseButtonsContainer: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 8
+    },
+    pickExistingExerciseContainer: {
+        display: "flex",
+        flex: 1,
+        gap: 8
+    },
+    pickExistingExerciseCard: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 8,
+        backgroundColor: colors.gray500,
+        borderRadius: 8,
+        padding: 12,
+        color: colors.white,
     }
 })
 

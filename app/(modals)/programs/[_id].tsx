@@ -85,6 +85,8 @@ export default function Program() {
         { weight: 0, reps: 0 },
     ])
 
+    const outsideSupersetExercises = program?.workout.filter(item => item.type === "exercise") || []
+
     const handleSetChange = (index: number, field: "weight" | "reps", value: string) => {
         const parsed = parseInt(value, 10);
         const numeric = isNaN(parsed) ? 0 : parsed;
@@ -381,6 +383,7 @@ export default function Program() {
                                                                         index={index ?? 0}
                                                                         superset={item}
                                                                         workoutItemId={item._id}
+                                                                        outsideSupersetExercises={outsideSupersetExercises}
                                                                         onDrag={drag}
                                                                         onSupersetNameChange={handleEditSupersetName}
                                                                         onDeleteSuperset={handleDeleteSuperset}

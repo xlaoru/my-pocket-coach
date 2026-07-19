@@ -11,7 +11,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises, onCreateNewExercise }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises, onCreateNewExercise, onLinkExercise }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
     const [newExerciseName, setNewExerciseName] = useState("")
 
@@ -63,6 +63,10 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
         setNewExerciseName("")
         setCreateNewExerciseMode(false)
     }, [newExerciseName, onCreateNewExercise, superset._id])
+
+    const handleLinkExercise = useCallback((exerciseId: string) => {
+        void onLinkExercise(superset._id, exerciseId)
+    }, [superset._id, onLinkExercise])
 
     return (
         <View style={styles.outterContainer}>
@@ -116,7 +120,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                 ) : isPickExistingExerciseMode ? (
                     <View style={styles.pickExistingExerciseContainer}>
                         {outsideSupersetExercises.map((exercise) => (
-                            <Pressable key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed] : styles.pickExistingExerciseCard} onPress={() => { }}>
+                            <Pressable key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed] : styles.pickExistingExerciseCard} onPress={() => { handleLinkExercise(exercise.components[0]._id) }}>
                                 <Ionicons name="barbell-outline" size={22} color={colors.red500} />
                                 <Title>{exercise.name}</Title>
                             </Pressable>
@@ -126,7 +130,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                 ) : (
                     <>
                         <Button iconName="add-circle-outline" variant="dashed" onPress={() => { setCreateNewExerciseMode(true) }} style={styles.buttons}>New Exercise</Button>
-                        {outsideSupersetExercises.length >= 2 && <Button iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
+                        {outsideSupersetExercises.length >= 1 && <Button iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
                     </>
                 )}
             </View>

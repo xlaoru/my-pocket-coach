@@ -29,6 +29,7 @@ import { useDeleteSuperset } from "@/features/programs/hooks/use-delete-superset
 import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
 import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
+import { useLinkExercises } from "@/features/programs/hooks/use-link-exercise";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 import { useUnlinkAllExercises } from "@/features/programs/hooks/use-unlink-all-exercises";
 import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
@@ -52,8 +53,9 @@ export default function Program() {
     const editSupersetNameMutation = useEditSupersetName()
     const deleteSupersetMutation = useDeleteSuperset()
     const unlinkExerciseMutation = useUnlinkExercise()
-    const unlinkAllExercises = useUnlinkAllExercises()
-    const createNewExercise = useCreateNewExercise()
+    const unlinkAllExercisesMutation = useUnlinkAllExercises()
+    const createNewExerciseMutation = useCreateNewExercise()
+    const linkExerciseMutation = useLinkExercises()
 
     const navigation = useNavigation()
 
@@ -297,18 +299,18 @@ export default function Program() {
 
     const handleUnlinkAllExercises = useCallback(async (supersetId: string) => {
         try {
-            await unlinkAllExercises.mutateAsync({
+            await unlinkAllExercisesMutation.mutateAsync({
                 programId: _id,
                 supersetId
             })
         } catch {
             Alert.alert("Failed to unlink exercises", "Please try again.");
         }
-    }, [_id, unlinkAllExercises])
+    }, [_id, unlinkAllExercisesMutation])
 
     const handleCreateNewExercise = useCallback(async (supersetId: string, newName: string) => {
         try {
-            await createNewExercise.mutateAsync({
+            await createNewExerciseMutation.mutateAsync({
                 programId: _id,
                 supersetId,
                 payload: {
@@ -323,7 +325,19 @@ export default function Program() {
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.");
         }
-    }, [_id, createNewExercise])
+    }, [_id, createNewExerciseMutation])
+
+    const handleLinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
+        try {
+            await linkExerciseMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                exerciseId
+            })
+        } catch {
+            Alert.alert("Failed to link exercise", "Please try again.");
+        }
+    }, [_id, linkExerciseMutation])
 
     return (
         <KeyboardAvoidingView
@@ -417,6 +431,7 @@ export default function Program() {
                                                                         onUnlinkExercise={handleUnlinkExercise}
                                                                         onUnlinkAllExercises={handleUnlinkAllExercises}
                                                                         onCreateNewExercise={handleCreateNewExercise}
+                                                                        onLinkExercise={handleLinkExercise}
                                                                     />
                                                                 )
                                                         }

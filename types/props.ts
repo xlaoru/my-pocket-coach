@@ -30,14 +30,17 @@ export interface IEntityEmptyStateProps {
 
 export interface IProgramListProps {
   programs: IProgram[]
+  onDeleteProgram: (programId: string) => Promise<void>
 }
 
 export interface IProgramListItemsProps {
+  programId: string
   title: string
   description?: string
   exercises: number
   supersets: number
   onPress: VoidFunction
+  onDeleteProgram: (programId: string) => Promise<void>
 }
 
 export interface ITitleProps {

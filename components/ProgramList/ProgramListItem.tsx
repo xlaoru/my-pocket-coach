@@ -1,13 +1,17 @@
 import { colors } from "@/styles/colors";
 import { IProgramListItemsProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useCallback } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function ProgramListItem({ title, description, exercises, supersets, onPress }: IProgramListItemsProps) {
+export default function ProgramListItem({ programId, title, description, exercises, supersets, onPress, onDeleteProgram }: IProgramListItemsProps) {
+    const handleDeleteProgram = useCallback(() => {
+        void onDeleteProgram(programId)
+    }, [onDeleteProgram, programId])
+
     return (
         <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.iconContainer}>
@@ -22,7 +26,7 @@ export default function ProgramListItem({ title, description, exercises, superse
                 </View>
             </View>
             <View style={styles.buttonsContainer}>
-                <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteProgram} />
                 <IconButton iconName="chevron-forward-outline" onPress={onPress} />
             </View>
         </Pressable>

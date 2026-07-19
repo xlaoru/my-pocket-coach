@@ -31,7 +31,7 @@ function countSupersets(workout: IWorkoutItem[]): number {
     return count;
 }
 
-export default function ProgramList({ programs }: IProgramListProps) {
+export default function ProgramList({ programs, onDeleteProgram }: IProgramListProps) {
     const router = useRouter()
 
     return (
@@ -43,6 +43,7 @@ export default function ProgramList({ programs }: IProgramListProps) {
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
                 <ProgramListItem
+                    programId={item._id}
                     title={item.name}
                     description={item.description}
                     exercises={countExercises(item.workout)}
@@ -53,6 +54,7 @@ export default function ProgramList({ programs }: IProgramListProps) {
                             params: { _id: item._id }
                         })
                     }}
+                    onDeleteProgram={onDeleteProgram}
                 />
             )}
         />

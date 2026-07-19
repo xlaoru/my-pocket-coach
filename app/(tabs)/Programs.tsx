@@ -2,22 +2,25 @@ import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
-import { useCreateProgram } from "@/features/programs/hooks/use-create-program";
-import { usePrograms } from "@/features/programs/hooks/use-programs";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
+import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import ProgramList from "@/components/ProgramList/ProgramList";
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { useCreateProgram } from "@/features/programs/hooks/use-create-program";
+import { useDeleteProgram } from "@/features/programs/hooks/use-delete-program";
+import { usePrograms } from "@/features/programs/hooks/use-programs";
+import React, { useCallback, useState } from "react";
+import { Alert, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Loader from "@/components/Loader/Loader";
 
 export default function Programs() {
     const insets = useSafeAreaInsets();
-    
+
     const { data: programs = [], isLoading, isError } = usePrograms();
+
     const createProgramMutation = useCreateProgram();
+    const deleteProgramMutation = useDeleteProgram()
 
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
@@ -39,6 +42,16 @@ export default function Programs() {
         setProgramDescription("");
         setIsBottomSheetOpen(false);
     };
+
+    const handleDeleteProgram = useCallback(async (programId: string) => {
+        try {
+            await deleteProgramMutation.mutateAsync({
+                programId
+            })
+        } catch {
+            Alert.alert("Failed to delete program", "Please try again.");
+        }
+    }, [deleteProgramMutation])
 
     return (
         <View
@@ -80,7 +93,7 @@ export default function Programs() {
                                     <EntityEmptyState iconName="barbell-outline" title="No programs yet" message="Create your first training program" />
                                 )
                                 : (
-                                    <ProgramList programs={programs} />
+                                    <ProgramList programs={programs} onDeleteProgram={handleDeleteProgram} />
                                 )
                 }
             </View>

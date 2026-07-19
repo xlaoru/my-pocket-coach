@@ -29,6 +29,7 @@ import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
 import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
+import { useUnlinkAllExercises } from "@/features/programs/hooks/use-unlink-all-exercises";
 import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
 import { colors } from "@/styles/colors";
 import { IExercise, ISet } from "@/types/models";
@@ -50,6 +51,7 @@ export default function Program() {
     const editSupersetNameMutation = useEditSupersetName()
     const deleteSupersetMutation = useDeleteSuperset()
     const unlinkExerciseMutation = useUnlinkExercise()
+    const unlinkAllExercises = useUnlinkAllExercises()
 
     const navigation = useNavigation()
 
@@ -289,6 +291,17 @@ export default function Program() {
         }
     }, [_id, unlinkExerciseMutation])
 
+    const handleUnlinkAllExercises = useCallback(async (supersetId: string) => {
+        try {
+            await unlinkAllExercises.mutateAsync({
+                programId: _id,
+                supersetId
+            })
+        } catch {
+            Alert.alert("Failed to unlink exercises", "Please try again.");
+        }
+    }, [_id, unlinkAllExercises])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -378,6 +391,7 @@ export default function Program() {
                                                                         onDeleteExercise={handleDeleteExercise}
                                                                         onMoveExercise={handleMoveExercise}
                                                                         onUnlinkExercise={handleUnlinkExercise}
+                                                                        onUnlinkAllExercises={handleUnlinkAllExercises}
                                                                     />
                                                                 )
                                                         }

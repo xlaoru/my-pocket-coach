@@ -10,7 +10,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
 
     useEffect(() => {
@@ -36,6 +36,10 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupe
         void onDeleteSuperset(superset._id)
     }, [superset._id, onDeleteSuperset])
 
+    const handleUnlinkAllExercises = useCallback(() => {
+        void onUnlinkAllExercises(superset._id)
+    }, [superset._id, onUnlinkAllExercises])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -49,7 +53,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupe
                     <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={() => { }} />
+                    <IconButton iconName="unlink-outline" onPress={handleUnlinkAllExercises} />
                     <IconButton iconName="trash-bin-outline" onPress={handleDeleteSuperset} />
                 </View>
             </View>

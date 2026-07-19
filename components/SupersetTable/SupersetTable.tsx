@@ -10,7 +10,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
 
     useEffect(() => {
@@ -32,6 +32,10 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupe
         void onSupersetNameChange(superset._id, trimmedName)
     }, [editableName, superset._id, superset.name, onSupersetNameChange])
 
+    const handleDeleteSuperset = useCallback(() => {
+        void onDeleteSuperset(superset._id)
+    }, [superset._id, onDeleteSuperset])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -46,7 +50,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, onDrag, onSupe
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={() => { }} />
-                    <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteSuperset} />
                 </View>
             </View>
             <NestableDraggableFlatList

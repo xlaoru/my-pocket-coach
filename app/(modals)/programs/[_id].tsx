@@ -24,6 +24,7 @@ import { useCreateExercise } from "@/features/programs/hooks/use-create-exercise
 import { useCreateSuperset } from "@/features/programs/hooks/use-create-superset";
 import { useDeleteExercise } from "@/features/programs/hooks/use-delete-exercise";
 import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exercise-set";
+import { useDeleteSuperset } from "@/features/programs/hooks/use-delete-superset";
 import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
 import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
@@ -46,6 +47,7 @@ export default function Program() {
     const moveExerciseMutation = useMoveExercise()
     const createSupersetMutation = useCreateSuperset()
     const editSupersetNameMutation = useEditSupersetName()
+    const deleteSupersetMutation = useDeleteSuperset()
 
     const navigation = useNavigation()
 
@@ -263,6 +265,17 @@ export default function Program() {
         }
     }, [_id, editSupersetNameMutation])
 
+    const handleDeleteSuperset = useCallback(async (supersetId: string) => {
+        try {
+            await deleteSupersetMutation.mutateAsync({
+                programId: _id,
+                supersetId
+            })
+        } catch {
+            Alert.alert("Failed to delete superset", "Please try again.");
+        }
+    }, [_id, deleteSupersetMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -344,6 +357,7 @@ export default function Program() {
                                                                         workoutItemId={item._id}
                                                                         onDrag={drag}
                                                                         onSupersetNameChange={handleEditSupersetName}
+                                                                        onDeleteSuperset={handleDeleteSuperset}
                                                                         onExerciseNameChange={handleEditExerciseName}
                                                                         onAddExerciseSet={handleAddExerciseSet}
                                                                         onEditExerciseSet={handleEditExerciseSet}

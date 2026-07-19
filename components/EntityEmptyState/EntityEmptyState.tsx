@@ -4,31 +4,35 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
+import Title from "../Title/Title";
 
-export default function EntityEmptyState({ iconName, message }: IEntityEmptyStateProps) {
+export default function EntityEmptyState({ iconName, title, message }: IEntityEmptyStateProps) {
     return (
         <View style={styles.infoContainer}>
             <View style={styles.iconContainer}>
-                <Ionicons name={iconName} color={colors.gray500} size={24} />
+                <Ionicons name={iconName} color={colors.gray100} size={24} />
             </View>
-            <Paragraph style={styles.paragraph}>{message}</Paragraph>
+            <View>
+                <Title style={styles.text}>{title}</Title>
+                <Paragraph style={styles.text}>{message}</Paragraph>
+            </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     infoContainer: {
-        marginTop: 120,
         alignItems: "center",
-        gap: 12
+        marginTop: 120,
+        gap: 8
     },
     iconContainer: {
         padding: 24,
-        backgroundColor: colors.gray700,
+        backgroundColor: colors.gray900,
         borderRadius: 50,
         alignSelf: "center",
     },
-    paragraph: {
+    text: {
         textAlign: "center",
     }
 });

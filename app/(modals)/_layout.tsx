@@ -1,10 +1,22 @@
+import { colors } from "@/styles/colors";
+import { Stack } from "expo-router";
 import React from "react";
-import { Modal, StyleSheet } from "react-native";
 
 export default function ModalLayout() {
     return (
-        <Modal />
+        <Stack
+            screenOptions={{
+                presentation: "modal",
+                contentStyle: {
+                    backgroundColor: colors.black,
+                },
+                headerStyle: {
+                    backgroundColor: colors.black,
+                },
+                headerTintColor: colors.gray100
+            }}
+        >
+            <Stack.Screen name="programs/[_id]" />
+        </Stack>
     );
 }
-
-const styles = StyleSheet.create({});

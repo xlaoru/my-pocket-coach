@@ -1,13 +1,17 @@
 import { colors } from "@/styles/colors";
 import { IProgramListItemsProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useCallback } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function ProgramListItem({ title, description, exercises, supersets, onPress }: IProgramListItemsProps) {
+export default function ProgramListItem({ programId, title, description, exercises, supersets, onPress, onDeleteProgram }: IProgramListItemsProps) {
+    const handleDeleteProgram = useCallback(() => {
+        void onDeleteProgram(programId)
+    }, [onDeleteProgram, programId])
+
     return (
         <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.iconContainer}>
@@ -15,14 +19,14 @@ export default function ProgramListItem({ title, description, exercises, superse
             </View>
             <View style={styles.contentContainer}>
                 <Title>{title.length > 15 ? `${title.substring(0, 15)}...` : title}</Title>
-                <Paragraph>{description && description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>
+                {description && <Paragraph>{description && description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>}
                 <View style={styles.amountsContainer}>
-                    <Paragraph style={styles.amountTitle}>{exercises} exercise{exercises !== 1 ? 's' : ''}</Paragraph>
-                    <Paragraph style={styles.amountTitle}>{supersets} superset{supersets !== 1 ? 's' : ''}</Paragraph>
+                    {exercises > 0 && <Paragraph style={styles.amountTitle}>{exercises} exercise{exercises !== 1 ? 's' : ''}</Paragraph>}
+                    {supersets > 0 && <Paragraph style={styles.amountTitle}>{supersets} superset{supersets !== 1 ? 's' : ''}</Paragraph>}
                 </View>
             </View>
             <View style={styles.buttonsContainer}>
-                <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteProgram} />
                 <IconButton iconName="chevron-forward-outline" onPress={onPress} />
             </View>
         </Pressable>
@@ -34,7 +38,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 12,
         padding: 12,
-        backgroundColor: colors.gray700,
+        backgroundColor: colors.gray900,
+        borderWidth: 1,
+        borderColor: colors.gray500,
         borderRadius: 16,
         alignItems: "center",
         justifyContent: "space-between",

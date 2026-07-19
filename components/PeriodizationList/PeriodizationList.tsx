@@ -10,6 +10,7 @@ export default function PeriodizationList({ periodizations }: IPeriodizationList
             contentContainerStyle={styles.contentContainer}
             data={periodizations}
             keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
                 <PeriodizationListItem
                     title={item.name}

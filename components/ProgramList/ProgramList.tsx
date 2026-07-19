@@ -1,28 +1,29 @@
-import { TWorkout } from "@/types/models";
+import { IWorkoutItem } from "@/types/models";
 import { IProgramListProps } from "@/types/props";
+import { useRouter } from "expo-router";
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
 import ProgramListItem from "./ProgramListItem";
 
-function countExercises(workout: TWorkout): number {
+function countExercises(workout: IWorkoutItem[]): number {
     let count = 0;
 
-    workout.forEach(item => {
-        if ('sets' in item) {
+    workout.forEach((item: IWorkoutItem) => {
+        if (item.type === "exercise") {
             count += 1;
-        } else if ('exercises' in item) {
-            count += item.exercises.length;
+        } else if (item.type === "superset") {
+            count += item.components.length
         }
     });
 
     return count;
 }
 
-function countSupersets(workout: TWorkout): number {
+function countSupersets(workout: IWorkoutItem[]): number {
     let count = 0;
 
-    workout.forEach(item => {
-        if ('exercises' in item) {
+    workout.forEach((item: IWorkoutItem) => {
+        if (item.type === "superset") {
             count += 1;
         }
     });
@@ -30,20 +31,30 @@ function countSupersets(workout: TWorkout): number {
     return count;
 }
 
-export default function ProgramList({ programs }: IProgramListProps) {
+export default function ProgramList({ programs, onDeleteProgram }: IProgramListProps) {
+    const router = useRouter()
+
     return (
         <FlatList
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
             data={programs}
-            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
                 <ProgramListItem
+                    programId={item._id}
                     title={item.name}
                     description={item.description}
                     exercises={countExercises(item.workout)}
                     supersets={countSupersets(item.workout)}
-                    onPress={() => { }}
+                    onPress={() => {
+                        router.push({
+                            pathname: "/(modals)/programs/[_id]",
+                            params: { _id: item._id }
+                        })
+                    }}
+                    onDeleteProgram={onDeleteProgram}
                 />
             )}
         />

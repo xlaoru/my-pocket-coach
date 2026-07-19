@@ -9,6 +9,8 @@ export interface IHeadingProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
   isEditable?: boolean
+  onChangeText?: (text: string) => void
+  onBlur?: VoidFunction
 }
 
 export interface IHeadingLabelProps {
@@ -20,6 +22,8 @@ export interface IParagraphProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
   isEditable?: boolean
+  onChangeText?: (text: string) => void
+  onBlur?: VoidFunction
 }
 
 export interface IEntityEmptyStateProps {

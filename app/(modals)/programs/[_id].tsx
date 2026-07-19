@@ -28,6 +28,7 @@ import { useDeleteExerciseSet } from "@/features/programs/hooks/use-delete-exerc
 import { useDeleteSuperset } from "@/features/programs/hooks/use-delete-superset";
 import { useEditExerciseName } from "@/features/programs/hooks/use-edit-exercise-name";
 import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-set";
+import { useEditProgram } from "@/features/programs/hooks/use-edit-program";
 import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
 import { useLinkExercises } from "@/features/programs/hooks/use-link-exercise";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
@@ -57,6 +58,7 @@ export default function Program() {
     const unlinkAllExercisesMutation = useUnlinkAllExercises()
     const createNewExerciseMutation = useCreateNewExercise()
     const linkExerciseMutation = useLinkExercises()
+    const editProgramMutation = useEditProgram()
 
     const navigation = useNavigation()
 
@@ -83,8 +85,18 @@ export default function Program() {
     const [selectedExercises, setSelectedExercises] = useState<string[]>([])
     const [selectedExercisesData, setSelectedExercisesData] = useState<IExercise[]>([])
 
+    const [programName, setProgramName] = useState(program?.name ?? "")
+    const [programDescription, setProgramDescription] = useState(program?.description ?? "")
     const [exerciseName, setExerciseName] = useState("")
     const [supersetName, setSupersetName] = useState("")
+
+    useEffect(() => {
+        if (program) {
+            setProgramName(program.name)
+            setProgramDescription(program.description ?? "")
+        }
+    }, [program])
+
 
     const [sets, setSets] = useState<ISet[]>([
         { weight: 0, reps: 0 },
@@ -109,6 +121,40 @@ export default function Program() {
     const removeSet = (index: number) => {
         setSets((prevSets) => prevSets.filter((_, i) => i !== index));
     }
+
+    const handleEditProgramName = useCallback(async () => {
+        const trimmedName = programName.trim()
+
+        if (!trimmedName) return
+
+        try {
+            await editProgramMutation.mutateAsync({
+                programId: _id,
+                payload: {
+                    name: trimmedName
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit program name", "Please try again.")
+        }
+    }, [_id, editProgramMutation, programName])
+
+    const handleEditProgramDescription = useCallback(async () => {
+        const trimmedDescription = programDescription.trim()
+
+        if (!trimmedDescription) return
+
+        try {
+            await editProgramMutation.mutateAsync({
+                programId: _id,
+                payload: {
+                    description: trimmedDescription
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit program description", "Please try again.")
+        }
+    }, [_id, editProgramMutation, programDescription])
 
     const handleCreateExercise = useCallback(async () => {
         const trimmedExerciseName = exerciseName.trim()
@@ -352,8 +398,8 @@ export default function Program() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable>{isLoading ? "Loading..." : program?.name}</Heading>
-                    {program?.description && <Paragraph isEditable>{isLoading ? "Loading..." : program?.description}</Paragraph>}
+                    <Heading isEditable onChangeText={setProgramName} onBlur={handleEditProgramName}>{isLoading ? "Loading..." : programName}</Heading>
+                    {program?.description && <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription}>{isLoading ? "Loading..." : programDescription}</Paragraph>}
                     <AttachPeriodizationButton onPress={() => { }} />
                 </View>
                 {isSupersetCombiningMode && (

@@ -7,16 +7,30 @@ import IconButton from "../IconButton/IconButton"
 import Paragraph from "../Paragraph/Paragraph"
 import Title from "../Title/Title"
 
-function StageCardComponent({ index, stage, onDrag, onDeleteStage }: IStageCardProps) {
+function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageName, onEditStageDescription }: IStageCardProps) {
     const [editableName, setEditableName] = useState(stage.name)
     const [editableDescription, setEditableDescription] = useState(stage.description)
 
     useEffect(() => {
-        if (stage.name && stage.description) {
-            setEditableName(stage.name)
-            setEditableDescription(stage.description)
-        }
+        setEditableName(stage.name)
+        setEditableDescription(stage.description)
     }, [stage.name, stage.description])
+
+    const handleNameBlur = useCallback(() => {
+        const trimmedName = editableName.trim()
+
+        if (!trimmedName) return
+
+        void onEditStageName(stage._id, trimmedName)
+    }, [editableName, onEditStageName, stage._id])
+
+    const handleDescriptionBlur = useCallback(() => {
+        const trimmedDescription = (editableDescription ?? "").trim()
+
+        if (!trimmedDescription) return
+
+        void onEditStageDescription(stage._id, trimmedDescription)
+    }, [editableDescription, onEditStageDescription, stage._id])
 
     const handleDeleteStage = useCallback(() => {
         void onDeleteStage(stage._id)
@@ -32,8 +46,8 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage }: IStageCardP
                     <Paragraph>{index + 1}</Paragraph>
                 </View>
                 <View style={styles.textContainer}>
-                    <Title isEditable onChangeText={setEditableName} onBlur={() => { }}>{editableName}</Title>
-                    {stage.description && <Paragraph isEditable onChangeText={setEditableDescription} onBlur={() => { }} style={styles.descriptionText}>{editableDescription}</Paragraph>}
+                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    {stage.description && <Paragraph isEditable onChangeText={setEditableDescription} onBlur={handleDescriptionBlur} style={styles.descriptionText}>{editableDescription}</Paragraph>}
                 </View>
             </View>
             <IconButton iconName="trash-bin-outline" onPress={handleDeleteStage} />

@@ -220,4 +220,6 @@ export interface IStageCardProps {
   stage: IStage
   onDrag: () => void
   onDeleteStage: (stageId: string) => Promise<void>
+  onEditStageName: (stageId: string, name: string) => Promise<void>
+  onEditStageDescription: (stageId: string, description: string) => Promise<void>
 }

@@ -8,6 +8,8 @@ import StageCard from "@/components/StageCard/StageCard";
 import StageForm from "@/components/StageForm/StageForm";
 import { useCreateStage } from "@/features/programs/hooks/use-create-stage";
 import { useDeleteStage } from "@/features/programs/hooks/use-delete-stage";
+import { useEditStageDescription } from "@/features/programs/hooks/use-edit-stage-description";
+import { useEditStageName } from "@/features/programs/hooks/use-edit-stage-name";
 import { useMoveStage } from "@/features/programs/hooks/use-move-stage";
 import { usePeriodization } from "@/features/programs/hooks/use-periodization";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -25,6 +27,8 @@ export default function Periodization() {
 
     const createStageMutation = useCreateStage()
     const moveStageMutation = useMoveStage()
+    const editStageNameMutation = useEditStageName()
+    const editStageDescriptionMutation = useEditStageDescription()
     const deleteStageMutation = useDeleteStage()
 
     const navigation = useNavigation()
@@ -87,6 +91,42 @@ export default function Periodization() {
         }
     }, [_id, moveStageMutation])
 
+    const handleEditStageName = useCallback(async (stageId: string, newName: string) => {
+        const trimmedExerciseName = newName.trim();
+
+        if (!trimmedExerciseName) return;
+
+        try {
+            await editStageNameMutation.mutateAsync({
+                periodizationId: _id,
+                stageId,
+                payload: {
+                    name: trimmedExerciseName
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit stage name", "Please try again.");
+        }
+    }, [_id, editStageNameMutation])
+
+    const handleEditStageDescription = useCallback(async (stageId: string, newDescription: string) => {
+        const trimmedExerciseDescription = newDescription.trim();
+
+        if (!trimmedExerciseDescription) return;
+
+        try {
+            await editStageDescriptionMutation.mutateAsync({
+                periodizationId: _id,
+                stageId,
+                payload: {
+                    description: trimmedExerciseDescription
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit stage description", "Please try again.");
+        }
+    }, [_id, editStageDescriptionMutation])
+
     const handleDeleteStage = useCallback(async (stageId: string) => {
         try {
             await deleteStageMutation.mutateAsync({
@@ -137,7 +177,7 @@ export default function Periodization() {
                                                 const index = getIndex()
                                                 return (
                                                     <View style={styles.itemWrapper}>
-                                                        <StageCard index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} />
+                                                        <StageCard index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} onEditStageName={handleEditStageName} onEditStageDescription={handleEditStageDescription} />
                                                     </View>
                                                 )
                                             }}

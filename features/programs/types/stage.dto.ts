@@ -13,3 +13,11 @@ export interface IMoveStagePayload {
   sourceIndex: number
   destinationIndex: number
 }
+
+export interface IEditStageNamePayload {
+  name: string
+}
+
+export interface IEditStageDescriptionPayload {
+  description: string
+}

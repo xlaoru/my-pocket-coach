@@ -71,13 +71,16 @@ export interface IButtonProps {
 
 export interface IPeriodizationListProps {
   periodizations: IPeriodization[]
+  onDeletePeriodization: (periodizationId: string) => Promise<void>
 }
 
 export interface IPeriodizationListItemProps {
+  periodizationId: string
   title: string
   description?: string
   stages: number
   onPress: VoidFunction
+  onDeletePeriodization: (periodizationId: string) => Promise<void>
 }
 
 export interface IBottomSheetFormProps {

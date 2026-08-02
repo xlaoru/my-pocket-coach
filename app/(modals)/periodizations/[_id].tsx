@@ -1,18 +1,72 @@
-import React from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
-
-
-
+import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
+import Button from "@/components/Button/Button";
+import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
+import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import StageForm from "@/components/StageForm/StageForm";
+import { useCreateStage } from "@/features/programs/hooks/use-create-stage";
+import { usePeriodization } from "@/features/programs/hooks/use-periodization";
 import { colors } from "@/styles/colors";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Periodization() {
     const insets = useSafeAreaInsets()
 
     const { _id } = useLocalSearchParams<{ _id: string }>()
+
+    const { data: periodization, isLoading, isError } = usePeriodization(_id)
+
+    const createStageMutation = useCreateStage()
+
+    const navigation = useNavigation()
+
+    const [isBottomSheetOpen, setBottomSheetOpen] = useState(false)
+
+    const [periodizationName, setPeriodizationName] = useState(periodization?.name ?? "")
+    const [periodizationDescription, setPeriodizationDescription] = useState(periodization?.description ?? "")
+
+    const [stageName, setStageName] = useState("")
+    const [stageDescription, setStageDescription] = useState("")
+
+    useEffect(() => {
+        if (periodization) {
+            setPeriodizationName(periodization.name)
+            setPeriodizationDescription(periodization.description ?? "")
+        }
+    }, [periodization])
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: "Periodization"
+        })
+    }, [periodization, navigation])
+
+    const handleCreateStage = useCallback(async () => {
+        const trimmedStageName = stageName.trim()
+        const trimmedStageDescription = stageDescription.trim()
+
+        if (!trimmedStageName) return
+
+        try {
+            await createStageMutation.mutateAsync({
+                periodizationId: _id,
+                payload: {
+                    name: trimmedStageName,
+                    description: trimmedStageDescription
+                }
+            })
+
+            setStageName("")
+            setStageDescription("")
+            setBottomSheetOpen(false)
+        } catch {
+            Alert.alert("Failed to create stage", "Please try again.")
+        }
+    }, [_id, createStageMutation, stageDescription, stageName])
 
     return (
         <KeyboardAvoidingView
@@ -26,9 +80,35 @@ export default function Periodization() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading>Periodization {_id}</Heading>
-                    <Paragraph>Description</Paragraph>
+                    <Heading isEditable onChangeText={setPeriodizationName} onBlur={() => { }}>{isLoading ? "Loading..." : periodizationName}</Heading>
+                    {periodization?.description && <Paragraph isEditable onChangeText={setPeriodizationDescription}>{periodizationDescription}</Paragraph>}
                 </View>
+                <View style={styles.listContainer}>
+                    {
+                        isError ? (<EntityEmptyState
+                            iconName="alert-circle-outline"
+                            title="Failed to load periodizations"
+                            message="Please check the API connection and try again."
+                        />) : isLoading
+                            ? (
+                                <Loader />
+                            )
+                            : periodization?.stages.length === 0
+                                ? (
+                                    <EntityEmptyState iconName="barbell" title="Empty periodization" message="Add stage below to get started" />
+                                )
+                                : (
+                                    <View></View>
+                                )
+
+                    }
+                </View>
+                <View style={styles.buttonContainer}>
+                    <Button iconName="add" onPress={() => { setBottomSheetOpen(true) }} style={styles.button}>New Stage</Button>
+                </View>
+                <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} onSubmit={handleCreateStage} title="Add Stage">
+                    <StageForm stageName={stageName} setStageName={setStageName} stageDescription={stageDescription} setStageDescription={setStageDescription} />
+                </BottomSheetForm>
             </View>
         </KeyboardAvoidingView>
     )

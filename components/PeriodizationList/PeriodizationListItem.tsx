@@ -19,7 +19,7 @@ export default function PeriodizationListItem({ periodizationId, title, descript
             </View>
             <View style={styles.contentContainer}>
                 <Title>{title.length > 15 ? `${title.substring(0, 15)}...` : title}</Title>
-                <Paragraph>{description && description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>
+                {description && <Paragraph>{description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>}
                 <Paragraph style={styles.stagesTitle}>{stages} stage{stages !== 1 ? "s" : ""}</Paragraph>
             </View>
             <View style={styles.buttonsContainer}>

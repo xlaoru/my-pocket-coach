@@ -207,3 +207,10 @@ export interface ISubExerciseTabelRowProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
 }
+
+export interface IStageFormProps {
+  stageName: string
+  setStageName: Dispatch<SetStateAction<string>>
+  stageDescription: string
+  setStageDescription: Dispatch<SetStateAction<string>>
+}

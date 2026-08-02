@@ -11,3 +11,11 @@ export interface ICreatePeriodizationPayload {
   name: string
   description?: string
 }
+
+export interface IEditPeriodizationNamePayload {
+  name: string
+}
+
+export interface IEditPeriodizationDescriptionPayload {
+  description: string
+}

@@ -8,6 +8,8 @@ import StageCard from "@/components/StageCard/StageCard";
 import StageForm from "@/components/StageForm/StageForm";
 import { useCreateStage } from "@/features/programs/hooks/use-create-stage";
 import { useDeleteStage } from "@/features/programs/hooks/use-delete-stage";
+import { useEditPeriodizationDescription } from "@/features/programs/hooks/use-edit-periodization-description";
+import { useEditPeriodizationName } from "@/features/programs/hooks/use-edit-periodization-name";
 import { useEditStageDescription } from "@/features/programs/hooks/use-edit-stage-description";
 import { useEditStageName } from "@/features/programs/hooks/use-edit-stage-name";
 import { useMoveStage } from "@/features/programs/hooks/use-move-stage";
@@ -26,6 +28,8 @@ export default function Periodization() {
     const { data: periodization, isLoading, isError } = usePeriodization(_id)
 
     const createStageMutation = useCreateStage()
+    const editPeriodizationNameMutation = useEditPeriodizationName()
+    const editPeriodizationDescriptionMutation = useEditPeriodizationDescription()
     const moveStageMutation = useMoveStage()
     const editStageNameMutation = useEditStageName()
     const editStageDescriptionMutation = useEditStageDescription()
@@ -76,6 +80,44 @@ export default function Periodization() {
             Alert.alert("Failed to create stage", "Please try again.")
         }
     }, [_id, createStageMutation, stageDescription, stageName])
+
+    const handleEditPeriodizationName = useCallback(async () => {
+        const trimmedPeriodizationName = periodizationName.trim()
+
+        if (!trimmedPeriodizationName) {
+            return
+        }
+
+        try {
+            await editPeriodizationNameMutation.mutateAsync({
+                periodizationId: _id,
+                payload: {
+                    name: trimmedPeriodizationName
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit periodization name", "Please try again.");
+        }
+    }, [_id, periodizationName, editPeriodizationNameMutation])
+
+    const handleEditPeriodizationDescription = useCallback(async () => {
+        const trimmedPeriodizationDescription = periodizationDescription.trim()
+
+        if (!trimmedPeriodizationDescription) {
+            return
+        }
+
+        try {
+            await editPeriodizationDescriptionMutation.mutateAsync({
+                periodizationId: _id,
+                payload: {
+                    description: trimmedPeriodizationDescription
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit periodization description", "Please try again.");
+        }
+    }, [_id, periodizationDescription, editPeriodizationDescriptionMutation])
 
     const handleMoveStage = useCallback(async (sourceIndex: number, destinationIndex: number) => {
         try {
@@ -150,8 +192,8 @@ export default function Periodization() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setPeriodizationName} onBlur={() => { }}>{isLoading ? "Loading..." : periodizationName}</Heading>
-                    {periodization?.description && <Paragraph isEditable onChangeText={setPeriodizationDescription}>{periodizationDescription}</Paragraph>}
+                    <Heading isEditable onChangeText={setPeriodizationName} onBlur={handleEditPeriodizationName}>{isLoading ? "Loading..." : periodizationName}</Heading>
+                    {periodization?.description && <Paragraph isEditable onChangeText={setPeriodizationDescription} onBlur={handleEditPeriodizationDescription}>{periodizationDescription}</Paragraph>}
                 </View>
                 <View style={styles.listContainer}>
                     {

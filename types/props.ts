@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react'
 import { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import { IExercise, IPeriodization, IProgram, ISet, IWorkoutItem } from './models'
+import { IExercise, IPeriodization, IProgram, ISet, IStage, IWorkoutItem } from './models'
 
 type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
@@ -213,4 +213,11 @@ export interface IStageFormProps {
   setStageName: Dispatch<SetStateAction<string>>
   stageDescription: string
   setStageDescription: Dispatch<SetStateAction<string>>
+}
+
+export interface IStageCardProps {
+  index: number
+  stage: IStage
+  onDrag: () => void
+  onDeleteStage: (stageId: string) => Promise<void>
 }

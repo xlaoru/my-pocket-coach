@@ -4,13 +4,14 @@ import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import StageCard from "@/components/StageCard/StageCard";
 import StageForm from "@/components/StageForm/StageForm";
 import { useCreateStage } from "@/features/programs/hooks/use-create-stage";
 import { usePeriodization } from "@/features/programs/hooks/use-periodization";
-import { colors } from "@/styles/colors";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { NestableDraggableFlatList, NestableScrollContainer } from "react-native-draggable-flatlist";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Periodization() {
@@ -98,7 +99,27 @@ export default function Periodization() {
                                     <EntityEmptyState iconName="barbell" title="Empty periodization" message="Add stage below to get started" />
                                 )
                                 : (
-                                    <View></View>
+                                    <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                        <NestableDraggableFlatList
+                                            autoscrollThreshold={30}
+                                            autoscrollSpeed={100}
+                                            data={periodization!.stages ?? []}
+                                            renderItem={({ item, getIndex, drag }) => {
+                                                const index = getIndex()
+                                                return (
+                                                    <View style={styles.itemWrapper}>
+                                                        <StageCard index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={async () => { }} />
+                                                    </View>
+                                                )
+                                            }}
+                                            keyExtractor={(item) => item._id}
+                                            onDragEnd={({ from, to }) => {
+                                                if (from === to) {
+                                                    return
+                                                }
+                                            }}
+                                        />
+                                    </NestableScrollContainer>
                                 )
 
                     }
@@ -130,9 +151,6 @@ const styles = StyleSheet.create({
     listContainer: {
         flex: 1,
     },
-    attachment: {
-        fontWeight: "bold"
-    },
     itemWrapper: {
         paddingBottom: 12,
     },
@@ -144,27 +162,4 @@ const styles = StyleSheet.create({
     button: {
         flex: 1
     },
-    combiningPanelContainer: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        backgroundColor: colors.red900,
-        borderWidth: 1,
-        borderColor: colors.red500,
-        borderRadius: 10,
-        padding: 15
-    },
-    combiningPanelTitle: {
-        color: colors.red500
-    },
-    combiningPanelButtonsContainer: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8
-    },
-    combiningPanelButton: {
-        paddingVertical: 8,
-        borderRadius: 16
-    }
 });

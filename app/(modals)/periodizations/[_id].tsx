@@ -7,6 +7,7 @@ import Paragraph from "@/components/Paragraph/Paragraph";
 import StageCard from "@/components/StageCard/StageCard";
 import StageForm from "@/components/StageForm/StageForm";
 import { useCreateStage } from "@/features/programs/hooks/use-create-stage";
+import { useDeleteStage } from "@/features/programs/hooks/use-delete-stage";
 import { useMoveStage } from "@/features/programs/hooks/use-move-stage";
 import { usePeriodization } from "@/features/programs/hooks/use-periodization";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -24,6 +25,7 @@ export default function Periodization() {
 
     const createStageMutation = useCreateStage()
     const moveStageMutation = useMoveStage()
+    const deleteStageMutation = useDeleteStage()
 
     const navigation = useNavigation()
 
@@ -85,6 +87,17 @@ export default function Periodization() {
         }
     }, [_id, moveStageMutation])
 
+    const handleDeleteStage = useCallback(async (stageId: string) => {
+        try {
+            await deleteStageMutation.mutateAsync({
+                periodizationId: _id,
+                stageId
+            })
+        } catch {
+            Alert.alert("Failed to delete stage", "Please try again.");
+        }
+    }, [_id, deleteStageMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -124,7 +137,7 @@ export default function Periodization() {
                                                 const index = getIndex()
                                                 return (
                                                     <View style={styles.itemWrapper}>
-                                                        <StageCard index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={async () => { }} />
+                                                        <StageCard index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} />
                                                     </View>
                                                 )
                                             }}

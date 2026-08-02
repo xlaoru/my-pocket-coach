@@ -1,13 +1,13 @@
 import { colors } from "@/styles/colors"
 import { IStageCardProps } from "@/types/props"
 import { Ionicons } from "@expo/vector-icons"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Pressable, StyleSheet, View } from "react-native"
 import IconButton from "../IconButton/IconButton"
 import Paragraph from "../Paragraph/Paragraph"
 import Title from "../Title/Title"
 
-function StageCardComponent({ index, stage, onDrag }: IStageCardProps) {
+function StageCardComponent({ index, stage, onDrag, onDeleteStage }: IStageCardProps) {
     const [editableName, setEditableName] = useState(stage.name)
     const [editableDescription, setEditableDescription] = useState(stage.description)
 
@@ -17,6 +17,10 @@ function StageCardComponent({ index, stage, onDrag }: IStageCardProps) {
             setEditableDescription(stage.description)
         }
     }, [stage.name, stage.description])
+
+    const handleDeleteStage = useCallback(() => {
+        void onDeleteStage(stage._id)
+    }, [onDeleteStage, stage._id])
 
     return (
         <View style={styles.outterContainer}>
@@ -32,7 +36,7 @@ function StageCardComponent({ index, stage, onDrag }: IStageCardProps) {
                     {stage.description && <Paragraph isEditable onChangeText={setEditableDescription} onBlur={() => { }} style={styles.descriptionText}>{editableDescription}</Paragraph>}
                 </View>
             </View>
-            <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+            <IconButton iconName="trash-bin-outline" onPress={handleDeleteStage} />
         </View>
     )
 }

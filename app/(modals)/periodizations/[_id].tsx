@@ -7,6 +7,7 @@ import Paragraph from "@/components/Paragraph/Paragraph";
 import StageCard from "@/components/StageCard/StageCard";
 import StageForm from "@/components/StageForm/StageForm";
 import { useCreateStage } from "@/features/programs/hooks/use-create-stage";
+import { useMoveStage } from "@/features/programs/hooks/use-move-stage";
 import { usePeriodization } from "@/features/programs/hooks/use-periodization";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
@@ -22,6 +23,7 @@ export default function Periodization() {
     const { data: periodization, isLoading, isError } = usePeriodization(_id)
 
     const createStageMutation = useCreateStage()
+    const moveStageMutation = useMoveStage()
 
     const navigation = useNavigation()
 
@@ -68,6 +70,20 @@ export default function Periodization() {
             Alert.alert("Failed to create stage", "Please try again.")
         }
     }, [_id, createStageMutation, stageDescription, stageName])
+
+    const handleMoveStage = useCallback(async (sourceIndex: number, destinationIndex: number) => {
+        try {
+            await moveStageMutation.mutateAsync({
+                periodizationId: _id,
+                payload: {
+                    sourceIndex,
+                    destinationIndex
+                }
+            })
+        } catch {
+            Alert.alert("Failed to move stage", "Please try again.");
+        }
+    }, [_id, moveStageMutation])
 
     return (
         <KeyboardAvoidingView
@@ -117,6 +133,8 @@ export default function Periodization() {
                                                 if (from === to) {
                                                     return
                                                 }
+
+                                                handleMoveStage(from, to)
                                             }}
                                         />
                                     </NestableScrollContainer>

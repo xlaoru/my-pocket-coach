@@ -67,11 +67,12 @@ export default function ComponentsPreview() {
                 <Button iconName="layers" variant="secondary" onPress={() => { }}>Secondary Button</Button>
                 <Button variant="outlined" onPress={() => { }}>Outlined Button</Button>
                 <Button variant="dashed" onPress={() => { }}>Dashed Button</Button>
+                <Button iconName="arrow-back-outline" variant="text" onPress={() => { }}>Text Button</Button>
                 <View style={styles.iconButtonContainer}>
                     <IconButton iconName="hourglass-outline" onPress={() => { }} />
                     <Paragraph>IconButton</Paragraph>
                 </View>
-                <AttachPeriodizationButton isAttaced={isAttached} unpressedValue="Attach Periodization" pressedValue="Wave periodization — Light Phase" onPress={onAttach} />
+                <AttachPeriodizationButton isAttaced={isAttached} value={null} onPress={onAttach} />
                 <AddSetOutlineButton onPress={() => { }} />
 
                 <View style={styles.separator} />

@@ -15,6 +15,7 @@ import ExerciseForm from "@/components/ExerciseForm/ExerciseForm";
 import Loader from "@/components/Loader/Loader";
 import { useProgram } from "@/features/programs/hooks/use-program";
 
+import AttachPeriodizationForm from "@/components/AttachPeriodizationForm/AttachPeriodizationForm";
 import ExerciseTable from "@/components/ExerciseTable/ExerciseTable";
 import SupersetForm from "@/components/SupersetForm/SupersetForm";
 import SupersetTable from "@/components/SupersetTable/SupersetTable";
@@ -32,6 +33,7 @@ import { useEditProgram } from "@/features/programs/hooks/use-edit-program";
 import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
 import { useLinkExercises } from "@/features/programs/hooks/use-link-exercise";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
+import { usePeriodizations } from "@/features/programs/hooks/use-periodizations";
 import { useUnlinkAllExercises } from "@/features/programs/hooks/use-unlink-all-exercises";
 import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
 import { colors } from "@/styles/colors";
@@ -43,6 +45,7 @@ export default function Program() {
     const { _id } = useLocalSearchParams<{ _id: string }>()
 
     const { data: program, isLoading, isError } = useProgram(_id)
+    const { data: periodizations } = usePeriodizations()
 
     const createExerciseMutation = useCreateExercise()
     const editExerciseNameMutation = useEditExerciseName()
@@ -85,8 +88,11 @@ export default function Program() {
     const [selectedExercises, setSelectedExercises] = useState<string[]>([])
     const [selectedExercisesData, setSelectedExercisesData] = useState<IExercise[]>([])
 
+    const [isAttachPeriodizationMode, setAttachPeriodizationMode] = useState(false)
+
     const [programName, setProgramName] = useState(program?.name ?? "")
     const [programDescription, setProgramDescription] = useState(program?.description ?? "")
+
     const [exerciseName, setExerciseName] = useState("")
     const [supersetName, setSupersetName] = useState("")
 
@@ -97,6 +103,9 @@ export default function Program() {
         }
     }, [program])
 
+    const periodizationLabel = program?.periodizationStage
+        ? `${program.periodizationStage.name} — ${program.periodizationStage.periodizationId?.name}`
+        : null
 
     const [sets, setSets] = useState<ISet[]>([
         { weight: 0, reps: 0 },
@@ -386,6 +395,12 @@ export default function Program() {
         }
     }, [_id, linkExerciseMutation])
 
+    const onHandleAttachment = useCallback(() => {
+        if (!periodizationLabel) {
+            setAttachPeriodizationMode(true)
+        }
+    }, [periodizationLabel])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -400,7 +415,7 @@ export default function Program() {
                 <View style={styles.header}>
                     <Heading isEditable onChangeText={setProgramName} onBlur={handleEditProgramName}>{isLoading ? "Loading..." : programName}</Heading>
                     {program?.description && <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription}>{isLoading ? "Loading..." : programDescription}</Paragraph>}
-                    <AttachPeriodizationButton onPress={() => { }} isAttaced={false} unpressedValue={""} pressedValue={""} />
+                    <AttachPeriodizationButton onPress={onHandleAttachment} isAttaced={Boolean(periodizationLabel)} value={isLoading ? "Loading..." : periodizationLabel} />
                 </View>
                 {isSupersetCombiningMode && (
                     <View style={styles.combiningPanelContainer}>
@@ -507,6 +522,9 @@ export default function Program() {
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
+                <BottomSheetForm isOpen={isAttachPeriodizationMode} title="Select Periodization" onSubmit={() => { }} onClose={() => { setAttachPeriodizationMode(false) }}>
+                    <AttachPeriodizationForm periodizations={periodizations ?? []} />
+                </BottomSheetForm>
             </View>
         </KeyboardAvoidingView>
     );
@@ -523,7 +541,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     header: {
-        gap: 2
+        gap: 2,
     },
     listContainer: {
         flex: 1,

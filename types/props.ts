@@ -63,7 +63,7 @@ export interface IIconButtonProps {
 
 export interface IButtonProps {
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'outlined' | 'dashed'
+  variant?: 'primary' | 'secondary' | 'outlined' | 'dashed' | 'text'
   iconName?: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']
@@ -101,8 +101,7 @@ export interface IInputProps {
 
 export interface IAttachPeriodizationButtonProps {
   isAttaced: boolean
-  unpressedValue: string
-  pressedValue: string
+  value: string | null
   onPress: VoidFunction
 }
 
@@ -225,4 +224,19 @@ export interface IStageCardProps {
   onDeleteStage: (stageId: string) => Promise<void>
   onEditStageName: (stageId: string, name: string) => Promise<void>
   onEditStageDescription: (stageId: string, description: string) => Promise<void>
+}
+
+export interface IAttachPeriodizationFormProps {
+  periodizations: IPeriodization[]
+}
+
+export interface IPeriodizationCardProps {
+  periodization: IPeriodization
+  setStagePicking: Dispatch<SetStateAction<boolean>>
+  setPickedStages: Dispatch<SetStateAction<IStage[]>>
+}
+
+export interface IAttachStageCardProps {
+  index: number
+  stage: IStage
 }

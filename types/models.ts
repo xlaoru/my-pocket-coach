@@ -20,6 +20,7 @@ export interface IProgram {
   _id: string
   name: string
   description?: string
+  periodizationStage: IStage
   workout: IWorkoutItem[]
   date: Date
 }
@@ -28,6 +29,9 @@ export interface IStage {
   _id: string
   name: string
   description?: string
+  periodizationId?: {
+    name: string
+  }
 }
 
 export interface IPeriodization {

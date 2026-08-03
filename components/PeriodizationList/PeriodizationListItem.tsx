@@ -1,25 +1,29 @@
 import { colors } from "@/styles/colors";
 import { IPeriodizationListItemProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useCallback } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function PeriodizationListItem({ title, description, stages, onPress }: IPeriodizationListItemProps) {
+export default function PeriodizationListItem({ periodizationId, title, description, stages, onPress, onDeletePeriodization }: IPeriodizationListItemProps) {
+    const handleDeletePeriodization = useCallback(() => {
+        void onDeletePeriodization(periodizationId)
+    }, [onDeletePeriodization, periodizationId])
+
     return (
         <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.iconContainer}>
-                <Ionicons name="flash-outline" size={24} color={colors.red500} />
+                <Ionicons name="flash" size={24} color={colors.red500} />
             </View>
             <View style={styles.contentContainer}>
                 <Title>{title.length > 15 ? `${title.substring(0, 15)}...` : title}</Title>
-                <Paragraph>{description && description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>
+                {description && <Paragraph>{description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>}
                 <Paragraph style={styles.stagesTitle}>{stages} stage{stages !== 1 ? "s" : ""}</Paragraph>
             </View>
             <View style={styles.buttonsContainer}>
-                <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeletePeriodization} />
                 <IconButton iconName="chevron-forward-outline" onPress={onPress} />
             </View>
         </Pressable>

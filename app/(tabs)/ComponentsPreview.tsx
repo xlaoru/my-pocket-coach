@@ -25,8 +25,12 @@ export default function ComponentsPreview() {
     const insets = useSafeAreaInsets()
 
     const [isOpenSimpleBottomSheet, setOpenSimpleBottomSheet] = useState(false)
-
     const [isOpenExerciseBottomSheet, setOpenExerciseBottomSheet] = useState(false)
+    const [isAttached, setAttached] = useState(false)
+
+    function onAttach() {
+        setAttached((prev) => !prev)
+    }
 
     return (
         <>
@@ -61,11 +65,14 @@ export default function ComponentsPreview() {
 
                 <Button iconName="checkmark-outline" onPress={() => { }}>Primary Button</Button>
                 <Button iconName="layers" variant="secondary" onPress={() => { }}>Secondary Button</Button>
+                <Button variant="outlined" onPress={() => { }}>Outlined Button</Button>
+                <Button variant="dashed" onPress={() => { }}>Dashed Button</Button>
+                <Button iconName="arrow-back-outline" variant="text" onPress={() => { }}>Text Button</Button>
                 <View style={styles.iconButtonContainer}>
                     <IconButton iconName="hourglass-outline" onPress={() => { }} />
                     <Paragraph>IconButton</Paragraph>
                 </View>
-                <AttachPeriodizationButton onPress={() => { }} />
+                <AttachPeriodizationButton isAttaced={isAttached} value={null} onPress={onAttach} />
                 <AddSetOutlineButton onPress={() => { }} />
 
                 <View style={styles.separator} />
@@ -84,6 +91,8 @@ export default function ComponentsPreview() {
                     exercises={5}
                     supersets={3}
                     onPress={() => { }}
+                    programId={""}
+                    onDeleteProgram={async () => { }}
                 />
 
                 <View style={styles.separator} />
@@ -95,6 +104,8 @@ export default function ComponentsPreview() {
                     description="Demo description."
                     stages={3}
                     onPress={() => { }}
+                    periodizationId={""}
+                    onDeletePeriodization={async () => { }}
                 />
 
                 <View style={styles.separator} />
@@ -130,7 +141,7 @@ export default function ComponentsPreview() {
 
                 <Heading>Exercise Table</Heading>
 
-                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} onDrag={() => { } } onExerciseNameChange={async () => { } } onAddExerciseSet={async () => { } } onEditExerciseSet={async () => { } } onDeleteExerciseSet={async () => { } } onDeleteExercise={async () => { } } isSupersetCombiningMode={false} setSupersetCombiningMode={() => { } } selectedExercises={[]} setSelectedExercises={() => {}} />
+                <ExerciseTable index={0} exercise={{ _id: "1", name: "Exercise Name", sets: [{ weight: 50, reps: 10 }, { weight: 50, reps: 10 }, { weight: 50, reps: 10 }] }} onDrag={() => { }} onExerciseNameChange={async () => { }} onAddExerciseSet={async () => { }} onEditExerciseSet={async () => { }} onDeleteExerciseSet={async () => { }} onDeleteExercise={async () => { }} isSupersetCombiningMode={false} selectedExercises={[]} setSelectedExercises={() => { }} workoutItemId={""} setSelectedExercisesData={() => { }} />
             </ScrollView>
 
             <BottomSheetForm
@@ -148,7 +159,7 @@ export default function ComponentsPreview() {
                 onSubmit={() => { }}
                 onClose={() => setOpenExerciseBottomSheet(false)}
             >
-                <ExerciseForm exerciseName="" setExerciseName={() => { } } sets={[]} onSetChange={() => {}} onAddSet={() => {}} onRemoveSet={() => {}} />
+                <ExerciseForm exerciseName="" setExerciseName={() => { }} sets={[]} onSetChange={() => { }} onAddSet={() => { }} onRemoveSet={() => { }} />
             </BottomSheetForm>
         </>
     );

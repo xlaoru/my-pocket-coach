@@ -66,6 +66,15 @@ const styles = StyleSheet.create({
     },
     dashedText: {
         color: colors.red500
+    },
+    textContainer: {
+        paddingVertical: 0,
+        paddingHorizontal: 0,
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+    },
+    textText: {
+        color: colors.gray100
     }
 });
 
@@ -73,5 +82,6 @@ const variantStyles = {
     primary: { container: styles.primaryContainer, text: styles.primaryText },
     secondary: { container: styles.secondaryContainer, text: styles.secondaryText },
     outlined: { container: styles.outlinedContainer, text: styles.outlinedText },
-    dashed: { container: styles.dashedContainer, text: styles.dashedText }
+    dashed: { container: styles.dashedContainer, text: styles.dashedText },
+    text: { container: styles.textContainer, text: styles.textText }
 } satisfies Record<string, { container: object; text: { color: string } }>;

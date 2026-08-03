@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react'
 import { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import { IExercise, IPeriodization, IProgram, ISet, IWorkoutItem } from './models'
+import { IExercise, IPeriodization, IProgram, ISet, IStage, IWorkoutItem } from './models'
 
 type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
@@ -30,6 +30,7 @@ export interface IEntityEmptyStateProps {
   iconName: TIoniconName
   title: string
   message: string
+  wrapperStyle?: StyleProp<ViewStyle>
 }
 
 export interface IProgramListProps {
@@ -63,7 +64,7 @@ export interface IIconButtonProps {
 
 export interface IButtonProps {
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'outlined' | 'dashed'
+  variant?: 'primary' | 'secondary' | 'outlined' | 'dashed' | 'text'
   iconName?: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']
@@ -71,13 +72,16 @@ export interface IButtonProps {
 
 export interface IPeriodizationListProps {
   periodizations: IPeriodization[]
+  onDeletePeriodization: (periodizationId: string) => Promise<void>
 }
 
 export interface IPeriodizationListItemProps {
+  periodizationId: string
   title: string
   description?: string
   stages: number
   onPress: VoidFunction
+  onDeletePeriodization: (periodizationId: string) => Promise<void>
 }
 
 export interface IBottomSheetFormProps {
@@ -86,6 +90,7 @@ export interface IBottomSheetFormProps {
   title: string
   onSubmit: VoidFunction
   onClose: VoidFunction
+  isWithoutSubmition?: boolean
 }
 
 export interface IInputProps {
@@ -97,6 +102,8 @@ export interface IInputProps {
 }
 
 export interface IAttachPeriodizationButtonProps {
+  isAttaced: boolean
+  value: string | null
   onPress: VoidFunction
 }
 
@@ -203,4 +210,46 @@ export interface ISubExerciseTabelRowProps {
   set: ISet
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+}
+
+export interface IStageFormProps {
+  stageName: string
+  setStageName: Dispatch<SetStateAction<string>>
+  stageDescription: string
+  setStageDescription: Dispatch<SetStateAction<string>>
+}
+
+export interface IStageCardProps {
+  index: number
+  stage: IStage
+  onDrag: () => void
+  onDeleteStage: (stageId: string) => Promise<void>
+  onEditStageName: (stageId: string, name: string) => Promise<void>
+  onEditStageDescription: (stageId: string, description: string) => Promise<void>
+}
+
+export interface IAttachPeriodizationFormProps {
+  isStagePicking: boolean
+  setStagePicking: Dispatch<SetStateAction<boolean>>
+  pickedPeriodization: IPeriodization | null
+  setPickedPeriodization: Dispatch<SetStateAction<IPeriodization | null>>
+  periodizations: IPeriodization[]
+  onLinkStage: (periodizationId: string, stageId: string) => Promise<void>
+  setAttachPeriodizationMode: (value: boolean) => void
+}
+
+export interface IPeriodizationCardProps {
+  periodization: IPeriodization
+  setStagePicking: Dispatch<SetStateAction<boolean>>
+  setPickedPeriodization: Dispatch<SetStateAction<IPeriodization | null>>
+}
+
+export interface IAttachStageCardProps {
+  index: number
+  periodizationId: string
+  stage: IStage
+  onLinkStage: (periodizationId: string, stageId: string) => Promise<void>
+  setAttachPeriodizationMode: (value: boolean) => void
+  setStagePicking: Dispatch<SetStateAction<boolean>>
+  setPickedPeriodization: Dispatch<SetStateAction<IPeriodization | null>>
 }

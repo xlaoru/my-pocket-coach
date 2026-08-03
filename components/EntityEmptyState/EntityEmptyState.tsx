@@ -6,9 +6,9 @@ import { StyleSheet, View } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function EntityEmptyState({ iconName, title, message }: IEntityEmptyStateProps) {
+export default function EntityEmptyState({ iconName, title, message, wrapperStyle }: IEntityEmptyStateProps) {
     return (
-        <View style={styles.infoContainer}>
+        <View style={[styles.infoContainer, wrapperStyle]}>
             <View style={styles.iconContainer}>
                 <Ionicons name={iconName} color={colors.gray100} size={24} />
             </View>

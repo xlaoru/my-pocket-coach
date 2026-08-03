@@ -6,9 +6,9 @@ import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function PeriodizationCard({ periodization, setStagePicking, setPickedStages }: IPeriodizationCardProps) {
+export default function PeriodizationCard({ periodization, setStagePicking, setPickedPeriodization }: IPeriodizationCardProps) {
     return (
-        <Pressable onPress={() => { setStagePicking(true); setPickedStages(periodization.stages) }} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
+        <Pressable onPress={() => { setStagePicking(true); setPickedPeriodization(periodization) }} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.iconContainer}>
                 <Ionicons name="flash" size={24} color={colors.red500} />
             </View>
@@ -17,7 +17,7 @@ export default function PeriodizationCard({ periodization, setStagePicking, setP
                 {periodization.description && <Paragraph>{periodization.description.length > 20 ? `${periodization.description.substring(0, 20)}...` : periodization.description}</Paragraph>}
                 <Paragraph style={styles.stagesTitle}>{periodization.stages.length} stage{periodization.stages.length !== 1 ? "s" : ""}</Paragraph>
             </View>
-            <IconButton iconName="chevron-forward-outline" onPress={() => { setStagePicking(true); setPickedStages(periodization.stages) }} />
+            <IconButton iconName="chevron-forward-outline" onPress={() => { setStagePicking(true); setPickedPeriodization(periodization) }} />
         </Pressable>
     )
 }

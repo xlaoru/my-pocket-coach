@@ -30,6 +30,7 @@ export interface IEntityEmptyStateProps {
   iconName: TIoniconName
   title: string
   message: string
+  wrapperStyle?: StyleProp<ViewStyle>
 }
 
 export interface IProgramListProps {
@@ -89,6 +90,7 @@ export interface IBottomSheetFormProps {
   title: string
   onSubmit: VoidFunction
   onClose: VoidFunction
+  isWithoutSubmition?: boolean
 }
 
 export interface IInputProps {
@@ -227,16 +229,27 @@ export interface IStageCardProps {
 }
 
 export interface IAttachPeriodizationFormProps {
+  isStagePicking: boolean
+  setStagePicking: Dispatch<SetStateAction<boolean>>
+  pickedPeriodization: IPeriodization | null
+  setPickedPeriodization: Dispatch<SetStateAction<IPeriodization | null>>
   periodizations: IPeriodization[]
+  onLinkStage: (periodizationId: string, stageId: string) => Promise<void>
+  setAttachPeriodizationMode: (value: boolean) => void
 }
 
 export interface IPeriodizationCardProps {
   periodization: IPeriodization
   setStagePicking: Dispatch<SetStateAction<boolean>>
-  setPickedStages: Dispatch<SetStateAction<IStage[]>>
+  setPickedPeriodization: Dispatch<SetStateAction<IPeriodization | null>>
 }
 
 export interface IAttachStageCardProps {
   index: number
+  periodizationId: string
   stage: IStage
+  onLinkStage: (periodizationId: string, stageId: string) => Promise<void>
+  setAttachPeriodizationMode: (value: boolean) => void
+  setStagePicking: Dispatch<SetStateAction<boolean>>
+  setPickedPeriodization: Dispatch<SetStateAction<IPeriodization | null>>
 }

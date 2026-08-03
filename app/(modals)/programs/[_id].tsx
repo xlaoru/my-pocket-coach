@@ -32,12 +32,13 @@ import { useEditExerciseSet } from "@/features/programs/hooks/use-edit-exercise-
 import { useEditProgram } from "@/features/programs/hooks/use-edit-program";
 import { useEditSupersetName } from "@/features/programs/hooks/use-edit-superset-name";
 import { useLinkExercises } from "@/features/programs/hooks/use-link-exercise";
+import { useLinkStage } from "@/features/programs/hooks/use-link-stage";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 import { usePeriodizations } from "@/features/programs/hooks/use-periodizations";
 import { useUnlinkAllExercises } from "@/features/programs/hooks/use-unlink-all-exercises";
 import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
 import { colors } from "@/styles/colors";
-import { IExercise, ISet } from "@/types/models";
+import { IExercise, IPeriodization, ISet } from "@/types/models";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -62,6 +63,7 @@ export default function Program() {
     const createNewExerciseMutation = useCreateNewExercise()
     const linkExerciseMutation = useLinkExercises()
     const editProgramMutation = useEditProgram()
+    const linkStageMutation = useLinkStage()
 
     const navigation = useNavigation()
 
@@ -89,6 +91,8 @@ export default function Program() {
     const [selectedExercisesData, setSelectedExercisesData] = useState<IExercise[]>([])
 
     const [isAttachPeriodizationMode, setAttachPeriodizationMode] = useState(false)
+    const [isStagePicking, setStagePicking] = useState(false)
+    const [pickedPeriodization, setPickedPeriodization] = useState<IPeriodization | null>(null)
 
     const [programName, setProgramName] = useState(program?.name ?? "")
     const [programDescription, setProgramDescription] = useState(program?.description ?? "")
@@ -401,6 +405,18 @@ export default function Program() {
         }
     }, [periodizationLabel])
 
+    const handleLinkStage = useCallback(async (periodizationId: string, stageId: string) => {
+        try {
+            await linkStageMutation.mutateAsync({
+                programId: _id,
+                periodizationId,
+                stageId
+            })
+        } catch {
+            Alert.alert("Failed to link stage", "Please try again.");
+        }
+    }, [_id, linkStageMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -522,8 +538,8 @@ export default function Program() {
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
-                <BottomSheetForm isOpen={isAttachPeriodizationMode} title="Select Periodization" onSubmit={() => { }} onClose={() => { setAttachPeriodizationMode(false) }}>
-                    <AttachPeriodizationForm periodizations={periodizations ?? []} />
+                <BottomSheetForm isWithoutSubmition isOpen={isAttachPeriodizationMode} title="Select Periodization" onSubmit={() => { }} onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>
+                    <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} />
                 </BottomSheetForm>
             </View>
         </KeyboardAvoidingView>

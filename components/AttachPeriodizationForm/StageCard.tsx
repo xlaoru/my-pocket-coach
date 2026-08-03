@@ -1,12 +1,22 @@
 import { colors } from "@/styles/colors";
 import { IAttachStageCardProps } from "@/types/props";
+import { useCallback } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function StageCard({ index, stage }: IAttachStageCardProps) {
+export default function StageCard({ index, periodizationId, stage, onLinkStage, setAttachPeriodizationMode, setStagePicking, setPickedPeriodization }: IAttachStageCardProps) {
+    const handleLinkStage = useCallback(() => {
+        void onLinkStage(periodizationId, stage._id)
+            .then(() => {
+                setAttachPeriodizationMode(false)
+                setStagePicking(false)
+                setPickedPeriodization(null)
+            })
+    }, [onLinkStage, periodizationId, stage._id, setAttachPeriodizationMode, setPickedPeriodization, setStagePicking])
+
     return (
-        <Pressable onPress={() => { }} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
+        <Pressable onPress={handleLinkStage} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.indexContainer}>
                 <Title style={styles.indexText}>{index + 1}</Title>
             </View>

@@ -400,7 +400,7 @@ export default function Program() {
                 <View style={styles.header}>
                     <Heading isEditable onChangeText={setProgramName} onBlur={handleEditProgramName}>{isLoading ? "Loading..." : programName}</Heading>
                     {program?.description && <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription}>{isLoading ? "Loading..." : programDescription}</Paragraph>}
-                    <AttachPeriodizationButton onPress={() => { }} />
+                    <AttachPeriodizationButton onPress={() => { }} isAttaced={false} unpressedValue={""} pressedValue={""} />
                 </View>
                 {isSupersetCombiningMode && (
                     <View style={styles.combiningPanelContainer}>

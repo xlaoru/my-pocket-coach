@@ -100,6 +100,9 @@ export interface IInputProps {
 }
 
 export interface IAttachPeriodizationButtonProps {
+  isAttaced: boolean
+  unpressedValue: string
+  pressedValue: string
   onPress: VoidFunction
 }
 

@@ -19,6 +19,12 @@ export function useEditStageDescription() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.periodizations.byId(variables.periodizationId),
       })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.periodizations.all,
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.programs.all,
+      })
     },
   })
 }

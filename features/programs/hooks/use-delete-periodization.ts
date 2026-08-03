@@ -19,6 +19,9 @@ export function useDeletePeriodization() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.periodizations.all,
       })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.programs.all,
+      })
     },
   })
 }

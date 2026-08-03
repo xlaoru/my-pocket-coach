@@ -21,6 +21,9 @@ export function useEditPeriodizationDescription() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.periodizations.all,
       })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.programs.all,
+      })
     },
   })
 }

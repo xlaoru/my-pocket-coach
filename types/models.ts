@@ -30,6 +30,7 @@ export interface IStage {
   name: string
   description?: string
   periodizationId?: {
+    _id: string
     name: string
   }
 }

@@ -37,6 +37,7 @@ import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 import { usePeriodizations } from "@/features/programs/hooks/use-periodizations";
 import { useUnlinkAllExercises } from "@/features/programs/hooks/use-unlink-all-exercises";
 import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
+import { useUnlinkStage } from "@/features/programs/hooks/use-unlink-stage";
 import { colors } from "@/styles/colors";
 import { IExercise, IPeriodization, ISet } from "@/types/models";
 
@@ -64,6 +65,7 @@ export default function Program() {
     const linkExerciseMutation = useLinkExercises()
     const editProgramMutation = useEditProgram()
     const linkStageMutation = useLinkStage()
+    const unlinkStageMutation = useUnlinkStage()
 
     const navigation = useNavigation()
 
@@ -108,7 +110,7 @@ export default function Program() {
     }, [program])
 
     const periodizationLabel = program?.periodizationStage
-        ? `${program.periodizationStage.name} — ${program.periodizationStage.periodizationId?.name}`
+        ? `${program.periodizationStage.periodizationId?.name} — ${program.periodizationStage.name}`
         : null
 
     const [sets, setSets] = useState<ISet[]>([
@@ -399,12 +401,6 @@ export default function Program() {
         }
     }, [_id, linkExerciseMutation])
 
-    const onHandleAttachment = useCallback(() => {
-        if (!periodizationLabel) {
-            setAttachPeriodizationMode(true)
-        }
-    }, [periodizationLabel])
-
     const handleLinkStage = useCallback(async (periodizationId: string, stageId: string) => {
         try {
             await linkStageMutation.mutateAsync({
@@ -416,6 +412,28 @@ export default function Program() {
             Alert.alert("Failed to link stage", "Please try again.");
         }
     }, [_id, linkStageMutation])
+
+    const handleUnlinkStage = useCallback(async (periodizationId: string, stageId: string) => {
+        try {
+            await unlinkStageMutation.mutateAsync({
+                programId: _id,
+                periodizationId,
+                stageId
+            })
+        } catch {
+            Alert.alert("Failed to unlink stage", "Please try again.");
+        }
+    }, [_id, unlinkStageMutation])
+
+    const onHandleAttachment = useCallback(() => {
+        if (!periodizationLabel) {
+            setAttachPeriodizationMode(true)
+        } else {
+            if (program?.periodizationStage?.periodizationId?._id) {
+                handleUnlinkStage(program?.periodizationStage?.periodizationId?._id, program?.periodizationStage?._id)
+            }
+        }
+    }, [periodizationLabel, program?.periodizationStage?._id, program?.periodizationStage?.periodizationId?._id, handleUnlinkStage])
 
     return (
         <KeyboardAvoidingView

@@ -15,7 +15,7 @@ export default function PeriodizationListItem({ periodizationId, title, descript
     return (
         <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
             <View style={styles.iconContainer}>
-                <Ionicons name="flash-outline" size={24} color={colors.red500} />
+                <Ionicons name="flash" size={24} color={colors.red500} />
             </View>
             <View style={styles.contentContainer}>
                 <Title>{title.length > 15 ? `${title.substring(0, 15)}...` : title}</Title>

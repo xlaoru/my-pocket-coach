@@ -20,6 +20,9 @@ export function useDeleteStage() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.periodizations.all,
       })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.programs.all,
+      })
     },
   })
 }

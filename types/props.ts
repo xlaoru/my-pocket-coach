@@ -1,7 +1,15 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react'
 import { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import { IExercise, IPeriodization, IProgram, ISet, IStage, IWorkoutItem } from './models'
+import {
+  IExercise,
+  IPeriodization,
+  IProgram,
+  ISet,
+  IStage,
+  ITemplate,
+  IWorkoutItem,
+} from './models'
 
 type TIoniconName = ComponentProps<typeof Ionicons>['name']
 
@@ -252,4 +260,18 @@ export interface IAttachStageCardProps {
   setAttachPeriodizationMode: (value: boolean) => void
   setStagePicking: Dispatch<SetStateAction<boolean>>
   setPickedPeriodization: Dispatch<SetStateAction<IPeriodization | null>>
+}
+
+export interface ITemplateListProps {
+  templates: ITemplate[]
+}
+
+export interface ITemplateListItemProps {
+  templateId: string
+  title: string
+  description: string
+  exercises: number
+  supersets: number
+  onPress: VoidFunction
+  onDeleteTemplate: (templateId: string) => Promise<void>
 }

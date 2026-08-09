@@ -81,7 +81,6 @@ export default function Periodization() {
                     isError
                         ? (
                             <EntityEmptyState iconName="calendar-outline" title="No periods yet" message="Create a periodization period with stages" />
-
                         )
                         : isLoading
 
@@ -93,7 +92,7 @@ export default function Periodization() {
                             )
                 }
             </View>
-            <Button iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }} >New Periodization</Button>
+            <Button iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Periodization</Button>
             <BottomSheetForm
                 isOpen={isBottomSheetOpen}
                 title="New Periodization"

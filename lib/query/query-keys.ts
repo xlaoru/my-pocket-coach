@@ -9,6 +9,6 @@ export const queryKeys = {
   },
   templates: {
     all: ['templates'] as const,
-    byId: (id: string) => ['templates'] as const,
+    byId: (id: string) => ['templates', id] as const,
   },
 }

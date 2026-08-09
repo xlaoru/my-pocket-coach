@@ -469,7 +469,7 @@ export default function Program() {
                             ? (
                                 <EntityEmptyState
                                     iconName="alert-circle-outline"
-                                    title="Failed to load programs"
+                                    title="Failed to load exercises"
                                     message="Please check the API connection and try again."
                                 />
                             )

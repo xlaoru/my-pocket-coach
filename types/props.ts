@@ -8,6 +8,8 @@ import {
   ISet,
   IStage,
   ITemplate,
+  ITemplateExercise,
+  ITemplateWorkoutItem,
   IWorkoutItem,
 } from './models'
 
@@ -275,4 +277,63 @@ export interface ITemplateListItemProps {
   supersets: number
   onPress: VoidFunction
   onDeleteTemplate: (templateId: string) => Promise<void>
+}
+
+export interface ITemplateExerciseTableProps {
+  index: number
+  exercise: ITemplateExercise
+  templateWorkoutItemId: string
+  onDrag: VoidFunction
+  onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
+  onExerciseSetChange: (exerciseId: string, set: number) => Promise<void>
+  onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+  isSupersetCombiningMode: boolean
+  selectedExercises: string[]
+  setSelectedExercises: Dispatch<SetStateAction<string[]>>
+  setSelectedExercisesData: Dispatch<SetStateAction<ITemplateExercise[]>>
+}
+
+export interface ITemplateSupersetTableProps {
+  index: number
+  superset: ITemplateWorkoutItem
+  templateWorkoutItemId: string
+  outsideSupersetExercises: ITemplateWorkoutItem[]
+  onDrag: VoidFunction
+  onSupersetNameChange: (supersetId: string, name: string) => Promise<void>
+  onDeleteSuperset: (supersetId: string) => Promise<void>
+  onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
+  onExerciseSetChange: (exerciseId: string, sets: string) => Promise<void>
+  onDeleteExercise: (exerciseId: string) => Promise<void>
+  onMoveExercise: (
+    containerId: string,
+    sourceIndex: number,
+    destinationIndex: number,
+  ) => Promise<void>
+  onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
+  onUnlinkAllExercises: (supersetId: string) => Promise<void>
+  onCreateNewExercise: (supersetId: string, newName: string) => Promise<void>
+  onLinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
+}
+
+export interface ISubTemplateExerciseTableProps {
+  supersetId: string
+  exercise: ITemplateExercise
+  onDrag: VoidFunction
+  onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
+  onExerciseSetsChange: (exerciseId: string, sets: string) => Promise<void>
+  onDeleteExercise: (exerciseId: string) => Promise<void>
+  onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
+}
+
+export interface ITemplateExerciseFormProps {
+  exerciseName: string
+  setExerciseName: (name: string) => void
+  exerciseSets: number
+  setExerciseSets: (sets: number) => void
+}
+
+export interface ITemplateSupersetFormProps {
+  supersetName: string
+  setSupersetName: Dispatch<SetStateAction<string>>
+  selectedExercisesData: ITemplateExercise[]
 }

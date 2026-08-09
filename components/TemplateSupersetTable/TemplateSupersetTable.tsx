@@ -1,0 +1,194 @@
+import { colors } from "@/styles/colors";
+import { ITemplateSupersetTableProps } from "@/types/props";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { NestableDraggableFlatList } from "react-native-draggable-flatlist";
+import Button from "../Button/Button";
+import IconButton from "../IconButton/IconButton";
+import Input from "../Input/Input";
+import Paragraph from "../Paragraph/Paragraph";
+import Title from "../Title/Title";
+import SubTemplateExerciseTable from "./SubTemplateExerciseTable";
+
+function TemplateSupersetTableComponent({
+    index,
+    superset,
+    templateWorkoutItemId,
+    outsideSupersetExercises,
+    onDrag,
+    onSupersetNameChange,
+    onDeleteSuperset,
+    onExerciseNameChange,
+    onExerciseSetChange,
+    onDeleteExercise,
+    onMoveExercise,
+    onUnlinkExercise,
+    onUnlinkAllExercises,
+    onCreateNewExercise,
+    onLinkExercise,
+}: ITemplateSupersetTableProps) {
+    const [editableName, setEditableName] = useState(superset.name)
+    const [newExerciseName, setNewExerciseName] = useState("")
+
+    const [isCreateNewExerciseMode, setCreateNewExerciseMode] = useState(false)
+    const [isPickExistingExerciseMode, setPickExistingExerciseMode] = useState(false)
+
+    return (
+        <View style={styles.outterContainer}>
+            <View style={styles.headerContainer}>
+                <View style={styles.headingContainer}>
+                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                        <Ionicons name="reorder-two" size={22} color={colors.red500} />
+                    </Pressable>
+                    <View style={styles.indexBox}>
+                        <Paragraph style={styles.indexText}>{index + 1}</Paragraph>
+                    </View>
+                    <Title isEditable onChangeText={setEditableName} onBlur={() => { }}>{editableName}</Title>
+
+                </View>
+                <View style={styles.headerIconButtonsContainer}>
+                    <IconButton iconName="unlink-outline" onPress={() => { }} />
+                    <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                </View>
+            </View>
+            <NestableDraggableFlatList
+                data={superset.components}
+                keyExtractor={(exercise) => exercise._id}
+                containerStyle={styles.subExercisesContainer}
+                contentContainerStyle={styles.subExercisesContent}
+                renderItem={({ item: exercise, drag }) => (
+                    <SubTemplateExerciseTable supersetId={superset._id}
+                        exercise={exercise}
+                        onDrag={drag}
+                        onExerciseNameChange={async () => { }}
+                        onExerciseSetsChange={async () => { }}
+                        onDeleteExercise={async () => { }}
+                        onUnlinkExercise={async () => { }}
+                    />
+                )}
+                onDragEnd={({ from, to }) => {
+                    if (from === to) return;
+                }}
+            />
+            <View style={styles.buttonsContainer}>
+                {isCreateNewExerciseMode ? (
+                    <View style={styles.createNewExerciseContainer}>
+                        <Input label="New exercise name:" placeholder="E.g. Arnold Press" value={newExerciseName} onChangeText={setNewExerciseName} style={styles.input} />
+                        <View style={styles.createNewExerciseButtonsContainer}>
+                            <Button iconName="checkmark-outline" onPress={() => { }} style={styles.buttons}>Add</Button>
+                            <Button variant="outlined" onPress={() => { setCreateNewExerciseMode(false); setNewExerciseName("") }} style={styles.buttons}>Cancel</Button>
+                        </View>
+                    </View>
+                ) : isPickExistingExerciseMode ? (
+                    <View style={styles.pickExistingExerciseContainer}>
+                        {outsideSupersetExercises.map((exercise) => (
+                            <Pressable key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed] : styles.pickExistingExerciseCard} onPress={() => { }}>
+                                <Ionicons name="barbell-outline" size={22} color={colors.red500} />
+                                <Title>{exercise.name}</Title>
+                            </Pressable>
+                        ))}
+                        <Button variant="outlined" onPress={() => { setPickExistingExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
+                    </View>
+                ) : (
+                    <>
+                        <Button iconName="add-circle-outline" variant="dashed" onPress={() => { setCreateNewExerciseMode(true) }} style={styles.buttons}>New Exercise</Button>
+                        {outsideSupersetExercises.length >= 1 && <Button iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
+                    </>
+                )}
+            </View>
+        </View>
+    )
+}
+
+const styles = StyleSheet.create({
+    outterContainer: {
+        padding: 16,
+        backgroundColor: colors.red900,
+        borderRadius: 14,
+        gap: 12,
+        borderWidth: 1,
+        borderColor: colors.red500,
+    },
+    headerContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    headingContainer: {
+        flexDirection: "row",
+        gap: 8,
+        alignItems: "center",
+    },
+    indexBox: {
+        width: 28,
+        height: 28,
+        borderRadius: 10,
+        backgroundColor: colors.red100,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    indexText: {
+        color: colors.red500,
+    },
+    pressed: {
+        opacity: 0.5,
+    },
+    headerIconButtonsContainer: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 16
+    },
+    subExercisesContainer: {
+        borderLeftWidth: 1,
+        borderLeftColor: colors.red500,
+        paddingHorizontal: 8,
+    },
+    subExercisesContent: {
+        display: "flex",
+        gap: 16,
+    },
+    buttonsContainer: {
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: colors.red500,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8
+    },
+    buttons: {
+        paddingVertical: 8,
+        borderRadius: 16,
+        flex: 1
+    },
+    input: {
+        flex: 1
+    },
+    createNewExerciseContainer: {
+        display: "flex",
+        flex: 1,
+        gap: 8
+    },
+    createNewExerciseButtonsContainer: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 8
+    },
+    pickExistingExerciseContainer: {
+        display: "flex",
+        flex: 1,
+        gap: 8
+    },
+    pickExistingExerciseCard: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 8,
+        backgroundColor: colors.gray500,
+        borderRadius: 8,
+        padding: 12,
+        color: colors.white,
+    }
+})
+
+export default React.memo(TemplateSupersetTableComponent)

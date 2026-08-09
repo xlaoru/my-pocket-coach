@@ -13,7 +13,7 @@ export default function ExerciseForm({ exerciseName, setExerciseName, sets, onSe
             <View>
                 <View style={styles.setsHeaderContainer}>
                     <Paragraph style={[styles.headerText, styles.setsTitle]}>{"Sets".toUpperCase()}</Paragraph>
-                    <Paragraph style={styles.headerText}>{3} set{3 > 1 ? "s" : ""}</Paragraph>
+                    <Paragraph style={styles.headerText}>{sets.length} set{sets.length > 1 ? "s" : ""}</Paragraph>
                 </View>
                 <ScrollView>
                     <View style={styles.measurementHeader}>

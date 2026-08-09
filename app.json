@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "my-pocket-coach",
+    "name": "My Pocket Coach",
     "slug": "my-pocket-coach",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.xlaoru.mypocketcoach"
     },
     "web": {
       "output": "static",
@@ -43,6 +44,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "83be8398-89a1-4069-8341-b6eacd31e184"
+      }
     }
   }
 }

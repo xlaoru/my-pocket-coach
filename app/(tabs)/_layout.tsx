@@ -26,6 +26,13 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
+                options={{
+                    title: "Templates",
+                    tabBarLabel: "Templates",
+                    tabBarIcon: ({ color, size }) => <Ionicons name="document-text-outline" color={color} size={size} />
+                }}
+            />
+            <Tabs.Screen
                 name="Periodization"
                 options={{
                     title: "Planning",

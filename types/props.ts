@@ -264,6 +264,7 @@ export interface IAttachStageCardProps {
 
 export interface ITemplateListProps {
   templates: ITemplate[]
+  onDeleteTemplate: (templateId: string) => Promise<void>
 }
 
 export interface ITemplateListItemProps {

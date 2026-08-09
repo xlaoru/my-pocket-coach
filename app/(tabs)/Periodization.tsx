@@ -80,16 +80,24 @@ export default function Periodization() {
                 {
                     isError
                         ? (
-                            <EntityEmptyState iconName="calendar-outline" title="No periods yet" message="Create a periodization period with stages" />
+                            <EntityEmptyState
+                                iconName="alert-circle-outline"
+                                title="Failed to load periodizations"
+                                message="Please check the API connection and try again."
+                            />
                         )
                         : isLoading
 
                             ? (
                                 <Loader />
                             )
-                            : (
-                                <PeriodizationList periodizations={periodizations} onDeletePeriodization={handleDeletePeriodization} />
-                            )
+                            : periodizations.length === 0
+                                ? (
+                                    <EntityEmptyState iconName="calendar-outline" title="No periods yet" message="Create a periodization period with stages" />
+                                )
+                                : (
+                                    <PeriodizationList periodizations={periodizations} onDeletePeriodization={handleDeletePeriodization} />
+                                )
                 }
             </View>
             <Button iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Periodization</Button>

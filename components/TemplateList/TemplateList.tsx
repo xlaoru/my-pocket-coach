@@ -30,7 +30,7 @@ function countSupersets(workout: ITemplateWorkoutItem[]): number {
     return count;
 }
 
-export default function TemplateList({ templates }: ITemplateListProps) {
+export default function TemplateList({ templates, onDeleteTemplate }: ITemplateListProps) {
     const router = useRouter()
 
     return (
@@ -53,7 +53,7 @@ export default function TemplateList({ templates }: ITemplateListProps) {
                             params: { _id: item._id }
                         })
                     }}
-                    onDeleteTemplate={async () => { }}
+                    onDeleteTemplate={onDeleteTemplate}
                 />
             )}
         />

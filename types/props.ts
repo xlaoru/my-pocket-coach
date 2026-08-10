@@ -320,7 +320,7 @@ export interface ISubTemplateExerciseTableProps {
   exercise: ITemplateExercise
   onDrag: VoidFunction
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
-  onExerciseSetsChange: (exerciseId: string, sets: string) => Promise<void>
+  onExerciseSetChange: (exerciseId: string, sets: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
 }

@@ -11,7 +11,7 @@ function SubTemplateExerciseTableComponent({
     exercise,
     onDrag,
     onExerciseNameChange,
-    onExerciseSetsChange,
+    onExerciseSetChange,
     onDeleteExercise,
     onUnlinkExercise,
 

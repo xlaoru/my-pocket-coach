@@ -63,18 +63,6 @@ export default function Template() {
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            {isSupersetCombiningMode && (
-                <View style={styles.combiningPanelContainer}>
-                    <View>
-                        <Title style={styles.combiningPanelTitle}>Combining mode</Title>
-                        <Paragraph>Select at least 2</Paragraph>
-                    </View>
-                    <View style={styles.combiningPanelButtonsContainer}>
-                        <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false) }} style={styles.combiningPanelButton}>Cancel</Button>
-                        {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
-                    </View>
-                </View>
-            )}
             <View
                 style={[
                     { paddingBottom: insets.bottom + 12 },
@@ -85,6 +73,18 @@ export default function Template() {
                     <Heading isEditable onChangeText={setTemplateName} onBlur={() => { }}>{isLoading ? "Loading..." : templateName}</Heading>
                     {template?.description && <Paragraph isEditable onChangeText={setTemplateDescription} onBlur={() => { }}>{isLoading ? "Loading..." : templateDescription}</Paragraph>}
                 </View>
+                {isSupersetCombiningMode && (
+                    <View style={styles.combiningPanelContainer}>
+                        <View>
+                            <Title style={styles.combiningPanelTitle}>Combining mode</Title>
+                            <Paragraph>Select at least 2</Paragraph>
+                        </View>
+                        <View style={styles.combiningPanelButtonsContainer}>
+                            <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false) }} style={styles.combiningPanelButton}>Cancel</Button>
+                            {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
+                        </View>
+                    </View>
+                )}
                 <View style={styles.listContainer}>
                     {
                         isError

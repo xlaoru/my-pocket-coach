@@ -302,7 +302,7 @@ export interface ITemplateSupersetTableProps {
   onSupersetNameChange: (supersetId: string, name: string) => Promise<void>
   onDeleteSuperset: (supersetId: string) => Promise<void>
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
-  onExerciseSetChange: (exerciseId: string, sets: string) => Promise<void>
+  onExerciseSetChange: (exerciseId: string, sets: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
   onMoveExercise: (
     containerId: string,

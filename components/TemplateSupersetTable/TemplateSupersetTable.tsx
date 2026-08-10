@@ -1,7 +1,7 @@
 import { colors } from "@/styles/colors";
 import { ITemplateSupersetTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { NestableDraggableFlatList } from "react-native-draggable-flatlist";
 import Button from "../Button/Button";
@@ -33,6 +33,10 @@ function TemplateSupersetTableComponent({
 
     const [isCreateNewExerciseMode, setCreateNewExerciseMode] = useState(false)
     const [isPickExistingExerciseMode, setPickExistingExerciseMode] = useState(false)
+
+    useEffect(() => {
+        setEditableName(superset.name);
+    }, [superset.name]);
 
     return (
         <View style={styles.outterContainer}>

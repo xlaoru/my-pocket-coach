@@ -1,7 +1,7 @@
 import { colors } from "@/styles/colors";
 import { ITemplateExerciseTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Checkbox from "../Checkbox/Checkbox";
 import IconButton from "../IconButton/IconButton";
@@ -23,6 +23,14 @@ function TemplateExerciseTableComponents({
 }: ITemplateExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [exerciseSets, setExerciseSets] = useState(exercise.sets)
+
+    useEffect(() => {
+        setEditableName(exercise.name);
+    }, [exercise.name]);
+
+    useEffect(() => {
+        setExerciseSets(exercise.sets);
+    }, [exercise.sets]);
 
     const toggleSelect = useCallback(() => {
         setSelectedExercises((prev) => prev.includes(templateWorkoutItemId) ? prev.filter((id) => id !== templateWorkoutItemId) : [...prev, templateWorkoutItemId])

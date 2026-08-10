@@ -23,6 +23,10 @@ function SubTemplateExerciseTableComponent({
         setEditableName(exercise.name);
     }, [exercise.name]);
 
+    useEffect(() => {
+        setExerciseSets(exercise.sets);
+    }, [exercise.sets]);
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>

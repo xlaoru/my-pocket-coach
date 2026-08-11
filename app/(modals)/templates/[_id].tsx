@@ -12,6 +12,7 @@ import Title from "@/components/Title/Title";
 import { useCreateTemplateExercise } from "@/features/programs/hooks/use-create-template-exercise";
 import { useEditTemplateExerciseName } from "@/features/programs/hooks/use-edit-template-exercise-name";
 import { useEditTemplateExerciseSets } from "@/features/programs/hooks/use-edit-template-exercise-sets";
+import { useMoveTemplateExercise } from "@/features/programs/hooks/use-move-template-exercise";
 import { useTemplate } from "@/features/programs/hooks/use-template";
 import { colors } from "@/styles/colors";
 import { ITemplateExercise } from "@/types/models";
@@ -31,6 +32,7 @@ export default function Template() {
     const createTemplateExerciseMutation = useCreateTemplateExercise()
     const editTemplateExerciseNameMutation = useEditTemplateExerciseName()
     const editTemplateExerciseSetsMutation = useEditTemplateExerciseSets()
+    const moveTemplateExerciseMutation = useMoveTemplateExercise()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -121,6 +123,21 @@ export default function Template() {
         }
     }, [_id, editTemplateExerciseSetsMutation])
 
+    const handleMoveTemplateExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
+        try {
+            await moveTemplateExerciseMutation.mutateAsync({
+                templateId: _id,
+                payload: {
+                    containerId,
+                    sourceIndex,
+                    destinationIndex
+                }
+            })
+        } catch {
+            Alert.alert("Failed to move exercise", "Please try again.");
+        }
+    }, [_id, moveTemplateExerciseMutation])
+
     useEffect(() => {
         if (!isSupersetCombiningMode) {
             setSelectedExercises([])
@@ -206,7 +223,7 @@ export default function Template() {
                                                                         onExerciseNameChange={handleEditTemplateExerciseName}
                                                                         onExerciseSetChange={handleEditTemplateExerciseSets}
                                                                         onDeleteExercise={async () => { }}
-                                                                        onMoveExercise={async () => { }}
+                                                                        onMoveExercise={handleMoveTemplateExercise}
                                                                         onUnlinkExercise={async () => { }}
                                                                         onUnlinkAllExercises={async () => { }}
                                                                         onCreateNewExercise={async () => { }}
@@ -220,6 +237,8 @@ export default function Template() {
                                             keyExtractor={(item) => item._id}
                                             onDragEnd={({ from, to }) => {
                                                 if (from === to) return
+
+                                                handleMoveTemplateExercise(_id, from, to)
                                             }}
                                         />
                                     </NestableScrollContainer>

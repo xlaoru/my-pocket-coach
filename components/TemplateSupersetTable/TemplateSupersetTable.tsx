@@ -73,6 +73,7 @@ function TemplateSupersetTableComponent({
                 )}
                 onDragEnd={({ from, to }) => {
                     if (from === to) return;
+                    void onMoveExercise(templateWorkoutItemId, from, to)
                 }}
             />
             <View style={styles.buttonsContainer}>

@@ -10,6 +10,7 @@ import TemplateSupersetForm from "@/components/TemplateSupersetForm/TemplateSupe
 import TemplateSupersetTable from "@/components/TemplateSupersetTable/TemplateSupersetTable";
 import Title from "@/components/Title/Title";
 import { useCreateTemplateExercise } from "@/features/programs/hooks/use-create-template-exercise";
+import { useDeleteTemplateExercise } from "@/features/programs/hooks/use-delete-template-exercise";
 import { useEditTemplateExerciseName } from "@/features/programs/hooks/use-edit-template-exercise-name";
 import { useEditTemplateExerciseSets } from "@/features/programs/hooks/use-edit-template-exercise-sets";
 import { useMoveTemplateExercise } from "@/features/programs/hooks/use-move-template-exercise";
@@ -33,6 +34,7 @@ export default function Template() {
     const editTemplateExerciseNameMutation = useEditTemplateExerciseName()
     const editTemplateExerciseSetsMutation = useEditTemplateExerciseSets()
     const moveTemplateExerciseMutation = useMoveTemplateExercise()
+    const deleteTemplateExerciseMutation = useDeleteTemplateExercise()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -138,6 +140,17 @@ export default function Template() {
         }
     }, [_id, moveTemplateExerciseMutation])
 
+    const handleDeleteTemplateExercise = useCallback(async (exerciseId: string) => {
+        try {
+            await deleteTemplateExerciseMutation.mutateAsync({
+                templateId: _id,
+                exerciseId
+            })
+        } catch {
+            Alert.alert("Failed to delete exercise", "Please try again.");
+        }
+    }, [_id, deleteTemplateExerciseMutation])
+
     useEffect(() => {
         if (!isSupersetCombiningMode) {
             setSelectedExercises([])
@@ -205,7 +218,7 @@ export default function Template() {
                                                                         onDrag={drag}
                                                                         onExerciseNameChange={handleEditTemplateExerciseName}
                                                                         onExerciseSetChange={handleEditTemplateExerciseSets}
-                                                                        onDeleteExerciseSet={async () => { }}
+                                                                        onDeleteExercise={handleDeleteTemplateExercise}
                                                                         isSupersetCombiningMode={isSupersetCombiningMode}
                                                                         selectedExercises={selectedExercises}
                                                                         setSelectedExercises={setSelectedExercises}
@@ -222,7 +235,7 @@ export default function Template() {
                                                                         onDeleteSuperset={async () => { }}
                                                                         onExerciseNameChange={handleEditTemplateExerciseName}
                                                                         onExerciseSetChange={handleEditTemplateExerciseSets}
-                                                                        onDeleteExercise={async () => { }}
+                                                                        onDeleteExercise={handleDeleteTemplateExercise}
                                                                         onMoveExercise={handleMoveTemplateExercise}
                                                                         onUnlinkExercise={async () => { }}
                                                                         onUnlinkAllExercises={async () => { }}

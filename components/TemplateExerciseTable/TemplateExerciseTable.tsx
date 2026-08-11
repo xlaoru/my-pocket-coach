@@ -15,7 +15,7 @@ function TemplateExerciseTableComponents({
     onDrag,
     onExerciseNameChange,
     onExerciseSetChange,
-    onDeleteExerciseSet,
+    onDeleteExercise,
     isSupersetCombiningMode,
     selectedExercises,
     setSelectedExercises,
@@ -64,6 +64,10 @@ function TemplateExerciseTableComponents({
         });
     }, [exercise._id, onExerciseSetChange]);
 
+    const handleDeleteTemplateExercise = useCallback(() => {
+        void onDeleteExercise(exercise._id)
+    }, [exercise._id, onDeleteExercise])
+
     const toggleSelect = useCallback(() => {
         setSelectedExercises((prev) => prev.includes(templateWorkoutItemId) ? prev.filter((id) => id !== templateWorkoutItemId) : [...prev, templateWorkoutItemId])
         setSelectedExercisesData((prev) =>
@@ -94,7 +98,7 @@ function TemplateExerciseTableComponents({
                                 </View>
                                 <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
-                            <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                            <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                         </View>
                     )
             }

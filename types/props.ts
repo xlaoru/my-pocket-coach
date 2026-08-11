@@ -286,7 +286,7 @@ export interface ITemplateExerciseTableProps {
   onDrag: VoidFunction
   onExerciseNameChange: (exerciseId: string, name: string) => Promise<void>
   onExerciseSetChange: (exerciseId: string, set: number) => Promise<void>
-  onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+  onDeleteExercise: (exerciseId: string) => Promise<void>
   isSupersetCombiningMode: boolean
   selectedExercises: string[]
   setSelectedExercises: Dispatch<SetStateAction<string[]>>

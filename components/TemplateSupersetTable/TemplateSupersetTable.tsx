@@ -67,7 +67,7 @@ function TemplateSupersetTableComponent({
                         onDrag={drag}
                         onExerciseNameChange={onExerciseNameChange}
                         onExerciseSetChange={onExerciseSetChange}
-                        onDeleteExercise={async () => { }}
+                        onDeleteExercise={onDeleteExercise}
                         onUnlinkExercise={async () => { }}
                     />
                 )}

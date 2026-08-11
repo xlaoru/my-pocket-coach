@@ -59,6 +59,10 @@ function SubTemplateExerciseTableComponent({
         });
     }, [exercise._id, onExerciseSetChange]);
 
+    const handleDeleteTemplateExercise = useCallback(() => {
+        void onDeleteExercise(exercise._id)
+    }, [exercise._id, onDeleteExercise])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -70,7 +74,7 @@ function SubTemplateExerciseTableComponent({
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={() => { }} />
-                    <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                 </View>
             </View>
             <View

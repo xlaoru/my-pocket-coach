@@ -16,7 +16,7 @@ export interface IEditTemplateSupersetNamePayload {
   name: string
 }
 
-export interface ICreateTemplateExerciseInSupersetPayload {
+export interface ICreateNewTemplateExercisePayload {
   name: string
   sets: number
 }

@@ -71,6 +71,17 @@ function TemplateSupersetTableComponent({
         void onLinkExercise(superset._id, exerciseId)
     }, [onLinkExercise, superset._id])
 
+    const handleCreateNewTemplateExercise = useCallback(() => {
+        const trimmedNewExerciseName = newExerciseName.trim()
+
+        if (!trimmedNewExerciseName) return
+
+        void onCreateNewExercise(superset._id, trimmedNewExerciseName)
+
+        setNewExerciseName("")
+        setCreateNewExerciseMode(false)
+    }, [newExerciseName, onCreateNewExercise, superset._id])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -114,7 +125,7 @@ function TemplateSupersetTableComponent({
                     <View style={styles.createNewExerciseContainer}>
                         <Input label="New exercise name:" placeholder="E.g. Arnold Press" value={newExerciseName} onChangeText={setNewExerciseName} style={styles.input} />
                         <View style={styles.createNewExerciseButtonsContainer}>
-                            <Button iconName="checkmark-outline" onPress={() => { }} style={styles.buttons}>Add</Button>
+                            <Button iconName="checkmark-outline" onPress={handleCreateNewTemplateExercise} style={styles.buttons}>Add</Button>
                             <Button variant="outlined" onPress={() => { setCreateNewExerciseMode(false); setNewExerciseName("") }} style={styles.buttons}>Cancel</Button>
                         </View>
                     </View>

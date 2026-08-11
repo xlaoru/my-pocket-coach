@@ -9,6 +9,7 @@ import TemplateExerciseTable from "@/components/TemplateExerciseTable/TemplateEx
 import TemplateSupersetForm from "@/components/TemplateSupersetForm/TemplateSupersetForm";
 import TemplateSupersetTable from "@/components/TemplateSupersetTable/TemplateSupersetTable";
 import Title from "@/components/Title/Title";
+import { useCreateNewTemplateExercise } from "@/features/programs/hooks/use-create-new-template-exercise";
 import { useCreateTemplateExercise } from "@/features/programs/hooks/use-create-template-exercise";
 import { useCreateTemplateSuperset } from "@/features/programs/hooks/use-create-template-superset";
 import { useDeleteTemplateExercise } from "@/features/programs/hooks/use-delete-template-exercise";
@@ -51,6 +52,7 @@ export default function Template() {
     const unlinkAllTemplateExercisesMutation = useUnlinkAllTemplateExercises()
     const unlinkTemplateExerciseMutation = useUnlinkTemplateExercise()
     const linkTemplateExerciseMutation = useLinkTemplateExercise()
+    const createNewTemplateExerciseMutation = useCreateNewTemplateExercise()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -296,6 +298,21 @@ export default function Template() {
         }
     }, [_id, linkTemplateExerciseMutation])
 
+    const handleCreateNewTemplateExercise = useCallback(async (supersetId: string, newName: string) => {
+        try {
+            await createNewTemplateExerciseMutation.mutateAsync({
+                templateId: _id,
+                supersetId,
+                payload: {
+                    name: newName,
+                    sets: 0
+                }
+            })
+        } catch {
+            Alert.alert("Failed to create exercise", "Please try again.");
+        }
+    }, [_id, createNewTemplateExerciseMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -378,7 +395,7 @@ export default function Template() {
                                                                         onMoveExercise={handleMoveTemplateExercise}
                                                                         onUnlinkExercise={handleUnlinkTemplateExercise}
                                                                         onUnlinkAllExercises={handleUnlinkAllTemplateExercises}
-                                                                        onCreateNewExercise={async () => { }}
+                                                                        onCreateNewExercise={handleCreateNewTemplateExercise}
                                                                         onLinkExercise={handleLinkTemplateExercise}
                                                                     />
                                                                 )

@@ -20,6 +20,7 @@ import { useEditTemplateName } from "@/features/programs/hooks/use-edit-template
 import { useEditTemplateSupersetName } from "@/features/programs/hooks/use-edit-template-superset-name";
 import { useMoveTemplateExercise } from "@/features/programs/hooks/use-move-template-exercise";
 import { useTemplate } from "@/features/programs/hooks/use-template";
+import { useUnlinkAllTemplateExercises } from "@/features/programs/hooks/use-unlink-all-template-exercises";
 import { colors } from "@/styles/colors";
 import { ITemplateExercise } from "@/types/models";
 import { useLocalSearchParams, useNavigation } from "expo-router";
@@ -45,6 +46,7 @@ export default function Template() {
     const createTemplateSupersetMutation = useCreateTemplateSuperset()
     const editTemplateSupersetNameMutation = useEditTemplateSupersetName()
     const deleteTemplateSupersetMutation = useDeleteTemplateSuperset()
+    const unlinkAllTemplateExercisesMutation = useUnlinkAllTemplateExercises()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -256,6 +258,17 @@ export default function Template() {
         }
     }, [_id, deleteTemplateSupersetMutation])
 
+    const handleUnlinkAllTemplateExercises = useCallback(async (supersetId: string) => {
+        try {
+            await unlinkAllTemplateExercisesMutation.mutateAsync({
+                templateId: _id,
+                supersetId
+            })
+        } catch {
+            Alert.alert("Failed to unlink exercises", "Please try again.");
+        }
+    }, [_id, unlinkAllTemplateExercisesMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -337,7 +350,7 @@ export default function Template() {
                                                                         onDeleteExercise={handleDeleteTemplateExercise}
                                                                         onMoveExercise={handleMoveTemplateExercise}
                                                                         onUnlinkExercise={async () => { }}
-                                                                        onUnlinkAllExercises={async () => { }}
+                                                                        onUnlinkAllExercises={handleUnlinkAllTemplateExercises}
                                                                         onCreateNewExercise={async () => { }}
                                                                         onLinkExercise={async () => { }}
                                                                     />

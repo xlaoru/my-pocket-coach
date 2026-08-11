@@ -57,6 +57,10 @@ function TemplateSupersetTableComponent({
         void onDeleteSuperset(superset._id)
     }, [superset._id, onDeleteSuperset])
 
+    const handleUnlinkAllTemplateExercises = useCallback(() => {
+        void onUnlinkAllExercises(superset._id)
+    }, [onUnlinkAllExercises, superset._id])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -71,7 +75,7 @@ function TemplateSupersetTableComponent({
 
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={() => { }} />
+                    <IconButton iconName="unlink-outline" onPress={handleUnlinkAllTemplateExercises} />
                     <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateSuperset} />
                 </View>
             </View>

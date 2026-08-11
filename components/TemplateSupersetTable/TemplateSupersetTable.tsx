@@ -1,7 +1,7 @@
 import { colors } from "@/styles/colors";
 import { ITemplateSupersetTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { NestableDraggableFlatList } from "react-native-draggable-flatlist";
 import Button from "../Button/Button";
@@ -38,6 +38,21 @@ function TemplateSupersetTableComponent({
         setEditableName(superset.name);
     }, [superset.name]);
 
+    const handleNameBlur = useCallback(() => {
+        const trimmedName = editableName.trim()
+
+        if (!trimmedName) {
+            setEditableName(superset.name)
+            return
+        }
+
+        if (trimmedName === superset.name) {
+            return
+        }
+
+        void onSupersetNameChange(superset._id, trimmedName)
+    }, [editableName, onSupersetNameChange, superset._id, superset.name])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -48,7 +63,7 @@ function TemplateSupersetTableComponent({
                     <View style={styles.indexBox}>
                         <Paragraph style={styles.indexText}>{index + 1}</Paragraph>
                     </View>
-                    <Title isEditable onChangeText={setEditableName} onBlur={() => { }}>{editableName}</Title>
+                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
 
                 </View>
                 <View style={styles.headerIconButtonsContainer}>

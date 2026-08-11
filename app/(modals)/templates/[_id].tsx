@@ -16,6 +16,7 @@ import { useEditTemplateDescription } from "@/features/programs/hooks/use-edit-t
 import { useEditTemplateExerciseName } from "@/features/programs/hooks/use-edit-template-exercise-name";
 import { useEditTemplateExerciseSets } from "@/features/programs/hooks/use-edit-template-exercise-sets";
 import { useEditTemplateName } from "@/features/programs/hooks/use-edit-template-name";
+import { useEditTemplateSupersetName } from "@/features/programs/hooks/use-edit-template-superset-name";
 import { useMoveTemplateExercise } from "@/features/programs/hooks/use-move-template-exercise";
 import { useTemplate } from "@/features/programs/hooks/use-template";
 import { colors } from "@/styles/colors";
@@ -41,6 +42,7 @@ export default function Template() {
     const moveTemplateExerciseMutation = useMoveTemplateExercise()
     const deleteTemplateExerciseMutation = useDeleteTemplateExercise()
     const createTemplateSupersetMutation = useCreateTemplateSuperset()
+    const editTemplateSupersetNameMutation = useEditTemplateSupersetName()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -223,6 +225,24 @@ export default function Template() {
         }
     }, [_id, createTemplateSupersetMutation, selectedExercises, supersetName])
 
+    const handleEditTemplateSupersetName = useCallback(async (supersetId: string, newName: string) => {
+        const trimmedTemplateSupersetName = newName.trim()
+
+        if (!trimmedTemplateSupersetName) return
+
+        try {
+            await editTemplateSupersetNameMutation.mutateAsync({
+                templateId: _id,
+                supersetId,
+                payload: {
+                    name: trimmedTemplateSupersetName
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit superset name", "Please try again.");
+        }
+    }, [_id, editTemplateSupersetNameMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -297,7 +317,7 @@ export default function Template() {
                                                                         templateWorkoutItemId={item._id}
                                                                         outsideSupersetExercises={outsideSupersetExercises}
                                                                         onDrag={drag}
-                                                                        onSupersetNameChange={async () => { }}
+                                                                        onSupersetNameChange={handleEditTemplateSupersetName}
                                                                         onDeleteSuperset={async () => { }}
                                                                         onExerciseNameChange={handleEditTemplateExerciseName}
                                                                         onExerciseSetChange={handleEditTemplateExerciseSets}

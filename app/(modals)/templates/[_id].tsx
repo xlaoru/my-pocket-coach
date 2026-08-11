@@ -12,6 +12,7 @@ import Title from "@/components/Title/Title";
 import { useCreateTemplateExercise } from "@/features/programs/hooks/use-create-template-exercise";
 import { useCreateTemplateSuperset } from "@/features/programs/hooks/use-create-template-superset";
 import { useDeleteTemplateExercise } from "@/features/programs/hooks/use-delete-template-exercise";
+import { useDeleteTemplateSuperset } from "@/features/programs/hooks/use-delete-template-superset";
 import { useEditTemplateDescription } from "@/features/programs/hooks/use-edit-template-description";
 import { useEditTemplateExerciseName } from "@/features/programs/hooks/use-edit-template-exercise-name";
 import { useEditTemplateExerciseSets } from "@/features/programs/hooks/use-edit-template-exercise-sets";
@@ -43,6 +44,7 @@ export default function Template() {
     const deleteTemplateExerciseMutation = useDeleteTemplateExercise()
     const createTemplateSupersetMutation = useCreateTemplateSuperset()
     const editTemplateSupersetNameMutation = useEditTemplateSupersetName()
+    const deleteTemplateSupersetMutation = useDeleteTemplateSuperset()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -243,6 +245,17 @@ export default function Template() {
         }
     }, [_id, editTemplateSupersetNameMutation])
 
+    const handleDeleteTemplateSuperset = useCallback(async (supersetId: string) => {
+        try {
+            await deleteTemplateSupersetMutation.mutateAsync({
+                templateId: _id,
+                supersetId
+            })
+        } catch {
+            Alert.alert("Failed to delete superset", "Please try again.");
+        }
+    }, [_id, deleteTemplateSupersetMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -318,7 +331,7 @@ export default function Template() {
                                                                         outsideSupersetExercises={outsideSupersetExercises}
                                                                         onDrag={drag}
                                                                         onSupersetNameChange={handleEditTemplateSupersetName}
-                                                                        onDeleteSuperset={async () => { }}
+                                                                        onDeleteSuperset={handleDeleteTemplateSuperset}
                                                                         onExerciseNameChange={handleEditTemplateExerciseName}
                                                                         onExerciseSetChange={handleEditTemplateExerciseSets}
                                                                         onDeleteExercise={handleDeleteTemplateExercise}

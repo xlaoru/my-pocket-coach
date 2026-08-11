@@ -53,6 +53,10 @@ function TemplateSupersetTableComponent({
         void onSupersetNameChange(superset._id, trimmedName)
     }, [editableName, onSupersetNameChange, superset._id, superset.name])
 
+    const handleDeleteTemplateSuperset = useCallback(() => {
+        void onDeleteSuperset(superset._id)
+    }, [superset._id, onDeleteSuperset])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -68,7 +72,7 @@ function TemplateSupersetTableComponent({
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={() => { }} />
-                    <IconButton iconName="trash-bin-outline" onPress={() => { }} />
+                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateSuperset} />
                 </View>
             </View>
             <NestableDraggableFlatList

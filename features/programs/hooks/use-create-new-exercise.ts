@@ -1,6 +1,6 @@
 import { queryKeys } from '@/lib/query/query-keys'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createNewExercise } from '../api/create-new-exercises'
+import { createNewExercise } from '../api/create-new-exercise'
 import { ICreateNewExercisePayload } from '../types/superset.dto'
 
 interface CreateNewExerciseVariables {

@@ -10,6 +10,7 @@ import TemplateSupersetForm from "@/components/TemplateSupersetForm/TemplateSupe
 import TemplateSupersetTable from "@/components/TemplateSupersetTable/TemplateSupersetTable";
 import Title from "@/components/Title/Title";
 import { useCreateTemplateExercise } from "@/features/programs/hooks/use-create-template-exercise";
+import { useCreateTemplateSuperset } from "@/features/programs/hooks/use-create-template-superset";
 import { useDeleteTemplateExercise } from "@/features/programs/hooks/use-delete-template-exercise";
 import { useEditTemplateExerciseName } from "@/features/programs/hooks/use-edit-template-exercise-name";
 import { useEditTemplateExerciseSets } from "@/features/programs/hooks/use-edit-template-exercise-sets";
@@ -35,6 +36,7 @@ export default function Template() {
     const editTemplateExerciseSetsMutation = useEditTemplateExerciseSets()
     const moveTemplateExerciseMutation = useMoveTemplateExercise()
     const deleteTemplateExerciseMutation = useDeleteTemplateExercise()
+    const createTemplateSupersetMutation = useCreateTemplateSuperset()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -157,6 +159,32 @@ export default function Template() {
         }
     }, [isSupersetCombiningMode])
 
+    const handleCreateTemplateSuperset = useCallback(async () => {
+        try {
+            const trimmedSupertsetName = supersetName.trim()
+
+            if (!trimmedSupertsetName) {
+                return
+            }
+
+            await createTemplateSupersetMutation.mutateAsync({
+                templateId: _id,
+                payload: {
+                    name: trimmedSupertsetName,
+                    templateWorkoutItemIds: selectedExercises
+                }
+            })
+
+            setSupersetName("")
+            setSelectedExercises([])
+            setSupersetCombiningMode(false)
+            setSupersetCombiningFormOpen(false)
+            setSelectedExercisesData([])
+        } catch {
+            Alert.alert("Failed to create superset", "Please try again.")
+        }
+    }, [_id, createTemplateSupersetMutation, selectedExercises, supersetName])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -265,7 +293,7 @@ export default function Template() {
                 <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
                     <TemplateExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} exerciseSets={exerciseSets} setExerciseSets={setExerciseSets} />
                 </BottomSheetForm>
-                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={() => { }} onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateTemplateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <TemplateSupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
             </View>

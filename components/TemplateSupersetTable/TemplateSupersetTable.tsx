@@ -61,6 +61,16 @@ function TemplateSupersetTableComponent({
         void onUnlinkAllExercises(superset._id)
     }, [onUnlinkAllExercises, superset._id])
 
+    useEffect(() => {
+        if (outsideSupersetExercises.length === 0) {
+            setPickExistingExerciseMode(false)
+        }
+    }, [outsideSupersetExercises.length])
+
+    const handleLinkTemplateExercise = useCallback((exerciseId: string) => {
+        void onLinkExercise(superset._id, exerciseId)
+    }, [onLinkExercise, superset._id])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -111,7 +121,7 @@ function TemplateSupersetTableComponent({
                 ) : isPickExistingExerciseMode ? (
                     <View style={styles.pickExistingExerciseContainer}>
                         {outsideSupersetExercises.map((exercise) => (
-                            <Pressable key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed] : styles.pickExistingExerciseCard} onPress={() => { }}>
+                            <Pressable key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed] : styles.pickExistingExerciseCard} onPress={() => { handleLinkTemplateExercise(exercise.components[0]._id) }}>
                                 <Ionicons name="barbell-outline" size={22} color={colors.red500} />
                                 <Title>{exercise.name}</Title>
                             </Pressable>

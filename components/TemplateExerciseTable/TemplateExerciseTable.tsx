@@ -32,6 +32,38 @@ function TemplateExerciseTableComponents({
         setExerciseSets(exercise.sets);
     }, [exercise.sets]);
 
+    const handleNameBlur = useCallback(() => {
+        const trimmedName = editableName.trim();
+
+        if (!trimmedName) {
+            setEditableName(exercise.name);
+            return;
+        }
+
+        if (trimmedName === exercise.name) {
+            return;
+        }
+
+        void onExerciseNameChange(exercise._id, trimmedName)
+    }, [editableName, exercise._id, exercise.name, onExerciseNameChange])
+
+    const handleDecrementSets = useCallback(() => {
+        setExerciseSets((prev) => {
+            if (prev <= 1) return prev;
+            const next = prev - 1;
+            void onExerciseSetChange(exercise._id, next);
+            return next;
+        });
+    }, [exercise._id, onExerciseSetChange]);
+
+    const handleIncrementSets = useCallback(() => {
+        setExerciseSets((prev) => {
+            const next = prev + 1;
+            void onExerciseSetChange(exercise._id, next);
+            return next;
+        });
+    }, [exercise._id, onExerciseSetChange]);
+
     const toggleSelect = useCallback(() => {
         setSelectedExercises((prev) => prev.includes(templateWorkoutItemId) ? prev.filter((id) => id !== templateWorkoutItemId) : [...prev, templateWorkoutItemId])
         setSelectedExercisesData((prev) =>
@@ -60,7 +92,7 @@ function TemplateExerciseTableComponents({
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable onChangeText={setEditableName} onBlur={() => { }}>{editableName}</Title>
+                                <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
                             <IconButton iconName="trash-bin-outline" onPress={() => { }} />
                         </View>
@@ -69,9 +101,9 @@ function TemplateExerciseTableComponents({
             <View
                 style={styles.setsContainer}
             >
-                <IconButton iconName="remove-circle-outline" onPress={() => { }} />
+                <IconButton iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton iconName="add-circle-outline" onPress={() => { }} />
+                <IconButton iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )

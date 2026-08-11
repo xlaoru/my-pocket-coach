@@ -65,8 +65,8 @@ function TemplateSupersetTableComponent({
                     <SubTemplateExerciseTable supersetId={superset._id}
                         exercise={exercise}
                         onDrag={drag}
-                        onExerciseNameChange={async () => { }}
-                        onExerciseSetChange={async () => { }}
+                        onExerciseNameChange={onExerciseNameChange}
+                        onExerciseSetChange={onExerciseSetChange}
                         onDeleteExercise={async () => { }}
                         onUnlinkExercise={async () => { }}
                     />

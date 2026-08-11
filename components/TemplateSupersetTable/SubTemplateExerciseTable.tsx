@@ -1,7 +1,7 @@
 import { colors } from "@/styles/colors";
 import { ISubTemplateExerciseTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
@@ -27,6 +27,38 @@ function SubTemplateExerciseTableComponent({
         setExerciseSets(exercise.sets);
     }, [exercise.sets]);
 
+    const handleNameBlur = useCallback(() => {
+        const trimmedName = editableName.trim();
+
+        if (!trimmedName) {
+            setEditableName(exercise.name);
+            return;
+        }
+
+        if (trimmedName === exercise.name) {
+            return;
+        }
+
+        void onExerciseNameChange(exercise._id, trimmedName)
+    }, [editableName, exercise._id, exercise.name, onExerciseNameChange])
+
+    const handleDecrementSets = useCallback(() => {
+        setExerciseSets((prev) => {
+            if (prev <= 1) return prev;
+            const next = prev - 1;
+            void onExerciseSetChange(exercise._id, next);
+            return next;
+        });
+    }, [exercise._id, onExerciseSetChange]);
+
+    const handleIncrementSets = useCallback(() => {
+        setExerciseSets((prev) => {
+            const next = prev + 1;
+            void onExerciseSetChange(exercise._id, next);
+            return next;
+        });
+    }, [exercise._id, onExerciseSetChange]);
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -34,7 +66,7 @@ function SubTemplateExerciseTableComponent({
                     <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title isEditable onChangeText={setEditableName} onBlur={() => { }}>{editableName}</Title>
+                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={() => { }} />
@@ -44,9 +76,9 @@ function SubTemplateExerciseTableComponent({
             <View
                 style={styles.setsContainer}
             >
-                <IconButton iconName="remove-circle-outline" onPress={() => { }} />
+                <IconButton iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton iconName="add-circle-outline" onPress={() => { }} />
+                <IconButton iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )

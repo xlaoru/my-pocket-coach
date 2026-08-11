@@ -63,6 +63,10 @@ function SubTemplateExerciseTableComponent({
         void onDeleteExercise(exercise._id)
     }, [exercise._id, onDeleteExercise])
 
+    const handleUnlinkTemplateExercise = useCallback(() => {
+        void onUnlinkExercise(supersetId, exercise._id)
+    }, [exercise._id, onUnlinkExercise, supersetId])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -73,7 +77,7 @@ function SubTemplateExerciseTableComponent({
                     <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={() => { }} />
+                    <IconButton iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
                     <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                 </View>
             </View>

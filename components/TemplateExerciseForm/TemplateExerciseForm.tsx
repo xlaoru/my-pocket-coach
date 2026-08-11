@@ -17,9 +17,9 @@ export default function TemplateExerciseForm({ exerciseName, setExerciseName, ex
             <View
                 style={styles.setsContainer}
             >
-                <IconButton iconName="remove-circle-outline" onPress={() => { }} />
+                <IconButton iconName="remove-circle-outline" onPress={() => { setExerciseSets(exerciseSets > 0 ? exerciseSets - 1 : exerciseSets) }} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton iconName="add-circle-outline" onPress={() => { }} />
+                <IconButton iconName="add-circle-outline" onPress={() => { setExerciseSets(exerciseSets + 1) }} />
             </View>
         </View >
     )

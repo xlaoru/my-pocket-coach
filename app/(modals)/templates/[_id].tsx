@@ -9,12 +9,13 @@ import TemplateExerciseTable from "@/components/TemplateExerciseTable/TemplateEx
 import TemplateSupersetForm from "@/components/TemplateSupersetForm/TemplateSupersetForm";
 import TemplateSupersetTable from "@/components/TemplateSupersetTable/TemplateSupersetTable";
 import Title from "@/components/Title/Title";
+import { useCreateTemplateExercise } from "@/features/programs/hooks/use-create-template-exercise";
 import { useTemplate } from "@/features/programs/hooks/use-template";
 import { colors } from "@/styles/colors";
 import { ITemplateExercise } from "@/types/models";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { useEffect, useLayoutEffect, useState } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { NestableDraggableFlatList, NestableScrollContainer } from "react-native-draggable-flatlist";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -24,6 +25,8 @@ export default function Template() {
     const { _id } = useLocalSearchParams<{ _id: string }>()
 
     const { data: template, isLoading, isError } = useTemplate(_id)
+
+    const createTemplateExerciseMutation = useCreateTemplateExercise()
 
     const [templateName, setTemplateName] = useState(template?.name ?? "")
     const [templateDescription, setTemplateDescription] = useState(template?.description ?? "")
@@ -57,6 +60,34 @@ export default function Template() {
             title: "Templates"
         })
     }, [template, navigation])
+
+    const handleCreateTemplateExercise = useCallback(async () => {
+        const trimmedExerciseName = exerciseName.trim()
+
+        if (!trimmedExerciseName) return;
+
+        try {
+            await createTemplateExerciseMutation.mutateAsync({
+                templateId: _id,
+                payload: {
+                    name: trimmedExerciseName,
+                    sets: exerciseSets
+                }
+            })
+
+            setExerciseName("")
+            setExerciseSets(0)
+            setExerciseFormOpen(false)
+        } catch {
+            Alert.alert("Failed to create exercise", "Please try again.")
+        }
+    }, [_id, createTemplateExerciseMutation, exerciseName, exerciseSets])
+
+    useEffect(() => {
+        if (!isSupersetCombiningMode) {
+            setSelectedExercises([])
+        }
+    }, [isSupersetCombiningMode])
 
     return (
         <KeyboardAvoidingView
@@ -161,7 +192,7 @@ export default function Template() {
                     <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
                     {template?.templateWorkout && template?.templateWorkout.length >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
                 </View>
-                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={() => { }} title="Add Exercise">
+                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
                     <TemplateExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} exerciseSets={exerciseSets} setExerciseSets={setExerciseSets} />
                 </BottomSheetForm>
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={() => { }} onClose={() => { setSupersetCombiningFormOpen(false) }}>

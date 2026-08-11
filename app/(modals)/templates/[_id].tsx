@@ -12,8 +12,10 @@ import Title from "@/components/Title/Title";
 import { useCreateTemplateExercise } from "@/features/programs/hooks/use-create-template-exercise";
 import { useCreateTemplateSuperset } from "@/features/programs/hooks/use-create-template-superset";
 import { useDeleteTemplateExercise } from "@/features/programs/hooks/use-delete-template-exercise";
+import { useEditTemplateDescription } from "@/features/programs/hooks/use-edit-template-description";
 import { useEditTemplateExerciseName } from "@/features/programs/hooks/use-edit-template-exercise-name";
 import { useEditTemplateExerciseSets } from "@/features/programs/hooks/use-edit-template-exercise-sets";
+import { useEditTemplateName } from "@/features/programs/hooks/use-edit-template-name";
 import { useMoveTemplateExercise } from "@/features/programs/hooks/use-move-template-exercise";
 import { useTemplate } from "@/features/programs/hooks/use-template";
 import { colors } from "@/styles/colors";
@@ -31,6 +33,8 @@ export default function Template() {
 
     const { data: template, isLoading, isError } = useTemplate(_id)
 
+    const editTemplateNameMutation = useEditTemplateName()
+    const editTemplateDescriptionMutation = useEditTemplateDescription()
     const createTemplateExerciseMutation = useCreateTemplateExercise()
     const editTemplateExerciseNameMutation = useEditTemplateExerciseName()
     const editTemplateExerciseSetsMutation = useEditTemplateExerciseSets()
@@ -70,6 +74,40 @@ export default function Template() {
             title: "Templates"
         })
     }, [template, navigation])
+
+    const handleEditTemplateName = useCallback(async () => {
+        const trimmedTemplateName = templateName.trim()
+
+        if (!trimmedTemplateName) return
+
+        try {
+            await editTemplateNameMutation.mutateAsync({
+                templateId: _id,
+                payload: {
+                    name: trimmedTemplateName
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit template name", "Please try again.");
+        }
+    }, [_id, editTemplateNameMutation, templateName])
+
+    const handleEditTemplateDescription = useCallback(async () => {
+        const trimmedTemplateDescription = templateDescription.trim()
+
+        if (!trimmedTemplateDescription) return
+
+        try {
+            await editTemplateDescriptionMutation.mutateAsync({
+                templateId: _id,
+                payload: {
+                    description: trimmedTemplateDescription
+                }
+            })
+        } catch {
+            Alert.alert("Failed to edit template description", "Please try again.");
+        }
+    }, [_id, editTemplateDescriptionMutation, templateDescription])
 
     const handleCreateTemplateExercise = useCallback(async () => {
         const trimmedExerciseName = exerciseName.trim()
@@ -160,13 +198,13 @@ export default function Template() {
     }, [isSupersetCombiningMode])
 
     const handleCreateTemplateSuperset = useCallback(async () => {
+        const trimmedSupertsetName = supersetName.trim()
+
+        if (!trimmedSupertsetName) {
+            return
+        }
+
         try {
-            const trimmedSupertsetName = supersetName.trim()
-
-            if (!trimmedSupertsetName) {
-                return
-            }
-
             await createTemplateSupersetMutation.mutateAsync({
                 templateId: _id,
                 payload: {
@@ -197,8 +235,8 @@ export default function Template() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setTemplateName} onBlur={() => { }}>{isLoading ? "Loading..." : templateName}</Heading>
-                    {template?.description && <Paragraph isEditable onChangeText={setTemplateDescription} onBlur={() => { }}>{isLoading ? "Loading..." : templateDescription}</Paragraph>}
+                    <Heading isEditable onChangeText={setTemplateName} onBlur={handleEditTemplateName}>{isLoading ? "Loading..." : templateName}</Heading>
+                    {template?.description && <Paragraph isEditable onChangeText={setTemplateDescription} onBlur={handleEditTemplateDescription}>{isLoading ? "Loading..." : templateDescription}</Paragraph>}
                 </View>
                 {isSupersetCombiningMode && (
                     <View style={styles.combiningPanelContainer}>

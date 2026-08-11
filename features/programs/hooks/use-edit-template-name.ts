@@ -21,9 +21,6 @@ export function useEditTemplateName() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.templates.all,
       })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
     },
   })
 }

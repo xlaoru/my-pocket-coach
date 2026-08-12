@@ -2,6 +2,7 @@ import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
 import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
+import GenerateProgramByTemplateForm from "@/components/GenerateProgramByTemplateForm/GenerateProgramByTemplateForm";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import Loader from "@/components/Loader/Loader";
@@ -9,7 +10,9 @@ import Paragraph from "@/components/Paragraph/Paragraph";
 import ProgramList from "@/components/ProgramList/ProgramList";
 import { useCreateProgram } from "@/features/programs/hooks/use-create-program";
 import { useDeleteProgram } from "@/features/programs/hooks/use-delete-program";
+import { useGenerateProgramByTemplate } from "@/features/programs/hooks/use-generate-program-by-template";
 import { usePrograms } from "@/features/programs/hooks/use-programs";
+import { useTemplates } from "@/features/programs/hooks/use-templates";
 import React, { useCallback, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -18,11 +21,15 @@ export default function Programs() {
     const insets = useSafeAreaInsets();
 
     const { data: programs = [], isLoading, isError } = usePrograms();
+    const { data: templates } = useTemplates()
 
     const createProgramMutation = useCreateProgram();
     const deleteProgramMutation = useDeleteProgram()
+    const generateProgramByTemplateMutation = useGenerateProgramByTemplate()
 
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+    const [isGeneratingProgramByTemplate, setGeneratingProgramByTemplate] = useState(false)
 
     const [programName, setProgramName] = useState("");
     const [programDescription, setProgramDescription] = useState("");
@@ -53,6 +60,18 @@ export default function Programs() {
         }
     }, [deleteProgramMutation])
 
+    const handleGenerateProgramByTemplate = useCallback(async (templateId: string) => {
+        try {
+            await generateProgramByTemplateMutation.mutateAsync({
+                templateId
+            })
+
+            setGeneratingProgramByTemplate(false)
+        } catch {
+            Alert.alert("Failed to generate program by template", "Please try again.");
+        }
+    }, [generateProgramByTemplateMutation])
+
     return (
         <View
             style={[
@@ -67,7 +86,10 @@ export default function Programs() {
         >
             <View>
                 <HeadingLabel>Training</HeadingLabel>
-                <Heading>Programs</Heading>
+                <View style={styles.headingContainer}>
+                    <Heading>Programs</Heading>
+                    <Button variant="secondary" iconName="sparkles" iconSize={14} onPress={() => { setGeneratingProgramByTemplate(true) }} style={{ paddingVertical: 6, paddingHorizontal: 16, borderRadius: 50 }}>Autofill</Button>
+                </View>
                 <Paragraph>
                     {isLoading
                         ? "Loading programs..."
@@ -107,6 +129,9 @@ export default function Programs() {
                 <BottomSheetInput label="Program Name" placeholder="e.g. Fullbody" value={programName} onChangeText={setProgramName} />
                 <BottomSheetInput label="Program Description" placeholder="e.g. A fullbody workout program" value={programDescription} onChangeText={setProgramDescription} />
             </BottomSheetForm>
+            <BottomSheetForm isOpen={isGeneratingProgramByTemplate} title="Generate from Template" onClose={() => setGeneratingProgramByTemplate(false)} onSubmit={() => { }} isWithoutSubmition>
+                <GenerateProgramByTemplateForm templates={templates ?? []} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} />
+            </BottomSheetForm>
         </View >
     );
 }
@@ -120,5 +145,11 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 16,
     },
+    headingContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between"
+    }
 });
 

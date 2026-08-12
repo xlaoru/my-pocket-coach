@@ -78,6 +78,7 @@ export interface IButtonProps {
   iconName?: TIoniconName
   onPress: VoidFunction
   style?: PressableProps['style']
+  iconSize?: number
 }
 
 export interface IPeriodizationListProps {
@@ -336,4 +337,14 @@ export interface ITemplateSupersetFormProps {
   supersetName: string
   setSupersetName: Dispatch<SetStateAction<string>>
   selectedExercisesData: ITemplateExercise[]
+}
+
+export interface IGenerateProgramByTemplateFormProps {
+  templates: ITemplate[]
+  onGenerateProgramByTemplate: (templateId: string) => Promise<void>
+}
+
+export interface ITemplateCardProps {
+  template: ITemplate
+  onGenerateProgramByTemplate: (templateId: string) => Promise<void>
 }

@@ -26,6 +26,7 @@ export default function TabsLayout() {
                 }}
             />
             <Tabs.Screen
+                name="Templates"
                 options={{
                     title: "Templates",
                     tabBarLabel: "Templates",
@@ -38,13 +39,6 @@ export default function TabsLayout() {
                     title: "Planning",
                     tabBarLabel: "Periodization",
                     tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" color={color} size={size} />,
-                }}
-            />
-            <Tabs.Screen
-                name="ComponentsPreview"
-                options={{
-                    title: "Components Preview",
-                    tabBarIcon: ({ color, size }) => <Ionicons name="flask-outline" color={color} size={size} />,
                 }}
             />
         </Tabs>

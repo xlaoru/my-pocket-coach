@@ -91,6 +91,14 @@ export default function Template() {
         return acc
     }, 0) || 0
 
+    const templateBareExercisesAmount = template?.templateWorkout.reduce((acc, item) => {
+        if (item.type === "exercise") {
+            return acc + 1
+        }
+
+        return acc
+    }, 0)
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: "Templates"
@@ -345,7 +353,7 @@ export default function Template() {
                             <Paragraph>Select at least 2</Paragraph>
                         </View>
                         <View style={styles.combiningPanelButtonsContainer}>
-                            <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false) }} style={styles.combiningPanelButton}>Cancel</Button>
+                            <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.combiningPanelButton}>Cancel</Button>
                             {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
                         </View>
                     </View>
@@ -430,7 +438,7 @@ export default function Template() {
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {template?.templateWorkout && template?.templateWorkout.length >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+                    {template?.templateWorkout && (templateBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
                 </View>
                 <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
                     <TemplateExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} exerciseSets={exerciseSets} setExerciseSets={setExerciseSets} />

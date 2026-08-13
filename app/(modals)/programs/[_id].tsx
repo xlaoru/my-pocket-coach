@@ -85,6 +85,14 @@ export default function Program() {
         return acc
     }, 0) || 0
 
+    const programBareExercisesAmount = program?.workout.reduce((acc, item) => {
+        if (item.type === "exercise") {
+            return acc + 1
+        }
+
+        return acc
+    }, 0)
+
     const [isExerciseFormOpen, setExerciseFormOpen] = useState(false);
     const [isSupersetCombiningFormOpen, setSupersetCombiningFormOpen] = useState(false);
 
@@ -458,7 +466,7 @@ export default function Program() {
                             <Paragraph>Select at least 2</Paragraph>
                         </View>
                         <View style={styles.combiningPanelButtonsContainer}>
-                            <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false) }} style={styles.combiningPanelButton}>Cancel</Button>
+                            <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.combiningPanelButton}>Cancel</Button>
                             {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
                         </View>
                     </View>
@@ -548,7 +556,7 @@ export default function Program() {
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {program?.workout && program?.workout.length >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
                 </View>
                 <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                     <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />

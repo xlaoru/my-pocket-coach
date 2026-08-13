@@ -81,6 +81,16 @@ export default function Template() {
 
     const navigation = useNavigation()
 
+    const templateExercisesAmount = template?.templateWorkout.reduce((acc, item) => {
+        if (item.type === "exercise") {
+            return acc + 1
+        } else if (item.type === "superset") {
+            return acc + item.components.length
+        }
+
+        return acc
+    }, 0) || 0
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: "Templates"
@@ -354,64 +364,68 @@ export default function Template() {
                                 ? (
                                     <Loader />
                                 )
-                                : (
-                                    <NestableScrollContainer showsVerticalScrollIndicator={false}>
-                                        <NestableDraggableFlatList
-                                            autoscrollThreshold={30}
-                                            autoscrollSpeed={100}
-                                            data={template!.templateWorkout ?? []}
-                                            renderItem={({ item, getIndex, drag }) => {
-                                                const index = getIndex()
-                                                return (
-                                                    <View style={styles.itemWrapper}>
-                                                        {
-                                                            item.type === "exercise"
-                                                                ? (
-                                                                    <TemplateExerciseTable
-                                                                        index={index ?? 0}
-                                                                        exercise={item.components[0]}
-                                                                        templateWorkoutItemId={item._id}
-                                                                        onDrag={drag}
-                                                                        onExerciseNameChange={handleEditTemplateExerciseName}
-                                                                        onExerciseSetChange={handleEditTemplateExerciseSets}
-                                                                        onDeleteExercise={handleDeleteTemplateExercise}
-                                                                        isSupersetCombiningMode={isSupersetCombiningMode}
-                                                                        selectedExercises={selectedExercises}
-                                                                        setSelectedExercises={setSelectedExercises}
-                                                                        setSelectedExercisesData={setSelectedExercisesData} />
-                                                                )
-                                                                : (
-                                                                    <TemplateSupersetTable
-                                                                        index={index ?? 0}
-                                                                        superset={item}
-                                                                        templateWorkoutItemId={item._id}
-                                                                        outsideSupersetExercises={outsideSupersetExercises}
-                                                                        onDrag={drag}
-                                                                        onSupersetNameChange={handleEditTemplateSupersetName}
-                                                                        onDeleteSuperset={handleDeleteTemplateSuperset}
-                                                                        onExerciseNameChange={handleEditTemplateExerciseName}
-                                                                        onExerciseSetChange={handleEditTemplateExerciseSets}
-                                                                        onDeleteExercise={handleDeleteTemplateExercise}
-                                                                        onMoveExercise={handleMoveTemplateExercise}
-                                                                        onUnlinkExercise={handleUnlinkTemplateExercise}
-                                                                        onUnlinkAllExercises={handleUnlinkAllTemplateExercises}
-                                                                        onCreateNewExercise={handleCreateNewTemplateExercise}
-                                                                        onLinkExercise={handleLinkTemplateExercise}
-                                                                    />
-                                                                )
-                                                        }
-                                                    </View>
-                                                )
-                                            }}
-                                            keyExtractor={(item) => item._id}
-                                            onDragEnd={({ from, to }) => {
-                                                if (from === to) return
+                                : templateExercisesAmount === 0
+                                    ? (
+                                        <EntityEmptyState iconName="document-text-outline" title="Empty template" message="Add template below to get started" />
+                                    )
+                                    : (
+                                        <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                            <NestableDraggableFlatList
+                                                autoscrollThreshold={30}
+                                                autoscrollSpeed={100}
+                                                data={template!.templateWorkout ?? []}
+                                                renderItem={({ item, getIndex, drag }) => {
+                                                    const index = getIndex()
+                                                    return (
+                                                        <View style={styles.itemWrapper}>
+                                                            {
+                                                                item.type === "exercise"
+                                                                    ? (
+                                                                        <TemplateExerciseTable
+                                                                            index={index ?? 0}
+                                                                            exercise={item.components[0]}
+                                                                            templateWorkoutItemId={item._id}
+                                                                            onDrag={drag}
+                                                                            onExerciseNameChange={handleEditTemplateExerciseName}
+                                                                            onExerciseSetChange={handleEditTemplateExerciseSets}
+                                                                            onDeleteExercise={handleDeleteTemplateExercise}
+                                                                            isSupersetCombiningMode={isSupersetCombiningMode}
+                                                                            selectedExercises={selectedExercises}
+                                                                            setSelectedExercises={setSelectedExercises}
+                                                                            setSelectedExercisesData={setSelectedExercisesData} />
+                                                                    )
+                                                                    : (
+                                                                        <TemplateSupersetTable
+                                                                            index={index ?? 0}
+                                                                            superset={item}
+                                                                            templateWorkoutItemId={item._id}
+                                                                            outsideSupersetExercises={outsideSupersetExercises}
+                                                                            onDrag={drag}
+                                                                            onSupersetNameChange={handleEditTemplateSupersetName}
+                                                                            onDeleteSuperset={handleDeleteTemplateSuperset}
+                                                                            onExerciseNameChange={handleEditTemplateExerciseName}
+                                                                            onExerciseSetChange={handleEditTemplateExerciseSets}
+                                                                            onDeleteExercise={handleDeleteTemplateExercise}
+                                                                            onMoveExercise={handleMoveTemplateExercise}
+                                                                            onUnlinkExercise={handleUnlinkTemplateExercise}
+                                                                            onUnlinkAllExercises={handleUnlinkAllTemplateExercises}
+                                                                            onCreateNewExercise={handleCreateNewTemplateExercise}
+                                                                            onLinkExercise={handleLinkTemplateExercise}
+                                                                        />
+                                                                    )
+                                                            }
+                                                        </View>
+                                                    )
+                                                }}
+                                                keyExtractor={(item) => item._id}
+                                                onDragEnd={({ from, to }) => {
+                                                    if (from === to) return
 
-                                                handleMoveTemplateExercise(_id, from, to)
-                                            }}
-                                        />
-                                    </NestableScrollContainer>
-                                )
+                                                    handleMoveTemplateExercise(_id, from, to)
+                                                }}
+                                            />
+                                        </NestableScrollContainer>
+                                    )
                     }
                 </View>
                 <View style={styles.buttonContainer}>

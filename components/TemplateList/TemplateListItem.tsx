@@ -1,0 +1,74 @@
+import { colors } from "@/styles/colors";
+import { ITemplateListItemProps } from "@/types/props";
+import Title from "../Title/Title";
+
+import { Ionicons } from "@expo/vector-icons";
+import { useCallback } from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import IconButton from "../IconButton/IconButton";
+import Paragraph from "../Paragraph/Paragraph";
+
+export default function TemplateListItem({ templateId, title, description, exercises, supersets, onPress, onDeleteTemplate }: ITemplateListItemProps) {
+    const handleDeleteTemplate = useCallback(() => {
+        void onDeleteTemplate(templateId)
+    }, [templateId, onDeleteTemplate])
+
+    return (
+        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
+            <View style={styles.iconContainer}>
+                <Ionicons name="document-text-outline" size={24} color={colors.red500} />
+            </View>
+            <View style={styles.contentContainer}>
+                <Title>{title.length > 15 ? `${title.substring(0, 15)}...` : title}</Title>
+                {description && <Paragraph>{description && description.length > 20 ? `${description.substring(0, 20)}...` : description}</Paragraph>}
+                <View style={styles.amountsContainer}>
+                    {exercises > 0 && <Paragraph style={styles.amountTitle}>{exercises} exercise{exercises !== 1 ? 's' : ''}</Paragraph>}
+                    {supersets > 0 && <Paragraph style={styles.amountTitle}>{supersets} superset{supersets !== 1 ? 's' : ''}</Paragraph>}
+                </View>
+            </View>
+            <View style={styles.buttonsContainer}>
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplate} />
+                <IconButton iconName="chevron-forward-outline" onPress={onPress} />
+            </View>
+        </Pressable>
+    )
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        gap: 12,
+        padding: 12,
+        backgroundColor: colors.gray900,
+        borderWidth: 1,
+        borderColor: colors.gray500,
+        borderRadius: 16,
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    contentContainer: {
+        flex: 1,
+        minWidth: 0,
+    },
+    iconContainer: {
+        padding: 12,
+        backgroundColor: colors.red900,
+        borderRadius: 16,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    amountsContainer: {
+        flexDirection: "row",
+        gap: 4,
+    },
+    amountTitle: {
+        fontSize: 14
+    },
+    buttonsContainer: {
+        flexDirection: "row",
+        gap: 18,
+    },
+    pressed: {
+        opacity: 0.85,
+    }
+});

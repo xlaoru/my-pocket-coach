@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Pressable, StyleSheet, Text } from "react-native";
 
-export default function Button({ children, variant = "primary", iconName, onPress, style }: IButtonProps) {
+export default function Button({ children, variant = "primary", iconName, onPress, style, iconSize = 22 }: IButtonProps) {
     const variantStyle = variantStyles[variant as keyof typeof variantStyles] ?? variantStyles.outlined;
 
     return (
@@ -15,7 +15,7 @@ export default function Button({ children, variant = "primary", iconName, onPres
                 return [styles.buttonContainer, state.pressed && styles.pressed, resolvedStyle, variantStyle.container];
             }}
         >
-            {iconName && <Ionicons name={iconName} color={variantStyle.text.color} size={22} />}
+            {iconName && <Ionicons name={iconName} color={variantStyle.text.color} size={iconSize} />}
             <Text style={[styles.buttonText, variantStyle.text]}>{children}</Text>
         </Pressable>
     );

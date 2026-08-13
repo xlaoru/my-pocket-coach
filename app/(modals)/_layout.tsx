@@ -18,6 +18,7 @@ export default function ModalLayout() {
         >
             <Stack.Screen name="programs/[_id]" />
             <Stack.Screen name="periodizations/[_id]" />
+            <Stack.Screen name="templates/[_id]" />
         </Stack>
     );
 }

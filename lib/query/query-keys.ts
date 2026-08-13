@@ -7,4 +7,8 @@ export const queryKeys = {
     all: ['periodizations'] as const,
     byId: (id: string) => ['periodizations', id] as const,
   },
+  templates: {
+    all: ['templates'] as const,
+    byId: (id: string) => ['templates', id] as const,
+  },
 }

@@ -48,3 +48,30 @@ export interface ISuperset {
   type: 'superset'
   components: IExercise[]
 }
+
+export interface ITemplate {
+  _id: string
+  name: string
+  description?: string
+  templateWorkout: ITemplateWorkoutItem[]
+}
+
+export interface ITemplateWorkoutItem {
+  _id: string
+  type: 'exercise' | 'superset'
+  name: string
+  components: ITemplateExercise[]
+}
+
+export interface ITemplateExercise {
+  _id: string
+  name: string
+  sets: number
+}
+
+export interface ITemplateSuperset {
+  _id: string
+  type: 'superset'
+  name: string
+  components: ITemplateExercise[]
+}

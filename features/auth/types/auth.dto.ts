@@ -3,6 +3,16 @@ export interface ILogInPayload {
   password: string
 }
 
+export interface ISignUpPayload {
+  name: string
+  email: string
+  password: string
+}
+
+export interface ISignUpResponseDto {
+  message: string
+}
+
 export interface IUserDto {
   id: string
   name: string

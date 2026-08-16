@@ -110,6 +110,9 @@ export interface IInputProps {
   value: string
   onChangeText: (text: string) => void
   style?: StyleProp<ViewStyle>
+  secureTextEntry?: boolean
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'
+  keyboardType?: 'default' | 'email-address'
 }
 
 export interface IAttachPeriodizationButtonProps {

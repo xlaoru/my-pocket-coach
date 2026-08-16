@@ -2,26 +2,36 @@ import Button from "@/components/Button/Button";
 import Heading from "@/components/Heading/Heading";
 import Input from "@/components/Input/Input";
 import Paragraph from "@/components/Paragraph/Paragraph";
-import { useLogIn } from "@/features/auth/hooks/use-log-in";
+import { useSignUp } from "@/features/auth/hooks/use-sign-up";
+import { colors } from "@/styles/colors";
 import { router } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function LogIn() {
+export default function SignUp() {
     const insets = useSafeAreaInsets();
 
-    const logInMutation = useLogIn();
+    const signUpMutation = useSignUp();
 
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
-    const handleLogIn = async () => {
+    const passwordsMismatch = confirmPassword.length > 0 && password !== confirmPassword;
+
+    const handleSignUp = async () => {
+        const trimmedName = name.trim();
+        const trimmedEmail = email.trim();
+
+        if (!trimmedName || !trimmedEmail || !password || password !== confirmPassword) return;
+
         try {
-            await logInMutation.mutateAsync({ email: email.trim(), password });
+            await signUpMutation.mutateAsync({ name: trimmedName, email: trimmedEmail, password });
             router.replace("/");
         } catch {
-            // error is already exposed via logInMutation.error below
+            // error is already exposed via signUpMutation.error below
         }
     };
 
@@ -37,22 +47,29 @@ export default function LogIn() {
                 },
             ]}
         >
-            <Heading>Log In</Heading>
+            <Heading>Sign Up</Heading>
             <View style={styles.form}>
+                <Input label="Name" placeholder="John Doe" value={name} onChangeText={setName} autoCapitalize="words" />
                 <Input label="Email" placeholder="you@example.com" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
                 <Input label="Password" placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry />
-                {logInMutation.isError && (
+                <Input label="Confirm Password" placeholder="••••••••" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+
+                {passwordsMismatch && (
+                    <Paragraph style={styles.error}>Passwords do not match.</Paragraph>
+                )}
+
+                {signUpMutation.isError && (
                     <Paragraph style={styles.error}>
-                        {logInMutation.error?.response?.data?.message ?? "Log in failed. Please try again."}
+                        {signUpMutation.error?.response?.data?.message ?? "Sign up failed. Please try again."}
                     </Paragraph>
                 )}
             </View>
             <View style={styles.actions}>
-                <Button onPress={handleLogIn}>
-                    {logInMutation.isPending ? "Logging in..." : "Log In"}
+                <Button onPress={handleSignUp}>
+                    {signUpMutation.isPending ? "Signing up..." : "Sign Up"}
                 </Button>
-                <Button variant="text" style={{ alignSelf: "center" }} onPress={() => router.push("/sign-up")}>
-                    Don&apos;t have an account? Sign Up
+                <Button variant="text" style={{ alignSelf: "center" }} onPress={() => router.push("/log-in")}>
+                    Already have an account? Log In
                 </Button>
             </View>
         </View>
@@ -72,6 +89,6 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     error: {
-        color: "#ff2d2d",
+        color: colors.red500,
     },
 });

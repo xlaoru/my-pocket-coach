@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Paragraph from "../Paragraph/Paragraph";
 
-export default function Input({ placeholder, value, label, onChangeText, style }: IInputProps) {
+export default function Input({ placeholder, value, label, onChangeText, style, secureTextEntry, autoCapitalize, keyboardType }: IInputProps) {
     return (
         <View style={[styles.container, style]}>
             <Paragraph style={styles.label}>{label.toUpperCase()}</Paragraph>
@@ -15,6 +15,9 @@ export default function Input({ placeholder, value, label, onChangeText, style }
                 value={value}
                 onChangeText={onChangeText}
                 placeholderTextColor={colors.gray100}
+                secureTextEntry={secureTextEntry}
+                autoCapitalize={autoCapitalize}
+                keyboardType={keyboardType}
             />
         </View>
     );

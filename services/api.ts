@@ -20,8 +20,6 @@ export const tokenStorage = {
   getAccessToken: () => SecureStore.getItemAsync(ACCESS_TOKEN_KEY),
   getRefreshToken: () => SecureStore.getItemAsync(REFRESH_TOKEN_KEY),
   setTokens: async (accessToken: string, refreshToken: string) => {
-    console.log({ accessToken, refreshToken })
-
     await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken)
     await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken)
   },

@@ -1,5 +1,5 @@
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { queryClient } from "@/lib/query/query-client";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -13,11 +13,11 @@ export default function RootLayout() {
           <BottomSheetModalProvider>
             <Stack>
               <Stack.Screen
-                name="(tabs)"
+                name="(root)/(tabs)"
                 options={{ headerShown: false }}
               />
               <Stack.Screen
-                name="(modals)"
+                name="(root)/(modals)"
                 options={{ headerShown: false, presentation: "modal" }}
               />
             </Stack>

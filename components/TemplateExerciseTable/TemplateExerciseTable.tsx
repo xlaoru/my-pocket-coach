@@ -96,7 +96,7 @@ function TemplateExerciseTableComponents({
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                                <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
                             <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                         </View>
@@ -128,9 +128,17 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     headingContainer: {
+        flex: 1,
         flexDirection: "row",
         gap: 8,
         alignItems: "center",
+    },
+    nameInput: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: "bold",
+        color: colors.white,
+        padding: 0,
     },
     indexBox: {
         width: 28,

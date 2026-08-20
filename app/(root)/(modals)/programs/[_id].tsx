@@ -42,6 +42,7 @@ import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise
 import { useUnlinkStage } from "@/features/programs/hooks/use-unlink-stage";
 import { colors } from "@/styles/colors";
 import { IExercise, IPeriodization, ISet } from "@/types/models";
+import { parseNumericInput } from "@/utils/parseNumericInput";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -132,9 +133,8 @@ export default function Program() {
     const outsideSupersetExercises = program?.workout.filter(item => item.type === "exercise") || []
 
     const handleSetChange = (index: number, field: "weight" | "reps", value: string) => {
-        const parsed = parseInt(value, 10);
-        const numeric = isNaN(parsed) ? 0 : parsed;
         setSets((prevSets) => {
+            const numeric = parseNumericInput(value, prevSets[index][field]);
             const newSets = [...prevSets];
             newSets[index] = { ...newSets[index], [field]: numeric };
             return newSets;
@@ -150,11 +150,14 @@ export default function Program() {
     }
 
     const handleEditProgramName = useCallback(async () => {
-        const trimmedName = programName.trim()
-
-        if (!trimmedName) return
-
         try {
+            const trimmedName = programName.trim()
+
+            if (!trimmedName) {
+                setProgramName(program?.name ?? "")
+                return
+            }
+
             await editProgramMutation.mutateAsync({
                 programId: _id,
                 payload: {
@@ -164,14 +167,17 @@ export default function Program() {
         } catch {
             Alert.alert("Failed to edit program name", "Please try again.")
         }
-    }, [_id, editProgramMutation, programName])
+    }, [_id, program?.name, editProgramMutation, programName])
 
     const handleEditProgramDescription = useCallback(async () => {
-        const trimmedDescription = programDescription.trim()
-
-        if (!trimmedDescription) return
-
         try {
+            const trimmedDescription = programDescription.trim()
+
+            if (!trimmedDescription) {
+                setProgramDescription(program?.description ?? "")
+                return
+            }
+
             await editProgramMutation.mutateAsync({
                 programId: _id,
                 payload: {
@@ -181,7 +187,7 @@ export default function Program() {
         } catch {
             Alert.alert("Failed to edit program description", "Please try again.")
         }
-    }, [_id, editProgramMutation, programDescription])
+    }, [_id, program?.description, editProgramMutation, programDescription])
 
     const handleCreateExercise = useCallback(async () => {
         const trimmedExerciseName = exerciseName.trim()
@@ -210,11 +216,11 @@ export default function Program() {
     }, [_id, createExerciseMutation, exerciseName, sets])
 
     const handleEditExerciseName = useCallback(async (exerciseId: string, newName: string) => {
-        const trimmedExerciseName = newName.trim();
-
-        if (!trimmedExerciseName) return;
-
         try {
+            const trimmedExerciseName = newName.trim();
+
+            if (!trimmedExerciseName) return;
+
             await editExerciseNameMutation.mutateAsync({
                 programId: _id,
                 exerciseId,

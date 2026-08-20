@@ -72,7 +72,7 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
                     <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={handleUnlinkExercise} />
@@ -124,9 +124,17 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     headingContainer: {
+        flex: 1,
         flexDirection: "row",
         gap: 8,
         alignItems: "center",
+    },
+    nameInput: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: "bold",
+        color: colors.white,
+        padding: 0,
     },
     pressed: {
         opacity: 0.5,

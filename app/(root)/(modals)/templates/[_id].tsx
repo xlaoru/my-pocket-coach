@@ -106,11 +106,14 @@ export default function Template() {
     }, [template, navigation])
 
     const handleEditTemplateName = useCallback(async () => {
-        const trimmedTemplateName = templateName.trim()
-
-        if (!trimmedTemplateName) return
-
         try {
+            const trimmedTemplateName = templateName.trim()
+
+            if (!trimmedTemplateName) {
+                setTemplateName(template?.name ?? "")
+                return
+            }
+
             await editTemplateNameMutation.mutateAsync({
                 templateId: _id,
                 payload: {
@@ -120,14 +123,17 @@ export default function Template() {
         } catch {
             Alert.alert("Failed to edit template name", "Please try again.");
         }
-    }, [_id, editTemplateNameMutation, templateName])
+    }, [_id, template?.name, editTemplateNameMutation, templateName])
 
     const handleEditTemplateDescription = useCallback(async () => {
-        const trimmedTemplateDescription = templateDescription.trim()
-
-        if (!trimmedTemplateDescription) return
-
         try {
+            const trimmedTemplateDescription = templateDescription.trim()
+
+            if (!trimmedTemplateDescription) {
+                setTemplateDescription(template?.description ?? "")
+                return
+            }
+
             await editTemplateDescriptionMutation.mutateAsync({
                 templateId: _id,
                 payload: {
@@ -137,7 +143,7 @@ export default function Template() {
         } catch {
             Alert.alert("Failed to edit template description", "Please try again.");
         }
-    }, [_id, editTemplateDescriptionMutation, templateDescription])
+    }, [_id, template?.description, editTemplateDescriptionMutation, templateDescription])
 
     const handleCreateTemplateExercise = useCallback(async () => {
         const trimmedExerciseName = exerciseName.trim()

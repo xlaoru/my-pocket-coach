@@ -92,7 +92,7 @@ function TemplateSupersetTableComponent({
                     <View style={styles.indexBox}>
                         <Paragraph style={styles.indexText}>{index + 1}</Paragraph>
                     </View>
-                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
 
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     headingContainer: {
+        flex: 1,
         flexDirection: "row",
         gap: 8,
         alignItems: "center",
@@ -179,6 +180,13 @@ const styles = StyleSheet.create({
     },
     indexText: {
         color: colors.red500,
+    },
+    nameInput: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: "bold",
+        color: colors.white,
+        padding: 0,
     },
     pressed: {
         opacity: 0.5,

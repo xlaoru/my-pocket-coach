@@ -4,7 +4,6 @@ import React from "react";
 import { StyleSheet, Text } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
-
 export default function Heading({ children, style, isEditable, onChangeText, onBlur }: IHeadingProps) {
     if (!isEditable) {
         return <Text style={[styles.heading, style]}>{children}</Text>;

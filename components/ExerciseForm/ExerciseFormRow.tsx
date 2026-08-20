@@ -1,18 +1,24 @@
 import { colors } from "@/styles/colors";
 import { IExerciseFormRowProps } from "@/types/props";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import ExerciseFormRowInput from "./ExerciseFormRowInput";
 
 export default function ExerciseFormRow({ index, set, onChange, onRemove }: IExerciseFormRowProps) {
+    const [setText, setSetText] = useState({ weight: set.weight.toString(), reps: set.reps.toString() })
+
+    useEffect(() => {
+        setSetText({ weight: set.weight.toString(), reps: set.reps.toString() })
+    }, [set])
+
     return (
         <View style={styles.outterContainer}>
             <Paragraph style={styles.index}>{index + 1}</Paragraph>
             <View style={styles.inputsContainer}>
-                <ExerciseFormRowInput placeholder="0" value={set.weight.toString()} onChangeText={(text) => onChange(index, "weight", text)} />
-                <ExerciseFormRowInput placeholder="0" value={set.reps.toString()} onChangeText={(text) => onChange(index, "reps", text)} />
+                <ExerciseFormRowInput keyboardType="decimal-pad" placeholder="0" value={setText.weight} onChangeText={(text) => setSetText({ ...setText, weight: text })} onBlur={() => onChange(index, "weight", setText.weight)} />
+                <ExerciseFormRowInput keyboardType="decimal-pad" placeholder="0" value={setText.reps} onChangeText={(text) => setSetText({ ...setText, reps: text })} onBlur={() => onChange(index, "reps", setText.reps)} />
             </View>
             <IconButton iconName="remove" onPress={() => onRemove(index)} />
         </View>

@@ -3,14 +3,16 @@ import { IExerciseFormRowInputProps } from "@/types/props";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
 import { StyleSheet } from "react-native";
 
-export default function ExerciseFormRowInput({ placeholder, value, onChangeText }: IExerciseFormRowInputProps) {
+export default function ExerciseFormRowInput({ placeholder, value, onChangeText, onBlur, keyboardType }: IExerciseFormRowInputProps) {
     return (
         <BottomSheetTextInput
             style={styles.input}
             placeholder={placeholder}
             value={value}
             onChangeText={onChangeText}
+            onBlur={onBlur}
             placeholderTextColor={colors.gray100}
+            keyboardType={keyboardType}
         />
     );
 }

@@ -7,6 +7,7 @@ export interface IExercise {
   _id: string
   name: string
   sets: ISet[]
+  note: string
 }
 
 export interface IWorkoutItem {
@@ -14,6 +15,7 @@ export interface IWorkoutItem {
   name: string
   type: 'exercise' | 'superset'
   components: IExercise[]
+  note: string
 }
 
 export interface IProgram {
@@ -47,6 +49,7 @@ export interface ISuperset {
   name: string
   type: 'superset'
   components: IExercise[]
+  note: string
 }
 
 export interface ITemplate {

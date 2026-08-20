@@ -1,22 +1,23 @@
-import { ISet } from "@/types/models";
+import { ISet } from '@/types/models'
 
 export interface IExerciseDto {
   _id: string
   name: string
   sets: ISet[]
+  note: string
 }
 
 export interface ICreateExercisePayload {
-  name: string;
+  name: string
   sets: ISet[]
 }
 
 export interface IEditExerciseNamePayload {
-  name: string;
+  name: string
 }
 
 export interface IAddExerciseSetPayload {
-  weight: number 
+  weight: number
   reps: number
 }
 
@@ -26,7 +27,11 @@ export interface IEditExerciseSetPayload {
 }
 
 export interface IMoveExercisePayload {
-  containerId: string;
-  sourceIndex: number;
-  destinationIndex: number;
+  containerId: string
+  sourceIndex: number
+  destinationIndex: number
+}
+
+export interface ISetExerciseNotePayload {
+  note: string
 }

@@ -5,10 +5,10 @@ import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Paragraph from "../Paragraph/Paragraph";
 
-export default function Input({ placeholder, value, label, onChangeText, style, secureTextEntry, autoCapitalize, keyboardType }: IInputProps) {
+export default function Input({ placeholder, value, label, onChangeText, style, secureTextEntry, autoCapitalize, keyboardType, onBlur }: IInputProps) {
     return (
         <View style={[styles.container, style]}>
-            <Paragraph style={styles.label}>{label.toUpperCase()}</Paragraph>
+            {label && <Paragraph style={styles.label}>{label.toUpperCase()}</Paragraph>}
             <TextInput
                 style={styles.input}
                 placeholder={placeholder}
@@ -18,6 +18,7 @@ export default function Input({ placeholder, value, label, onChangeText, style, 
                 secureTextEntry={secureTextEntry}
                 autoCapitalize={autoCapitalize}
                 keyboardType={keyboardType}
+                onBlur={onBlur}
             />
         </View>
     );

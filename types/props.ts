@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons'
 import { ComponentProps, Dispatch, ReactNode, SetStateAction } from 'react'
-import { PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { KeyboardTypeOptions, PressableProps, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import {
   IExercise,
   IPeriodization,
@@ -66,6 +66,7 @@ export interface ITitleProps {
   onChangeText?: (text: string) => void
   onBlur?: VoidFunction
   onSubmitEditing?: VoidFunction
+  keyboardType?: KeyboardTypeOptions
 }
 
 export interface IIconButtonProps {
@@ -143,6 +144,7 @@ export interface IExerciseFormRowInputProps {
   placeholder: string
   value: string
   onChangeText: (text: string) => void
+  keyboardType?: KeyboardTypeOptions
 }
 
 export interface IAddSetOutlineButtonProps {

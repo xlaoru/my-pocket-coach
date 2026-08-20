@@ -27,10 +27,10 @@ export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExer
                 <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title isEditable style={styles.title} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: Number(text) })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
+                <Title keyboardType="numeric" isEditable style={styles.title} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: Number(text) })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title isEditable style={styles.title} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: Number(text) })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
+                <Title keyboardType="numeric" isEditable style={styles.title} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: Number(text) })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
             </View>
             <View style={styles.actionCell}>
                 <IconButton iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />

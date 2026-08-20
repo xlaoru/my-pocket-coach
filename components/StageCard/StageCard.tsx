@@ -19,18 +19,24 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
     const handleNameBlur = useCallback(() => {
         const trimmedName = editableName.trim()
 
-        if (!trimmedName) return
+        if (!trimmedName) {
+            setEditableName(stage.name)
+            return
+        }
 
         void onEditStageName(stage._id, trimmedName)
-    }, [editableName, onEditStageName, stage._id])
+    }, [editableName, stage.name, onEditStageName, stage._id])
 
     const handleDescriptionBlur = useCallback(() => {
         const trimmedDescription = (editableDescription ?? "").trim()
 
-        if (!trimmedDescription) return
+        if (!trimmedDescription) {
+            setEditableDescription(stage.description)
+            return
+        }
 
         void onEditStageDescription(stage._id, trimmedDescription)
-    }, [editableDescription, onEditStageDescription, stage._id])
+    }, [editableDescription, stage.description, onEditStageDescription, stage._id])
 
     const handleDeleteStage = useCallback(() => {
         void onDeleteStage(stage._id)
@@ -69,12 +75,14 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     innerConainer: {
+        flex: 1,
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
         gap: 8
     },
     textContainer: {
+        flex: 1,
         display: "flex",
         gap: 4
     },

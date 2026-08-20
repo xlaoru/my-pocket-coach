@@ -92,7 +92,7 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                                <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
                             <View style={styles.headerIconButtonsContainer}>
                                 <IconButton iconName="reader-outline" onPress={handleNotePress} />
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     headingContainer: {
+        flex: 1,
         flexDirection: "row",
         gap: 8,
         alignItems: "center",
@@ -185,8 +186,7 @@ const styles = StyleSheet.create({
         width: 22,
     },
     nameInput: {
-        flexShrink: 1,
-        minWidth: 0,
+        flex: 1,
         fontSize: 18,
         fontWeight: "bold",
         color: colors.white,

@@ -1,6 +1,6 @@
 import { IBottomSheetFormProps } from "@/types/props";
 import React, { useCallback, useEffect, useRef } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, Pressable, StyleSheet, View } from "react-native";
 
 import { colors } from "@/styles/colors";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
@@ -61,9 +61,9 @@ export default function BottomSheetForm({ isOpen, title, children, onSubmit, onC
                     <IconButton iconName="close" onPress={handleDismiss} />
                 </View>
                 <View style={styles.separator} />
-                <View style={styles.childrenContainer}>
+                <Pressable style={styles.childrenContainer} onPress={() => Keyboard.dismiss()}>
                     {children}
-                </View>
+                </Pressable>
                 {isWithoutSubmition || <Button iconName="checkmark" onPress={onSubmit}>Submit</Button>}
             </BottomSheetView>
         </BottomSheetModal>

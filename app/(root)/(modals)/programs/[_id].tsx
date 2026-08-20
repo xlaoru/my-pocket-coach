@@ -42,6 +42,7 @@ import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise
 import { useUnlinkStage } from "@/features/programs/hooks/use-unlink-stage";
 import { colors } from "@/styles/colors";
 import { IExercise, IPeriodization, ISet } from "@/types/models";
+import { parseNumericInput } from "@/utils/parseNumericInput";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -132,9 +133,8 @@ export default function Program() {
     const outsideSupersetExercises = program?.workout.filter(item => item.type === "exercise") || []
 
     const handleSetChange = (index: number, field: "weight" | "reps", value: string) => {
-        const parsed = parseInt(value, 10);
-        const numeric = isNaN(parsed) ? 0 : parsed;
         setSets((prevSets) => {
+            const numeric = parseNumericInput(value, prevSets[index][field]);
             const newSets = [...prevSets];
             newSets[index] = { ...newSets[index], [field]: numeric };
             return newSets;

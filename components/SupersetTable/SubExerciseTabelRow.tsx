@@ -1,21 +1,25 @@
 import { colors } from "@/styles/colors";
-import { ISet } from "@/types/models";
 import { ISubExerciseTabelRowProps } from "@/types/props";
+import { parseNumericInput } from "@/utils/parseNumericInput";
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
 export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet }: ISubExerciseTabelRowProps) {
-    const [exerciseSet, setExerciseSet] = useState<ISet>(set)
+    const [exerciseSet, setExerciseSet] = useState({ weight: String(set.weight), reps: String(set.reps) })
 
     useEffect(() => {
-        setExerciseSet(set)
+        setExerciseSet({ weight: String(set.weight), reps: String(set.reps) })
     }, [set])
 
     const handleSetBlur = useCallback(() => {
-        void onEditExerciseSet(exerciseId, index, exerciseSet)
-    }, [exerciseSet, exerciseId, index, onEditExerciseSet])
+        const weight = parseNumericInput(exerciseSet.weight, set.weight)
+        const reps = parseNumericInput(exerciseSet.reps, set.reps)
+
+        setExerciseSet({ weight: String(weight), reps: String(reps) })
+        void onEditExerciseSet(exerciseId, index, { weight, reps })
+    }, [exerciseSet, exerciseId, index, set, onEditExerciseSet])
 
     const handleDeleteExerciseSet = useCallback(() => {
         void onDeleteExerciseSet(exerciseId, index)
@@ -27,10 +31,10 @@ export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExer
                 <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title keyboardType="numeric" isEditable style={styles.title} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: Number(text) })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
+                <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title keyboardType="numeric" isEditable style={styles.title} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: Number(text) })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
+                <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
             </View>
             <View style={styles.actionCell}>
                 <IconButton iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
@@ -56,6 +60,9 @@ const styles = StyleSheet.create({
     },
     title: {
         textAlign: "center",
+    },
+    editableTitle: {
+        alignSelf: "stretch",
     },
     indexTitle: {
         color: colors.red500

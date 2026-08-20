@@ -144,6 +144,7 @@ export interface IExerciseFormRowInputProps {
   placeholder: string
   value: string
   onChangeText: (text: string) => void
+  onBlur?: VoidFunction
   keyboardType?: KeyboardTypeOptions
 }
 

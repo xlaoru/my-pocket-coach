@@ -119,7 +119,7 @@ export default function Periodization() {
         } catch {
             Alert.alert("Failed to edit periodization description", "Please try again.");
         }
-    }, [_id, periodizationDescription, editPeriodizationDescriptionMutation])
+    }, [_id, periodization?.description, periodizationDescription, editPeriodizationDescriptionMutation])
 
     const handleMoveStage = useCallback(async (sourceIndex: number, destinationIndex: number) => {
         try {

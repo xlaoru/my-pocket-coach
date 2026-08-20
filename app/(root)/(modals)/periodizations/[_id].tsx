@@ -82,13 +82,14 @@ export default function Periodization() {
     }, [_id, createStageMutation, stageDescription, stageName])
 
     const handleEditPeriodizationName = useCallback(async () => {
-        const trimmedPeriodizationName = periodizationName.trim()
-
-        if (!trimmedPeriodizationName) {
-            return
-        }
-
         try {
+            const trimmedPeriodizationName = periodizationName.trim()
+
+            if (!trimmedPeriodizationName) {
+                setPeriodizationName(periodization?.name ?? "")
+                return
+            }
+
             await editPeriodizationNameMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
@@ -98,16 +99,17 @@ export default function Periodization() {
         } catch {
             Alert.alert("Failed to edit periodization name", "Please try again.");
         }
-    }, [_id, periodizationName, editPeriodizationNameMutation])
+    }, [_id, periodization?.name, periodizationName, editPeriodizationNameMutation])
 
     const handleEditPeriodizationDescription = useCallback(async () => {
-        const trimmedPeriodizationDescription = periodizationDescription.trim()
-
-        if (!trimmedPeriodizationDescription) {
-            return
-        }
-
         try {
+            const trimmedPeriodizationDescription = periodizationDescription.trim()
+
+            if (!trimmedPeriodizationDescription) {
+                setPeriodizationDescription(periodization?.description ?? "")
+                return
+            }
+
             await editPeriodizationDescriptionMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {

@@ -1,8 +1,8 @@
 import { colors } from "@/styles/colors";
 import { ISupersetTableProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useEffect, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import { NestableDraggableFlatList } from "react-native-draggable-flatlist";
 import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
@@ -11,16 +11,21 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises, onCreateNewExercise, onLinkExercise }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises, onCreateNewExercise, onLinkExercise, onSetExerciseNote, onSetSupersetNote }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
     const [newExerciseName, setNewExerciseName] = useState("")
+    const [editableNote, setEditableNote] = useState(superset.note)
+
+    const [isNoteMode, setNoteMode] = useState(false)
+    const noteInputRef = useRef<TextInput>(null)
 
     const [isCreateNewExerciseMode, setCreateNewExerciseMode] = useState(false)
     const [isPickExistingExerciseMode, setPickExistingExerciseMode] = useState(false)
 
     useEffect(() => {
         setEditableName(superset.name)
-    }, [superset.name])
+        setEditableNote(superset.note)
+    }, [superset.name, superset.note])
 
     useEffect(() => {
         if (outsideSupersetExercises.length === 0) {
@@ -68,6 +73,27 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
         void onLinkExercise(superset._id, exerciseId)
     }, [superset._id, onLinkExercise])
 
+    const handleNotePress = useCallback(() => {
+        if (superset.note) {
+            noteInputRef.current?.focus()
+            return
+        }
+
+        setNoteMode(true)
+    }, [superset.note])
+
+    const handleNoteBlur = useCallback(() => {
+        const trimmedNote = editableNote.trim()
+
+        if (!trimmedNote) {
+            setNoteMode(false)
+        }
+
+        if (trimmedNote === superset.note) return
+
+        void onSetSupersetNote(superset._id, trimmedNote)
+    }, [superset._id, superset.note, editableNote, onSetSupersetNote])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -82,6 +108,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={handleUnlinkAllExercises} />
+                    <IconButton iconName="reader-outline" onPress={handleNotePress} />
                     <IconButton iconName="trash-bin-outline" onPress={handleDeleteSuperset} />
                 </View>
             </View>
@@ -101,6 +128,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                         onDeleteExerciseSet={onDeleteExerciseSet}
                         onDeleteExercise={onDeleteExercise}
                         onUnlinkExercise={onUnlinkExercise}
+                        onSetExerciseNote={onSetExerciseNote}
                     />
                 )}
                 onDragEnd={({ from, to }) => {
@@ -108,6 +136,13 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                     void onMoveExercise(workoutItemId, from, to);
                 }}
             />
+            {
+                (superset.note || isNoteMode) && (
+                    <View style={styles.noteContainer}>
+                        <Paragraph ref={noteInputRef} isEditable autoFocus={isNoteMode && !superset.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
+                    </View>
+                )
+            }
             <View style={styles.buttonsContainer}>
                 {isCreateNewExerciseMode ? (
                     <View style={styles.createNewExerciseContainer}>
@@ -225,7 +260,12 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 12,
         color: colors.white,
-    }
+    },
+    noteContainer: {
+        borderLeftWidth: 1,
+        borderColor: colors.red500,
+        paddingLeft: 8
+    },
 })
 
 export default React.memo(SupersetTableComponent)

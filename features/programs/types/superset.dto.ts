@@ -6,6 +6,7 @@ export interface ISupersetDTO {
   name: string
   type: 'superset'
   components: IExerciseDto[]
+  note: string
 }
 
 export interface ICreateSupersetPayload {
@@ -20,4 +21,8 @@ export interface IEditSupersetNamePayload {
 export interface ICreateNewExercisePayload {
   name: string
   sets: ISet[]
+}
+
+export interface ISetSupersetNotePayload {
+  note: string
 }

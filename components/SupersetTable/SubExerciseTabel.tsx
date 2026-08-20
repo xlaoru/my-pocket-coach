@@ -1,20 +1,25 @@
 import { colors } from "@/styles/colors";
 import { ISubExerciseTabelProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback, useEffect, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
 import AddSetOutlineButton from "../ExerciseForm/AddSetOutlineButton";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabelRow from "./SubExerciseTabelRow";
 
-function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise }: ISubExerciseTabelProps) {
+function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise, onSetExerciseNote }: ISubExerciseTabelProps) {
     const [editableName, setEditableName] = useState(exercise.name);
+    const [editableNote, setEditableNote] = useState(exercise.note)
+
+    const [isNoteMode, setNoteMode] = useState(false)
+    const noteInputRef = useRef<TextInput>(null)
 
     useEffect(() => {
         setEditableName(exercise.name);
-    }, [exercise.name]);
+        setEditableNote(exercise.note)
+    }, [exercise.name, exercise.note]);
 
     const handleNameBlur = useCallback(() => {
         const trimmedName = editableName.trim();
@@ -39,6 +44,27 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
         void onUnlinkExercise(supersetId, exercise._id)
     }, [supersetId, exercise._id, onUnlinkExercise])
 
+    const handleNotePress = useCallback(() => {
+        if (exercise.note) {
+            noteInputRef.current?.focus()
+            return
+        }
+
+        setNoteMode(true)
+    }, [exercise.note])
+
+    const handleNoteBlur = useCallback(() => {
+        const trimmedNote = editableNote.trim()
+
+        if (!trimmedNote) {
+            setNoteMode(false)
+        }
+
+        if (trimmedNote === exercise.note) return
+
+        void onSetExerciseNote(exercise._id, trimmedNote)
+    }, [exercise._id, exercise.note, editableNote, onSetExerciseNote])
+
     return (
         <View style={styles.outterContainer}>
             <View style={styles.headerContainer}>
@@ -50,6 +76,7 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={handleUnlinkExercise} />
+                    <IconButton iconName="reader-outline" onPress={handleNotePress} />
                     <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
                 </View>
             </View>
@@ -75,6 +102,13 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
                 ))}
             </View>
             <AddSetOutlineButton onPress={() => { onAddExerciseSet(exercise._id) }} />
+            {
+                (exercise.note || isNoteMode) && (
+                    <View style={styles.noteContainer}>
+                        <Paragraph ref={noteInputRef} isEditable autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
+                    </View>
+                )
+            }
         </View>
     )
 }
@@ -137,6 +171,11 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         gap: 8
+    },
+    noteContainer: {
+        borderLeftWidth: 1,
+        borderColor: colors.red500,
+        paddingLeft: 8
     },
 })
 

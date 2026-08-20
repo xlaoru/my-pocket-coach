@@ -32,6 +32,7 @@ export interface IParagraphProps {
   children: ReactNode
   style?: StyleProp<TextStyle>
   isEditable?: boolean
+  autoFocus?: boolean
   onChangeText?: (text: string) => void
   onBlur?: VoidFunction
 }
@@ -105,7 +106,7 @@ export interface IBottomSheetFormProps {
 }
 
 export interface IInputProps {
-  label: string
+  label?: string
   placeholder: string
   value: string
   onChangeText: (text: string) => void
@@ -113,6 +114,7 @@ export interface IInputProps {
   secureTextEntry?: boolean
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'
   keyboardType?: 'default' | 'email-address'
+  onBlur?: VoidFunction
 }
 
 export interface IAttachPeriodizationButtonProps {
@@ -161,6 +163,7 @@ export interface IExerciseTableProps {
   selectedExercises: string[]
   setSelectedExercises: Dispatch<SetStateAction<string[]>>
   setSelectedExercisesData: Dispatch<SetStateAction<IExercise[]>>
+  onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
 }
 
 export interface IExerciseTableRowProps {
@@ -204,6 +207,8 @@ export interface ISupersetTableProps {
   onUnlinkAllExercises: (supersetId: string) => Promise<void>
   onCreateNewExercise: (supersetId: string, newName: string) => Promise<void>
   onLinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
+  onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
+  onSetSupersetNote: (supersetId: string, newNote: string) => Promise<void>
 }
 
 export interface ISubExerciseTabelProps {
@@ -216,6 +221,7 @@ export interface ISubExerciseTabelProps {
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
+  onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
 }
 
 export interface ISubExerciseTabelRowProps {

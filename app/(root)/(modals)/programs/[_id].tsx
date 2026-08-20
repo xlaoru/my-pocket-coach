@@ -35,6 +35,8 @@ import { useLinkExercises } from "@/features/programs/hooks/use-link-exercise";
 import { useLinkStage } from "@/features/programs/hooks/use-link-stage";
 import { useMoveExercise } from "@/features/programs/hooks/use-move-exercise";
 import { usePeriodizations } from "@/features/programs/hooks/use-periodizations";
+import { useSetExerciseNote } from "@/features/programs/hooks/use-set-exercise-note";
+import { useSetSupersetNote } from "@/features/programs/hooks/use-set-superset-note";
 import { useUnlinkAllExercises } from "@/features/programs/hooks/use-unlink-all-exercises";
 import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise";
 import { useUnlinkStage } from "@/features/programs/hooks/use-unlink-stage";
@@ -66,6 +68,8 @@ export default function Program() {
     const editProgramMutation = useEditProgram()
     const linkStageMutation = useLinkStage()
     const unlinkStageMutation = useUnlinkStage()
+    const setExerciseNoteMutation = useSetExerciseNote()
+    const setSupersetNoteMutation = useSetSupersetNote()
 
     const navigation = useNavigation()
 
@@ -443,6 +447,34 @@ export default function Program() {
         }
     }, [periodizationLabel, program?.periodizationStage?._id, program?.periodizationStage?.periodizationId?._id, handleUnlinkStage])
 
+    const handleSetExerciseNote = useCallback(async (exerciseId: string, newNote: string) => {
+        try {
+            await setExerciseNoteMutation.mutateAsync({
+                programId: _id,
+                exerciseId,
+                payload: {
+                    note: newNote
+                }
+            })
+        } catch {
+            Alert.alert("Failed to set exercise note", "Please try again.");
+        }
+    }, [_id, setExerciseNoteMutation])
+
+    const handleSetSupersetNote = useCallback(async (supersetId: string, newNote: string) => {
+        try {
+            await setSupersetNoteMutation.mutateAsync({
+                programId: _id,
+                supersetId,
+                payload: {
+                    note: newNote
+                }
+            })
+        } catch {
+            Alert.alert("Failed to set superset note", "Please try again.");
+        }
+    }, [_id, setSupersetNoteMutation])
+
     return (
         <KeyboardAvoidingView
             style={styles.keyboardAvoidingContainer}
@@ -515,6 +547,7 @@ export default function Program() {
                                                                         selectedExercises={selectedExercises}
                                                                         setSelectedExercises={setSelectedExercises}
                                                                         setSelectedExercisesData={setSelectedExercisesData}
+                                                                        onSetExerciseNote={handleSetExerciseNote}
                                                                     />
                                                                 )
                                                                 : (
@@ -536,6 +569,8 @@ export default function Program() {
                                                                         onUnlinkAllExercises={handleUnlinkAllExercises}
                                                                         onCreateNewExercise={handleCreateNewExercise}
                                                                         onLinkExercise={handleLinkExercise}
+                                                                        onSetExerciseNote={handleSetExerciseNote}
+                                                                        onSetSupersetNote={handleSetSupersetNote}
                                                                     />
                                                                 )
                                                         }

@@ -49,8 +49,8 @@ export default function Program() {
 
     const { _id } = useLocalSearchParams<{ _id: string }>()
 
-    const { data: program, isLoading, isError } = useProgram(_id)
-    const { data: periodizations } = usePeriodizations()
+    const { data: program, isLoading: isProgramLoading, isError: isProgramError, refetch: refetchProgram } = useProgram(_id)
+    const { data: periodizations, isLoading: isPeriodizationsLoading, isError: isPeriodizationsError, refetch: refetchPeriodizations } = usePeriodizations()
 
     const createExerciseMutation = useCreateExercise()
     const editExerciseNameMutation = useEditExerciseName()
@@ -115,6 +115,10 @@ export default function Program() {
     const [exerciseName, setExerciseName] = useState("")
     const [supersetName, setSupersetName] = useState("")
 
+    const [isProgramNameDisabled, setProgramNameDisabled] = useState(false)
+    const [isProgramDescriptionDisabled, setProgramDescriptionDisabled] = useState(false)
+    const [isAttachmentDisabled, setAttachmentDisabled] = useState(false)
+
     useEffect(() => {
         if (program) {
             setProgramName(program.name)
@@ -158,11 +162,17 @@ export default function Program() {
                 return
             }
 
+            if (programName === program?.name) return
+
+            setProgramNameDisabled(true)
+
             await editProgramMutation.mutateAsync({
                 programId: _id,
                 payload: {
                     name: trimmedName
                 }
+            }).finally(() => {
+                setProgramNameDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit program name", "Please try again.")
@@ -178,11 +188,17 @@ export default function Program() {
                 return
             }
 
+            if (programDescription === program?.description) return
+
+            setProgramDescriptionDisabled(true)
+
             await editProgramMutation.mutateAsync({
                 programId: _id,
                 payload: {
                     description: trimmedDescription
                 }
+            }).then(() => {
+                setProgramDescriptionDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit program description", "Please try again.")
@@ -421,10 +437,15 @@ export default function Program() {
 
     const handleLinkStage = useCallback(async (periodizationId: string, stageId: string) => {
         try {
+            setAttachPeriodizationMode(false)
+            setAttachmentDisabled(true)
+
             await linkStageMutation.mutateAsync({
                 programId: _id,
                 periodizationId,
                 stageId
+            }).finally(() => {
+                setAttachmentDisabled(false)
             })
         } catch {
             Alert.alert("Failed to link stage", "Please try again.");
@@ -433,10 +454,14 @@ export default function Program() {
 
     const handleUnlinkStage = useCallback(async (periodizationId: string, stageId: string) => {
         try {
+            setAttachmentDisabled(true)
+
             await unlinkStageMutation.mutateAsync({
                 programId: _id,
                 periodizationId,
                 stageId
+            }).finally(() => {
+                setAttachmentDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink stage", "Please try again.");
@@ -493,9 +518,26 @@ export default function Program() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setProgramName} onBlur={handleEditProgramName}>{isLoading ? "Loading..." : programName}</Heading>
-                    {program?.description && <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription}>{isLoading ? "Loading..." : programDescription}</Paragraph>}
-                    <AttachPeriodizationButton onPress={onHandleAttachment} isAttaced={Boolean(periodizationLabel)} value={isLoading ? "Loading..." : periodizationLabel} />
+                    {
+                        isProgramLoading
+                            ? (
+
+                                <Heading>Loading...</Heading>
+                            )
+                            : (
+                                <Heading isEditable onChangeText={setProgramName} onBlur={handleEditProgramName} disabled={isProgramNameDisabled}>{programName}</Heading>
+                            )
+                    }
+                    {
+                        program?.description && isProgramLoading
+                            ? (
+                                <Paragraph>Loading...</Paragraph>
+                            )
+                            : (
+                                <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription} disabled={isProgramDescriptionDisabled}>{programDescription}</Paragraph>
+                            )
+                    }
+                    <AttachPeriodizationButton onPress={onHandleAttachment} isAttaced={Boolean(periodizationLabel)} value={isProgramLoading ? "Loading..." : periodizationLabel} disabled={isAttachmentDisabled} />
                 </View>
                 {isSupersetCombiningMode && (
                     <View style={styles.combiningPanelContainer}>
@@ -511,17 +553,18 @@ export default function Program() {
                 )}
                 <View style={styles.listContainer}>
                     {
-                        isError
+                        isProgramError
                             ? (
                                 <EntityEmptyState
                                     iconName="alert-circle-outline"
-                                    title="Failed to load exercises"
+                                    title="Failed to load program"
                                     message="Please check the API connection and try again."
+                                    onRetry={() => refetchProgram()}
                                 />
                             )
-                            : isLoading
+                            : isProgramLoading
                                 ? (
-                                    <Loader />
+                                    <Loader text="Loading your program..." />
                                 )
                                 : programExercisesAmount === 0
                                     ? (
@@ -606,7 +649,7 @@ export default function Program() {
                     <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
                 <BottomSheetForm isWithoutSubmition isOpen={isAttachPeriodizationMode} title="Select Periodization" onSubmit={() => { }} onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>
-                    <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} />
+                    <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} isLoading={isPeriodizationsLoading} isError={isPeriodizationsError} refetchPeriodizations={refetchPeriodizations} />
                 </BottomSheetForm>
             </View>
         </KeyboardAvoidingView>

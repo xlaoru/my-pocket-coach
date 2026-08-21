@@ -5,9 +5,9 @@ import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
 
-export default function AttachPeriodizationButton({ isAttaced, value, onPress }: IAttachPeriodizationButtonProps) {
+export default function AttachPeriodizationButton({ isAttaced, value, onPress, disabled }: IAttachPeriodizationButtonProps) {
     return (
-        <Pressable onPress={onPress} style={({ pressed }) => pressed ? [styles.innerContainer, styles.pressed] : styles.innerContainer}>
+        <Pressable onPress={onPress} style={({ pressed }) => pressed ? [styles.innerContainer, styles.pressed, disabled && styles.disabled] : [styles.innerContainer, disabled && styles.disabled]} disabled={disabled}>
             <Ionicons name="flash" size={12} color={isAttaced ? colors.red500 : colors.gray100} />
             <Paragraph style={isAttaced ? [styles.attachment, styles.pressedText] : styles.attachment}>{value ? value : "Attach Periodization"} {isAttaced && <Ionicons name="close" size={12} color={colors.red500} />}</Paragraph>
         </Pressable>
@@ -29,6 +29,9 @@ const styles = StyleSheet.create({
         color: colors.red500
     },
     pressed: {
-        opacity: 0.7
-    }
+        opacity: 0.85
+    },
+    disabled: {
+        opacity: 0.5
+    },
 });

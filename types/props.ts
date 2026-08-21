@@ -21,6 +21,7 @@ export interface IHeadingProps {
   isEditable?: boolean
   onChangeText?: (text: string) => void
   onBlur?: VoidFunction
+  disabled?: boolean
 }
 
 export interface IHeadingLabelProps {
@@ -35,6 +36,7 @@ export interface IParagraphProps {
   autoFocus?: boolean
   onChangeText?: (text: string) => void
   onBlur?: VoidFunction
+  disabled?: boolean
 }
 
 export interface IEntityEmptyStateProps {
@@ -125,6 +127,7 @@ export interface IAttachPeriodizationButtonProps {
   isAttaced: boolean
   value: string | null
   onPress: VoidFunction
+  disabled?: boolean
 }
 
 export interface IExerciseFormProps {
@@ -262,6 +265,9 @@ export interface IAttachPeriodizationFormProps {
   periodizations: IPeriodization[]
   onLinkStage: (periodizationId: string, stageId: string) => Promise<void>
   setAttachPeriodizationMode: (value: boolean) => void
+  isLoading: boolean
+  isError: boolean
+  refetchPeriodizations: () => void
 }
 
 export interface IPeriodizationCardProps {

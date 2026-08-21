@@ -72,8 +72,6 @@ export default function Programs() {
             await generateProgramByTemplateMutation.mutateAsync({
                 templateId
             })
-
-            setGeneratingProgramByTemplate(false)
         } catch {
             Alert.alert("Failed to generate program by template", "Please try again.");
         }

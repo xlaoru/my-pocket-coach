@@ -3,18 +3,23 @@ import { ITemplateListItemProps } from "@/types/props";
 import Title from "../Title/Title";
 
 import { Ionicons } from "@expo/vector-icons";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 
 export default function TemplateListItem({ templateId, title, description, exercises, supersets, onPress, onDeleteTemplate }: ITemplateListItemProps) {
-    const handleDeleteTemplate = useCallback(() => {
-        void onDeleteTemplate(templateId)
+    const [disabled, setDisabled] = useState(false)
+
+    const handleDeleteTemplate = useCallback(async () => {
+        setDisabled(true)
+        await onDeleteTemplate(templateId).finally(() => {
+            setDisabled(false)
+        })
     }, [templateId, onDeleteTemplate])
 
     return (
-        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
+        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed, disabled && styles.disabled]} disabled={disabled}>
             <View style={styles.iconContainer}>
                 <Ionicons name="document-text-outline" size={24} color={colors.red500} />
             </View>
@@ -27,8 +32,8 @@ export default function TemplateListItem({ templateId, title, description, exerc
                 </View>
             </View>
             <View style={styles.buttonsContainer}>
-                <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplate} />
-                <IconButton iconName="chevron-forward-outline" onPress={onPress} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplate} disabled={disabled} />
+                <IconButton iconName="chevron-forward-outline" onPress={onPress} disabled={disabled} />
             </View>
         </Pressable>
     )
@@ -70,5 +75,8 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.85,
+    },
+    disabled: {
+        opacity: 0.5,
     }
 });

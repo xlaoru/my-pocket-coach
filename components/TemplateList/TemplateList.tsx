@@ -49,7 +49,7 @@ export default function TemplateList({ templates, onDeleteTemplate }: ITemplateL
                     supersets={countSupersets(item.templateWorkout)}
                     onPress={() => {
                         router.push({
-                            pathname: "/(modals)/templates/[_id]",
+                            pathname: "/(root)/(modals)/templates/[_id]",
                             params: { _id: item._id }
                         })
                     }}

@@ -100,7 +100,7 @@ export default function Programs() {
                 <Paragraph>
                     {
                         isProgramsError
-                            ? "Failed to load programs..."
+                            ? "Failed to load programs"
                             : isProgramsLoading || createProgramMutation.isPending || deleteProgramMutation.isPending || generateProgramByTemplateMutation.isPending
                                 ? "Loading programs..."
                                 : `${programs.length} program${programs.length !== 1 ? "s" : ""}`

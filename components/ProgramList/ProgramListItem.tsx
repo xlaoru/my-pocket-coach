@@ -1,19 +1,24 @@
 import { colors } from "@/styles/colors";
 import { IProgramListItemsProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
 export default function ProgramListItem({ programId, title, description, exercises, supersets, onPress, onDeleteProgram }: IProgramListItemsProps) {
-    const handleDeleteProgram = useCallback(() => {
-        void onDeleteProgram(programId)
+    const [disabled, setDisabled] = useState(false)
+
+    const handleDeleteProgram = useCallback(async () => {
+        setDisabled(true)
+        await onDeleteProgram(programId).finally(() => {
+            setDisabled(false)
+        })
     }, [onDeleteProgram, programId])
 
     return (
-        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed]}>
+        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed, disabled && styles.disabled]} disabled={disabled}>
             <View style={styles.iconContainer}>
                 <Ionicons name="barbell-outline" size={24} color={colors.red500} />
             </View>
@@ -26,8 +31,8 @@ export default function ProgramListItem({ programId, title, description, exercis
                 </View>
             </View>
             <View style={styles.buttonsContainer}>
-                <IconButton iconName="trash-bin-outline" onPress={handleDeleteProgram} />
-                <IconButton iconName="chevron-forward-outline" onPress={onPress} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteProgram} disabled={disabled} />
+                <IconButton iconName="chevron-forward-outline" onPress={onPress} disabled={disabled} />
             </View>
         </Pressable>
     );
@@ -69,5 +74,8 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.85,
+    },
+    disabled: {
+        opacity: 0.5,
     }
 });

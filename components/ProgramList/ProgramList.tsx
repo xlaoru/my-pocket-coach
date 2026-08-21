@@ -50,7 +50,7 @@ export default function ProgramList({ programs, onDeleteProgram }: IProgramListP
                     supersets={countSupersets(item.workout)}
                     onPress={() => {
                         router.push({
-                            pathname: "/(modals)/programs/[_id]",
+                            pathname: "/(root)/(modals)/programs/[_id]",
                             params: { _id: item._id }
                         })
                     }}

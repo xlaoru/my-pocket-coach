@@ -118,7 +118,7 @@ export default function Programs() {
                                 onRetry={() => refetchPrograms()}
                             />
                         )
-                        : isProgramsLoading || createProgramMutation.isPending || deleteProgramMutation.isPending || generateProgramByTemplateMutation.isPending
+                        : isProgramsLoading || createProgramMutation.isPending || generateProgramByTemplateMutation.isPending
                             ? (
                                 <Loader text="Loading your programs..." />
                             )

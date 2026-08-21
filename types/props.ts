@@ -74,6 +74,7 @@ export interface ITitleProps {
 export interface IIconButtonProps {
   iconName: TIoniconName
   onPress: VoidFunction
+  disabled?: boolean
 }
 
 export interface IButtonProps {

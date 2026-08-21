@@ -20,8 +20,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Programs() {
     const insets = useSafeAreaInsets();
 
-    const { data: programs = [], isLoading: isProgramsLoading, isError: isProgramsError } = usePrograms();
-    const { data: templates, isLoading: isTemplatesLoading, isError: isTemplatesError } = useTemplates()
+    const { data: programs = [], isLoading: isProgramsLoading, isError: isProgramsError, refetch: refetchPrograms } = usePrograms();
+    const { data: templates, isLoading: isTemplatesLoading, isError: isTemplatesError, refetch: refetchTemplates } = useTemplates()
 
     const createProgramMutation = useCreateProgram();
     const deleteProgramMutation = useDeleteProgram()
@@ -115,6 +115,7 @@ export default function Programs() {
                                 iconName="alert-circle-outline"
                                 title="Failed to load programs"
                                 message="Please check the API connection and try again."
+                                onRetry={() => refetchPrograms()}
                             />
                         )
                         : isProgramsLoading || createProgramMutation.isPending || deleteProgramMutation.isPending || generateProgramByTemplateMutation.isPending
@@ -141,7 +142,7 @@ export default function Programs() {
                 <BottomSheetInput label="Program Description" placeholder="e.g. A fullbody workout program" value={programDescription} onChangeText={setProgramDescription} />
             </BottomSheetForm>
             <BottomSheetForm isOpen={isGeneratingProgramByTemplate} title="Generate from Template" onClose={() => setGeneratingProgramByTemplate(false)} onSubmit={() => { }} isWithoutSubmition>
-                <GenerateProgramByTemplateForm templates={templates ?? []} isLoading={isTemplatesLoading} isError={isTemplatesError} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} />
+                <GenerateProgramByTemplateForm templates={templates ?? []} isLoading={isTemplatesLoading} isError={isTemplatesError} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} refetchTemplates={refetchTemplates} />
             </BottomSheetForm>
         </View >
     );

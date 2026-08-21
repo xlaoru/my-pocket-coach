@@ -5,13 +5,19 @@ import EntityEmptyState from "../EntityEmptyState/EntityEmptyState";
 import Loader from "../Loader/Loader";
 import TemplateCard from "./TemplateCard";
 
-export default function GenerateProgramByTemplateForm({ templates, onGenerateProgramByTemplate, isLoading, isError }: IGenerateProgramByTemplateFormProps) {
+export default function GenerateProgramByTemplateForm({ templates, onGenerateProgramByTemplate, isLoading, isError, refetchTemplates }: IGenerateProgramByTemplateFormProps) {
     return (
         <View style={styles.container}>
             {
                 isError
                     ? (
-                        <EntityEmptyState iconName="alert-circle-outline" title="Failed to load templates" message="Please check the API connection and try again" wrapperStyle={{ marginTop: 0, marginBottom: 50 }} />
+                        <EntityEmptyState
+                            iconName="alert-circle-outline"
+                            title="Failed to load templates"
+                            message="Please check the API connection and try again"
+                            wrapperStyle={{ marginTop: 0, marginBottom: 50 }}
+                            onRetry={() => refetchTemplates()}
+                        />
                     )
                     : isLoading
                         ? (

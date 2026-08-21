@@ -42,6 +42,8 @@ export interface IEntityEmptyStateProps {
   title: string
   message: string
   wrapperStyle?: StyleProp<ViewStyle>
+  onRetry?: () => void
+  retryLabel?: string
 }
 
 export interface IProgramListProps {
@@ -356,6 +358,7 @@ export interface IGenerateProgramByTemplateFormProps {
   onGenerateProgramByTemplate: (templateId: string) => Promise<void>
   isLoading: boolean
   isError: boolean
+  refetchTemplates: () => void
 }
 
 export interface ITemplateCardProps {

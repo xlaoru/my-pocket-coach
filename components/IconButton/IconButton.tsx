@@ -6,7 +6,7 @@ import { Pressable, StyleSheet } from "react-native";
 
 export default function IconButton({ iconName, onPress, disabled }: IIconButtonProps) {
     return (
-        <Pressable onPress={onPress} style={({ pressed }) => [pressed && styles.pressed, disabled && styles.disabled]}>
+        <Pressable onPress={onPress} disabled={disabled} style={({ pressed }) => [pressed && styles.pressed, disabled && styles.disabled]}>
             <Ionicons name={iconName} size={22} color={colors.gray100} />
         </Pressable>
     );

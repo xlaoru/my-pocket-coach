@@ -9,7 +9,7 @@ import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
-export default function BottomSheetForm({ isOpen, title, children, onSubmit, onClose, isWithoutSubmition }: IBottomSheetFormProps) {
+export default function BottomSheetForm({ isOpen, title, children, onSubmit, onClose, isWithoutSubmition, disabled }: IBottomSheetFormProps) {
     const insets = useSafeAreaInsets();
 
     const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -64,7 +64,7 @@ export default function BottomSheetForm({ isOpen, title, children, onSubmit, onC
                 <Pressable style={styles.childrenContainer} onPress={() => Keyboard.dismiss()}>
                     {children}
                 </Pressable>
-                {isWithoutSubmition || <Button iconName="checkmark" onPress={onSubmit}>Submit</Button>}
+                {isWithoutSubmition || <Button disabled={disabled} iconName="checkmark" onPress={onSubmit}>Submit</Button>}
             </BottomSheetView>
         </BottomSheetModal>
     );

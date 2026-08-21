@@ -71,6 +71,7 @@ export interface ITitleProps {
   onBlur?: VoidFunction
   onSubmitEditing?: VoidFunction
   keyboardType?: KeyboardTypeOptions
+  disabled?: boolean
 }
 
 export interface IIconButtonProps {
@@ -86,6 +87,7 @@ export interface IButtonProps {
   onPress: VoidFunction
   style?: PressableProps['style']
   iconSize?: number
+  disabled?: boolean
 }
 
 export interface IPeriodizationListProps {
@@ -109,6 +111,7 @@ export interface IBottomSheetFormProps {
   onSubmit: VoidFunction
   onClose: VoidFunction
   isWithoutSubmition?: boolean
+  disabled?: boolean
 }
 
 export interface IInputProps {
@@ -155,6 +158,7 @@ export interface IExerciseFormRowInputProps {
 }
 
 export interface IAddSetOutlineButtonProps {
+  disabled?: boolean
   onPress: VoidFunction
 }
 
@@ -173,6 +177,7 @@ export interface IExerciseTableProps {
   setSelectedExercises: Dispatch<SetStateAction<string[]>>
   setSelectedExercisesData: Dispatch<SetStateAction<IExercise[]>>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
+  isMoveDisabled: boolean
 }
 
 export interface IExerciseTableRowProps {
@@ -181,6 +186,7 @@ export interface IExerciseTableRowProps {
   set: ISet
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+  isDeleteExerciseDisabled: boolean
 }
 
 export interface ICheckboxProps {

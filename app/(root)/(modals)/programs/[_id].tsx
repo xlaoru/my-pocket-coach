@@ -117,7 +117,9 @@ export default function Program() {
 
     const [isProgramNameDisabled, setProgramNameDisabled] = useState(false)
     const [isProgramDescriptionDisabled, setProgramDescriptionDisabled] = useState(false)
+    const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
     const [isAttachmentDisabled, setAttachmentDisabled] = useState(false)
+    const [isMoveDisabled, setMoveDisabled] = useState(false)
 
     useEffect(() => {
         if (program) {
@@ -197,7 +199,7 @@ export default function Program() {
                 payload: {
                     description: trimmedDescription
                 }
-            }).then(() => {
+            }).finally(() => {
                 setProgramDescriptionDisabled(false)
             })
         } catch {
@@ -206,26 +208,28 @@ export default function Program() {
     }, [_id, program?.description, editProgramMutation, programDescription])
 
     const handleCreateExercise = useCallback(async () => {
-        const trimmedExerciseName = exerciseName.trim()
-
-        if (!trimmedExerciseName) return;
-
-        if (createExerciseMutation.isPending) return;
-
         try {
+            const trimmedExerciseName = exerciseName.trim()
+
+            if (!trimmedExerciseName) return;
+
+            setExerciseFormOpen(false)
+            setCreateExerciseDisabled(true)
+
             await createExerciseMutation.mutateAsync({
                 programId: _id,
                 payload: {
                     name: trimmedExerciseName,
                     sets: sets
                 }
+            }).finally(() => {
+                setCreateExerciseDisabled(false)
             })
 
             setExerciseName("")
             setSets([
                 { weight: 0, reps: 0 },
             ])
-            setExerciseFormOpen(false)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
@@ -305,6 +309,8 @@ export default function Program() {
 
     const handleMoveExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
         try {
+            setMoveDisabled(true)
+
             await moveExerciseMutation.mutateAsync({
                 programId: _id,
                 payload: {
@@ -312,6 +318,8 @@ export default function Program() {
                     sourceIndex,
                     destinationIndex
                 }
+            }).finally(() => {
+                setMoveDisabled(false)
             })
         } catch {
             Alert.alert("Failed to move exercise", "Please try again.");
@@ -562,7 +570,7 @@ export default function Program() {
                                     onRetry={() => refetchProgram()}
                                 />
                             )
-                            : isProgramLoading
+                            : isProgramLoading || createExerciseMutation.isPending
                                 ? (
                                     <Loader text="Loading your program..." />
                                 )
@@ -597,6 +605,7 @@ export default function Program() {
                                                                         setSelectedExercises={setSelectedExercises}
                                                                         setSelectedExercisesData={setSelectedExercisesData}
                                                                         onSetExerciseNote={handleSetExerciseNote}
+                                                                        isMoveDisabled={isMoveDisabled}
                                                                     />
                                                                 )
                                                                 : (
@@ -639,10 +648,10 @@ export default function Program() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    <Button disabled={isCreateExerciseDisabled} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
                     {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
                 </View>
-                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
+                <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                     <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
                 </BottomSheetForm>
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>

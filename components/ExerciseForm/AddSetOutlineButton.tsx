@@ -5,9 +5,9 @@ import React from "react";
 import { Pressable, StyleSheet } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
 
-export default function AddSetOutlineButton({ onPress }: IAddSetOutlineButtonProps) {
+export default function AddSetOutlineButton({ disabled, onPress }: IAddSetOutlineButtonProps) {
     return (
-        <Pressable style={({ pressed }) => [styles.container, pressed && styles.pressed]} onPress={onPress}>
+        <Pressable style={({ pressed }) => [styles.container, pressed && styles.pressed, disabled && styles.disabled]} onPress={onPress} disabled={disabled}>
             <Ionicons name="add-circle-outline" size={14} color={colors.red500} />
             <Paragraph style={styles.text}>Add set</Paragraph>
         </Pressable>
@@ -26,6 +26,9 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     pressed: {
-        opacity: 0.7,
+        opacity: 0.85,
+    },
+    disabled: {
+        opacity: 0.5,
     }
 });

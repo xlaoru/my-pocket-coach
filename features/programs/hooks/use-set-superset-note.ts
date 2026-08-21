@@ -16,7 +16,7 @@ export function useSetSupersetNote() {
     mutationFn: ({ programId, supersetId, payload }: SetSupersetNoteVariables) =>
       setSupersetNote(programId, supersetId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.programs.byId(variables.programId),
       })
     },

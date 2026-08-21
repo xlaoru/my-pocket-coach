@@ -354,9 +354,15 @@ export interface ITemplateSupersetFormProps {
 export interface IGenerateProgramByTemplateFormProps {
   templates: ITemplate[]
   onGenerateProgramByTemplate: (templateId: string) => Promise<void>
+  isLoading: boolean
+  isError: boolean
 }
 
 export interface ITemplateCardProps {
   template: ITemplate
   onGenerateProgramByTemplate: (templateId: string) => Promise<void>
+}
+
+export interface ILoaderProps {
+  text?: string
 }

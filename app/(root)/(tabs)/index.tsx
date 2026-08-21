@@ -20,8 +20,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Programs() {
     const insets = useSafeAreaInsets();
 
-    const { data: programs = [], isLoading, isError } = usePrograms();
-    const { data: templates } = useTemplates()
+    const { data: programs = [], isLoading: isProgramsLoading, isError: isProgramsError } = usePrograms();
+    const { data: templates, isLoading: isTemplatesLoading, isError: isTemplatesError } = useTemplates()
 
     const createProgramMutation = useCreateProgram();
     const deleteProgramMutation = useDeleteProgram()
@@ -35,19 +35,24 @@ export default function Programs() {
     const [programDescription, setProgramDescription] = useState("");
 
     const handleCreateProgram = async () => {
-        const trimmedProgramName = programName.trim();
-        const trimmedProgramDescription = programDescription.trim();
+        try {
+            setIsBottomSheetOpen(false);
 
-        if (!trimmedProgramName) return;
+            const trimmedProgramName = programName.trim();
+            const trimmedProgramDescription = programDescription.trim();
 
-        await createProgramMutation.mutateAsync({
-            name: trimmedProgramName,
-            description: trimmedProgramDescription || undefined,
-        });
+            if (!trimmedProgramName) return;
 
-        setProgramName("");
-        setProgramDescription("");
-        setIsBottomSheetOpen(false);
+            await createProgramMutation.mutateAsync({
+                name: trimmedProgramName,
+                description: trimmedProgramDescription || undefined,
+            });
+
+            setProgramName("");
+            setProgramDescription("");
+        } catch {
+            Alert.alert("Failed to create program", "Please try again.");
+        }
     };
 
     const handleDeleteProgram = useCallback(async (programId: string) => {
@@ -62,6 +67,8 @@ export default function Programs() {
 
     const handleGenerateProgramByTemplate = useCallback(async (templateId: string) => {
         try {
+            setGeneratingProgramByTemplate(false)
+
             await generateProgramByTemplateMutation.mutateAsync({
                 templateId
             })
@@ -91,14 +98,18 @@ export default function Programs() {
                     <Button variant="secondary" iconName="sparkles" iconSize={14} onPress={() => { setGeneratingProgramByTemplate(true) }} style={{ paddingVertical: 6, paddingHorizontal: 16, borderRadius: 50 }}>Autofill</Button>
                 </View>
                 <Paragraph>
-                    {isLoading
-                        ? "Loading programs..."
-                        : `${programs.length} program${programs.length !== 1 ? "s" : ""}`}
+                    {
+                        isProgramsError
+                            ? "Failed to load programs..."
+                            : isProgramsLoading || createProgramMutation.isPending || deleteProgramMutation.isPending || generateProgramByTemplateMutation.isPending
+                                ? "Loading programs..."
+                                : `${programs.length} program${programs.length !== 1 ? "s" : ""}`
+                    }
                 </Paragraph>
             </View>
             <View style={styles.listContainer}>
                 {
-                    isError
+                    isProgramsError
                         ? (
                             <EntityEmptyState
                                 iconName="alert-circle-outline"
@@ -106,9 +117,9 @@ export default function Programs() {
                                 message="Please check the API connection and try again."
                             />
                         )
-                        : isLoading
+                        : isProgramsLoading || createProgramMutation.isPending || deleteProgramMutation.isPending || generateProgramByTemplateMutation.isPending
                             ? (
-                                <Loader />
+                                <Loader text="Loading your programs..." />
                             )
                             : programs.length === 0
                                 ? (
@@ -130,7 +141,7 @@ export default function Programs() {
                 <BottomSheetInput label="Program Description" placeholder="e.g. A fullbody workout program" value={programDescription} onChangeText={setProgramDescription} />
             </BottomSheetForm>
             <BottomSheetForm isOpen={isGeneratingProgramByTemplate} title="Generate from Template" onClose={() => setGeneratingProgramByTemplate(false)} onSubmit={() => { }} isWithoutSubmition>
-                <GenerateProgramByTemplateForm templates={templates ?? []} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} />
+                <GenerateProgramByTemplateForm templates={templates ?? []} isLoading={isTemplatesLoading} isError={isTemplatesError} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} />
             </BottomSheetForm>
         </View >
     );

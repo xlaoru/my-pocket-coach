@@ -1,9 +1,10 @@
 import { colors } from "@/styles/colors";
-import Paragraph from "../Paragraph/Paragraph";
+import { ILoaderProps } from "@/types/props";
 import React, { useEffect, useRef } from "react";
 import { Animated, Easing, StyleSheet, View } from "react-native";
+import Paragraph from "../Paragraph/Paragraph";
 
-export default function Loader() {
+export default function Loader({ text = "Racking your next set..." }: ILoaderProps) {
   const repValue = useRef(new Animated.Value(0)).current;
   const glowValue = useRef(new Animated.Value(0.85)).current;
 
@@ -77,9 +78,7 @@ export default function Loader() {
             },
           ]}
         />
-
         <View style={styles.track} />
-
         <Animated.View
           style={[
             styles.barbell,
@@ -92,19 +91,16 @@ export default function Loader() {
             <View style={[styles.plate, styles.outerPlate]} />
             <View style={[styles.plate, styles.innerPlate]} />
           </View>
-
           <View style={styles.bar}>
             <View style={styles.knurl} />
           </View>
-
           <View style={styles.sideStack}>
             <View style={[styles.plate, styles.innerPlate]} />
             <View style={[styles.plate, styles.outerPlate]} />
           </View>
         </Animated.View>
       </View>
-
-      <Paragraph style={styles.label}>Racking your next set...</Paragraph>
+      <Paragraph style={styles.label}>{text}</Paragraph>
     </View>
   );
 }

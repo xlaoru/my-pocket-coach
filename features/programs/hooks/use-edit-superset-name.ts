@@ -16,7 +16,7 @@ export function useEditSupersetName() {
     mutationFn: ({ programId, supersetId, payload }: EditSupersetNameVaribales) =>
       editSupersetName(programId, supersetId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.programs.byId(variables.programId),
       })
     },

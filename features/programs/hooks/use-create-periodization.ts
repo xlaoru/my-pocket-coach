@@ -8,10 +8,14 @@ export function useCreatePeriodization() {
   return useMutation({
     mutationFn: createPeriodization,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.periodizations.all })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.periodizations.all,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.all,
+        }),
+      ])
     },
   })
 }

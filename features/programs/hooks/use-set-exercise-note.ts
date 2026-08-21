@@ -16,7 +16,7 @@ export function useSetExerciseNote() {
     mutationFn: ({ programId, exerciseId, payload }: SetExerciseNoteVariables) =>
       setExerciseNote(programId, exerciseId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.programs.byId(variables.programId),
       })
     },

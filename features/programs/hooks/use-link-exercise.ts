@@ -15,12 +15,14 @@ export function useLinkExercises() {
     mutationFn: ({ programId, supersetId, exerciseId }: LinkExerciseVariables) =>
       linkExercise(programId, supersetId, exerciseId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.byId(variables.programId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.byId(variables.programId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.all,
+        }),
+      ])
     },
   })
 }

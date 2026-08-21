@@ -15,15 +15,17 @@ export function useEditPeriodizationName() {
     mutationFn: ({ periodizationId, payload }: EditPeriodizationNameVariables) =>
       editPeriodizationName(periodizationId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.periodizations.byId(variables.periodizationId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.periodizations.all,
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.periodizations.byId(variables.periodizationId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.periodizations.all,
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.all,
+        }),
+      ])
     },
   })
 }

@@ -14,12 +14,14 @@ export function useEditProgram() {
   return useMutation({
     mutationFn: ({ programId, payload }: EditProgramVariables) => editProgram(programId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.byId(variables.programId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.byId(variables.programId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.all,
+        }),
+      ])
     },
   })
 }

@@ -16,12 +16,14 @@ export function useCreateNewTemplateExercise() {
     mutationFn: ({ templateId, supersetId, payload }: CreateNewTemplateExerciseVariables) =>
       createNewTemplateExercise(templateId, supersetId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.templates.byId(variables.templateId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.templates.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.templates.byId(variables.templateId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.templates.all,
+        }),
+      ])
     },
   })
 }

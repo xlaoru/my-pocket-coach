@@ -14,12 +14,14 @@ export function useUnlinkAllTemplateExercises() {
     mutationFn: ({ templateId, supersetId }: UnlinkAllTemplateExercisesVariables) =>
       unlinkAllTemplateExercises(templateId, supersetId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.templates.byId(variables.templateId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.templates.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.templates.byId(variables.templateId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.templates.all,
+        }),
+      ])
     },
   })
 }

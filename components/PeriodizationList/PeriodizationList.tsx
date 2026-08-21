@@ -22,7 +22,7 @@ export default function PeriodizationList({ periodizations, onDeletePeriodizatio
                     stages={item.stages.length}
                     onPress={() => {
                         router.push({
-                            pathname: "/(modals)/periodizations/[_id]",
+                            pathname: "/(root)/(modals)/periodizations/[_id]",
                             params: { _id: item._id }
                         })
                     }}

@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Periodization() {
     const insets = useSafeAreaInsets();
 
-    const { data: periodizations = [], isLoading, isError } = usePeriodizations()
+    const { data: periodizations = [], isLoading, isError, refetch } = usePeriodizations()
 
     const createPeriodizationMutation = useCreatePeriodization()
     const deletePeriodizationMutation = useDeletePeriodization()
@@ -28,19 +28,24 @@ export default function Periodization() {
     const [periodizationDescription, setPeriodizationDescription] = useState("");
 
     const handleCreatePeriodization = useCallback(async () => {
-        const trimmedPeriodizationName = periodizationName.trim()
-        const trimmedPeriodizationDescription = periodizationDescription.trim()
+        try {
+            setIsBottomSheetOpen(false)
 
-        if (!trimmedPeriodizationName) return
+            const trimmedPeriodizationName = periodizationName.trim()
+            const trimmedPeriodizationDescription = periodizationDescription.trim()
 
-        await createPeriodizationMutation.mutateAsync({
-            name: trimmedPeriodizationName,
-            description: trimmedPeriodizationDescription || undefined
-        })
+            if (!trimmedPeriodizationName) return
 
-        setPeriodizationName("")
-        setPeriodizationDescription("")
-        setIsBottomSheetOpen(false)
+            await createPeriodizationMutation.mutateAsync({
+                name: trimmedPeriodizationName,
+                description: trimmedPeriodizationDescription || undefined
+            })
+
+            setPeriodizationName("")
+            setPeriodizationDescription("")
+        } catch {
+            Alert.alert("Failed to create periodization", "Please try again.");
+        }
     }, [createPeriodizationMutation, periodizationDescription, periodizationName])
 
     const handleDeletePeriodization = useCallback(async (periodizationId: string) => {
@@ -70,9 +75,11 @@ export default function Periodization() {
                 <Heading>Periodization</Heading>
                 <Paragraph>
                     {
-                        isLoading
-                            ? "Loading periodizations..."
-                            : `${periodizations.length} period${periodizations.length !== 1 ? "s" : ""}`
+                        isError
+                            ? "Failed to load periodizations"
+                            : isLoading
+                                ? "Loading periodizations..."
+                                : `${periodizations.length} period${periodizations.length !== 1 ? "s" : ""}`
                     }
                 </Paragraph>
             </View>
@@ -84,12 +91,13 @@ export default function Periodization() {
                                 iconName="alert-circle-outline"
                                 title="Failed to load periodizations"
                                 message="Please check the API connection and try again."
+                                onRetry={() => refetch()}
                             />
                         )
-                        : isLoading
+                        : isLoading || createPeriodizationMutation.isPending
 
                             ? (
-                                <Loader />
+                                <Loader text="Loading your periodizations..." />
                             )
                             : periodizations.length === 0
                                 ? (

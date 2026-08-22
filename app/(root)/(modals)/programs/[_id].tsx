@@ -575,7 +575,7 @@ export default function Program() {
                                     onRetry={() => refetchProgram()}
                                 />
                             )
-                            : isProgramLoading || createExerciseMutation.isPending || createSupersetMutation.isPending || linkExerciseMutation.isPending
+                            : isProgramLoading || createExerciseMutation.isPending || createSupersetMutation.isPending
                                 ? (
                                     <Loader text="Loading your program..." />
                                 )

@@ -11,7 +11,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabel from "./SubExerciseTabel";
 
-function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises, onCreateNewExercise, onLinkExercise, onSetExerciseNote, onSetSupersetNote, isMoveDisabled }: ISupersetTableProps) {
+function SupersetTableComponent({ index, superset, workoutItemId, outsideSupersetExercises, onDrag, onSupersetNameChange, onDeleteSuperset, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onMoveExercise, onUnlinkExercise, onUnlinkAllExercises, onCreateNewExercise, onLinkExercise, onSetExerciseNote, onSetSupersetNote, isMoveDisabled, setLinkedExerciseId, isSupersetCombiningMode, isSupersetCombiningDisabled }: ISupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
     const [newExerciseName, setNewExerciseName] = useState("")
     const [editableNote, setEditableNote] = useState(superset.note)
@@ -91,10 +91,12 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
 
     const handleLinkExercise = useCallback(async (exerciseId: string) => {
         setLinkExerciseDisabled(true)
+        setLinkedExerciseId(exerciseId)
         await onLinkExercise(superset._id, exerciseId).finally(() => {
             setLinkExerciseDisabled(false)
+            setLinkedExerciseId("")
         })
-    }, [superset._id, onLinkExercise])
+    }, [superset._id, onLinkExercise, setLinkedExerciseId])
 
     const handleNotePress = useCallback(() => {
         if (superset.note) {
@@ -186,21 +188,21 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                                     <Button disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled} variant="outlined" onPress={() => { setCreateNewExerciseMode(false); setNewExerciseName("") }} style={styles.buttons}>Cancel</Button>
                                 </View>
                             </View>
-                        ) : (isPickExistingExerciseMode && !isDeleteSupersetDisabled && !isUnlinkAllExercisesDisabled && !isMoveDisabled)
+                        ) : (isPickExistingExerciseMode && !isDeleteSupersetDisabled && !isUnlinkAllExercisesDisabled && !isMoveDisabled && !isSupersetCombiningMode && !isSupersetCombiningDisabled)
                             ? (
                                 <View style={styles.pickExistingExerciseContainer}>
                                     {outsideSupersetExercises.map((exercise) => (
-                                        <Pressable disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled} key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed, (isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled) && styles.disabled] : [styles.pickExistingExerciseCard, (isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled) && styles.disabled]} onPress={() => handleLinkExercise(exercise.components[0]._id)}>
+                                        <Pressable disabled={isSupersetCombiningDisabled || isSupersetCombiningMode || isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled} key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed, (isSupersetCombiningDisabled || isSupersetCombiningMode || isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled) && styles.disabled] : [styles.pickExistingExerciseCard, (isSupersetCombiningDisabled || isSupersetCombiningMode || isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled) && styles.disabled]} onPress={() => handleLinkExercise(exercise.components[0]._id)}>
                                             <Ionicons name="barbell-outline" size={22} color={colors.red500} />
                                             <Title>{exercise.name}</Title>
                                         </Pressable>
                                     ))}
-                                    <Button disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled} variant="outlined" onPress={() => { setPickExistingExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
+                                    <Button disabled={isSupersetCombiningDisabled || isSupersetCombiningMode || isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isLinkExerciseDisabled} variant="outlined" onPress={() => { setPickExistingExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
                                 </View>
                             ) : (
                                 <>
                                     <Button disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isLinkExerciseDisabled} iconName="add-circle-outline" variant="dashed" onPress={() => { setCreateNewExerciseMode(true) }} style={styles.buttons}>New Exercise</Button>
-                                    {outsideSupersetExercises.length >= 1 && <Button disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isLinkExerciseDisabled} iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
+                                    {outsideSupersetExercises.length >= 1 && <Button disabled={isSupersetCombiningMode || isMoveDisabled || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isLinkExerciseDisabled} iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
                                 </>
                             )}
             </View>

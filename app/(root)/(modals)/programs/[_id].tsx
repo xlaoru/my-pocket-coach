@@ -121,6 +121,7 @@ export default function Program() {
     const [isAttachmentDisabled, setAttachmentDisabled] = useState(false)
     const [isMoveDisabled, setMoveDisabled] = useState(false)
     const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
+    const [linkedExerciseId, setLinkedExerciseId] = useState("")
 
     useEffect(() => {
         if (program) {
@@ -327,37 +328,31 @@ export default function Program() {
         }
     }, [_id, moveExerciseMutation])
 
-    useEffect(() => {
-        if (!isSupersetCombiningMode) {
-            setSelectedExercises([])
-        }
-    }, [isSupersetCombiningMode])
-
     const handleCreateSuperset = useCallback(async () => {
         try {
-            setSupersetCombiningFormOpen(false)
-            setSupersetCombiningMode(false)
-            setSupersetCombiningDisabled(true)
-
             const trimmedSupertsetName = supersetName.trim()
 
             if (!trimmedSupertsetName) {
                 return
             }
 
+            setSupersetCombiningFormOpen(false)
+            setSupersetCombiningMode(false)
+            setSupersetCombiningDisabled(true)
+
             await createSupersetMutation.mutateAsync({
                 programId: _id,
                 payload: {
-                    name: supersetName,
+                    name: trimmedSupertsetName,
                     workoutItemIds: selectedExercises
                 }
             }).finally(() => {
                 setSupersetCombiningDisabled(false)
+                setSelectedExercises([])
+                setSelectedExercisesData([])
             })
 
             setSupersetName("")
-            setSelectedExercises([])
-            setSelectedExercisesData([])
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
         }
@@ -575,7 +570,7 @@ export default function Program() {
                                     onRetry={() => refetchProgram()}
                                 />
                             )
-                            : isProgramLoading || createExerciseMutation.isPending || createSupersetMutation.isPending
+                            : isProgramLoading
                                 ? (
                                     <Loader text="Loading your program..." />
                                 )
@@ -611,6 +606,8 @@ export default function Program() {
                                                                         setSelectedExercisesData={setSelectedExercisesData}
                                                                         onSetExerciseNote={handleSetExerciseNote}
                                                                         isMoveDisabled={isMoveDisabled}
+                                                                        linkedExerciseId={linkedExerciseId}
+                                                                        isSupersetCombiningDisabled={isSupersetCombiningDisabled}
                                                                     />
                                                                 )
                                                                 : (
@@ -635,6 +632,9 @@ export default function Program() {
                                                                         onSetExerciseNote={handleSetExerciseNote}
                                                                         onSetSupersetNote={handleSetSupersetNote}
                                                                         isMoveDisabled={isMoveDisabled}
+                                                                        setLinkedExerciseId={setLinkedExerciseId}
+                                                                        isSupersetCombiningMode={isSupersetCombiningMode}
+                                                                        isSupersetCombiningDisabled={isSupersetCombiningDisabled}
                                                                     />
                                                                 )
                                                         }
@@ -655,7 +655,7 @@ export default function Program() {
                 </View>
                 <View style={styles.buttonContainer}>
                     <Button disabled={isCreateExerciseDisabled || isSupersetCombiningMode} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
+                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button disabled={isSupersetCombiningDisabled} iconName="layers" variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
                 <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                     <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />

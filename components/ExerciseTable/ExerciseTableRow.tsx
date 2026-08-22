@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
-export default function ExerciseTableRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet, isDeleteExerciseDisabled, isSupersetCombiningMode }: IExerciseTableRowProps) {
+export default function ExerciseTableRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet, isDeleteExerciseDisabled, isSupersetCombiningMode, isMoveDisabled }: IExerciseTableRowProps) {
   const [exerciseSet, setExerciseSet] = useState({ weight: String(set.weight), reps: String(set.reps) })
 
   const [isSetDisabled, setSetDisabled] = useState(false)
@@ -44,13 +44,13 @@ export default function ExerciseTableRow({ exerciseId, index, set, onEditExercis
         <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title keyboardType="decimal-pad" disabled={isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
+        <Title keyboardType="decimal-pad" disabled={isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title keyboardType="decimal-pad" disabled={isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
+        <Title keyboardType="decimal-pad" disabled={isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
       </View>
       <View style={styles.actionCell}>
-        <IconButton disabled={isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
+        <IconButton disabled={isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
       </View>
     </View>
   );

@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
-export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet, isDeleteSupersetDisabled }: ISubExerciseTabelRowProps) {
+export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet, isDeleteSupersetDisabled, isUnlinkExerciseDisabled, isUnlinkAllExercisesDisabled, isMoveDisabled }: ISubExerciseTabelRowProps) {
     const [exerciseSet, setExerciseSet] = useState({ weight: String(set.weight), reps: String(set.reps) })
 
     useEffect(() => {
@@ -18,6 +18,9 @@ export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExer
         const reps = parseNumericInput(exerciseSet.reps, set.reps)
 
         setExerciseSet({ weight: String(weight), reps: String(reps) })
+
+        if (weight === set.weight && reps === set.reps) return
+
         void onEditExerciseSet(exerciseId, index, { weight, reps })
     }, [exerciseSet, exerciseId, index, set, onEditExerciseSet])
 
@@ -31,13 +34,13 @@ export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExer
                 <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title disabled={isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
+                <Title disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title disabled={isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
+                <Title disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
             </View>
             <View style={styles.actionCell}>
-                <IconButton disabled={isDeleteSupersetDisabled} iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
+                <IconButton disabled={isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
             </View>
         </View>
     )

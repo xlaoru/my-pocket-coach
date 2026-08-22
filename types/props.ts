@@ -124,6 +124,7 @@ export interface IInputProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'
   keyboardType?: 'default' | 'email-address'
   onBlur?: VoidFunction
+  disabled?: boolean
 }
 
 export interface IAttachPeriodizationButtonProps {
@@ -188,6 +189,7 @@ export interface IExerciseTableRowProps {
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   isDeleteExerciseDisabled: boolean
   isSupersetCombiningMode: boolean
+  isMoveDisabled: boolean
 }
 
 export interface ICheckboxProps {
@@ -241,6 +243,7 @@ export interface ISubExerciseTabelProps {
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
   isMoveDisabled: boolean
   isDeleteSupersetDisabled: boolean
+  isUnlinkAllExercisesDisabled: boolean
 }
 
 export interface ISubExerciseTabelRowProps {
@@ -250,6 +253,9 @@ export interface ISubExerciseTabelRowProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   isDeleteSupersetDisabled: boolean
+  isUnlinkExerciseDisabled: boolean
+  isUnlinkAllExercisesDisabled: boolean
+  isMoveDisabled: boolean
 }
 
 export interface IStageFormProps {

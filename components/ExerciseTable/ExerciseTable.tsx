@@ -93,7 +93,7 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
     }, [exercise._id, exercise.note, editableNote, onSetExerciseNote])
 
     return (
-        <View style={[styles.outterContainer, selectedExercises.includes(workoutItemId) && styles.selected, isDeleteExerciseDisabled && styles.disabled]}>
+        <View style={[styles.outterContainer, selectedExercises.includes(workoutItemId) && styles.selected, (isMoveDisabled || isDeleteExerciseDisabled) && styles.disabled]}>
             {
                 isSupersetCombiningMode
                     ?
@@ -113,11 +113,11 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable disabled={isDeleteExerciseDisabled || isExerciseNameDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                                <Title isEditable disabled={isMoveDisabled || isDeleteExerciseDisabled || isExerciseNameDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
                             <View style={styles.headerIconButtonsContainer}>
-                                <IconButton disabled={isDeleteExerciseDisabled || isNoteDisabled} iconName="reader-outline" onPress={handleNotePress} />
-                                <IconButton disabled={isDeleteExerciseDisabled} iconName="trash-bin-outline" onPress={handleDeleteExercise} />
+                                <IconButton disabled={isMoveDisabled || isDeleteExerciseDisabled || isNoteDisabled} iconName="reader-outline" onPress={handleNotePress} />
+                                <IconButton disabled={isMoveDisabled || isDeleteExerciseDisabled} iconName="trash-bin-outline" onPress={handleDeleteExercise} />
                             </View>
                         </View>
                     )
@@ -138,14 +138,14 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
                     <View style={styles.actionPlaceholder} />
                 </View>
                 {
-                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} isDeleteExerciseDisabled={isDeleteExerciseDisabled} isSupersetCombiningMode={isSupersetCombiningMode} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
+                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} isMoveDisabled={isMoveDisabled} isDeleteExerciseDisabled={isDeleteExerciseDisabled} isSupersetCombiningMode={isSupersetCombiningMode} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
                 }
             </View>
-            <AddSetOutlineButton disabled={isDeleteExerciseDisabled || isSupersetCombiningMode || isAddSetDisabled} onPress={handleAddExerciseSet} />
+            <AddSetOutlineButton disabled={isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isAddSetDisabled} onPress={handleAddExerciseSet} />
             {
                 (exercise.note || isNoteMode) && (
                     <View style={styles.noteContainer}>
-                        <Paragraph ref={noteInputRef} isEditable disabled={isDeleteExerciseDisabled || isSupersetCombiningMode || isNoteDisabled} autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
+                        <Paragraph ref={noteInputRef} isEditable disabled={isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isNoteDisabled} autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
                     </View>
                 )
             }

@@ -256,6 +256,7 @@ export interface ISubExerciseTabelRowProps {
   isUnlinkExerciseDisabled: boolean
   isUnlinkAllExercisesDisabled: boolean
   isMoveDisabled: boolean
+  isDeleteExerciseDisabled: boolean
 }
 
 export interface IStageFormProps {

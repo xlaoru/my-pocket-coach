@@ -27,18 +27,24 @@ export default function Periodization() {
     const [periodizationName, setPeriodizationName] = useState("");
     const [periodizationDescription, setPeriodizationDescription] = useState("");
 
+    const [isCreatePeriodization, setCreatePeriodization] = useState(false)
+    const [isDeletePeriodization, setDeletePeriodization] = useState(false)
+
     const handleCreatePeriodization = useCallback(async () => {
         try {
-            setIsBottomSheetOpen(false)
-
             const trimmedPeriodizationName = periodizationName.trim()
             const trimmedPeriodizationDescription = periodizationDescription.trim()
 
             if (!trimmedPeriodizationName) return
 
+            setIsBottomSheetOpen(false)
+            setCreatePeriodization(true)
+
             await createPeriodizationMutation.mutateAsync({
                 name: trimmedPeriodizationName,
                 description: trimmedPeriodizationDescription || undefined
+            }).finally(() => {
+                setCreatePeriodization(false)
             })
 
             setPeriodizationName("")
@@ -50,8 +56,11 @@ export default function Periodization() {
 
     const handleDeletePeriodization = useCallback(async (periodizationId: string) => {
         try {
+            setDeletePeriodization(true)
             await deletePeriodizationMutation.mutateAsync({
                 periodizationId
+            }).finally(() => {
+                setDeletePeriodization(false)
             })
         } catch {
             Alert.alert("Failed to delete periodization", "Please try again.");
@@ -77,7 +86,7 @@ export default function Periodization() {
                     {
                         isError
                             ? "Failed to load periodizations"
-                            : isLoading
+                            : isLoading || isCreatePeriodization || isDeletePeriodization
                                 ? "Loading periodizations..."
                                 : `${periodizations.length} period${periodizations.length !== 1 ? "s" : ""}`
                     }
@@ -94,7 +103,7 @@ export default function Periodization() {
                                 onRetry={() => refetch()}
                             />
                         )
-                        : isLoading || createPeriodizationMutation.isPending
+                        : isLoading
 
                             ? (
                                 <Loader text="Loading your periodizations..." />
@@ -108,8 +117,9 @@ export default function Periodization() {
                                 )
                 }
             </View>
-            <Button iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Periodization</Button>
+            <Button disabled={isCreatePeriodization} iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Periodization</Button>
             <BottomSheetForm
+                disabled={isCreatePeriodization}
                 isOpen={isBottomSheetOpen}
                 title="New Periodization"
                 onSubmit={handleCreatePeriodization}

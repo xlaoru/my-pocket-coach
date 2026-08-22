@@ -235,6 +235,10 @@ export interface ISupersetTableProps {
   setLinkedExerciseId: (exerciseId: string) => void
   isSupersetCombiningMode: boolean
   isSupersetCombiningDisabled: boolean
+  isUnlinkExerciseDisabled: boolean
+  isUnlinkAllExercisesDisabled: boolean
+  isDeleteExerciseDisabled: boolean
+  isCreateExerciseDisabled: boolean
 }
 
 export interface ISubExerciseTabelProps {

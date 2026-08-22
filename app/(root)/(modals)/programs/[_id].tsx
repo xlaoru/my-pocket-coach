@@ -122,6 +122,9 @@ export default function Program() {
     const [isMoveDisabled, setMoveDisabled] = useState(false)
     const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
     const [linkedExerciseId, setLinkedExerciseId] = useState("")
+    const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
+    const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
+    const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
 
     useEffect(() => {
         if (program) {
@@ -300,9 +303,12 @@ export default function Program() {
 
     const handleDeleteExercise = useCallback(async (exerciseId: string) => {
         try {
+            setDeleteExerciseDisabled(true)
             await deleteExerciseMutation.mutateAsync({
                 programId: _id,
                 exerciseId: exerciseId
+            }).finally(() => {
+                setDeleteExerciseDisabled(false)
             })
         } catch {
             Alert.alert("Failed to delete exercise", "Please try again.");
@@ -391,10 +397,13 @@ export default function Program() {
 
     const handleUnlinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setUnlinkExerciseDisabled(true)
             await unlinkExerciseMutation.mutateAsync({
                 programId: _id,
                 supersetId,
                 exerciseId
+            }).finally(() => {
+                setUnlinkExerciseDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercise", "Please try again.");
@@ -403,9 +412,12 @@ export default function Program() {
 
     const handleUnlinkAllExercises = useCallback(async (supersetId: string) => {
         try {
+            setUnlinkAllExercisesDisabled(true)
             await unlinkAllExercisesMutation.mutateAsync({
                 programId: _id,
                 supersetId
+            }).finally(() => {
+                setUnlinkAllExercisesDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercises", "Please try again.");
@@ -635,6 +647,10 @@ export default function Program() {
                                                                         setLinkedExerciseId={setLinkedExerciseId}
                                                                         isSupersetCombiningMode={isSupersetCombiningMode}
                                                                         isSupersetCombiningDisabled={isSupersetCombiningDisabled}
+                                                                        isUnlinkExerciseDisabled={isUnlinkExerciseDisabled}
+                                                                        isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled}
+                                                                        isDeleteExerciseDisabled={isDeleteExerciseDisabled}
+                                                                        isCreateExerciseDisabled={isCreateExerciseDisabled}
                                                                     />
                                                                 )
                                                         }

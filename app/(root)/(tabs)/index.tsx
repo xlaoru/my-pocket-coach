@@ -144,6 +144,7 @@ export default function Programs() {
             </View>
             <Button iconName="add-outline" disabled={isCreateProgramDisabled} onPress={() => setIsBottomSheetOpen(true)}>New Program</Button>
             <BottomSheetForm
+                disabled={isCreateProgramDisabled}
                 isOpen={isBottomSheetOpen}
                 title="New Program"
                 onSubmit={handleCreateProgram}

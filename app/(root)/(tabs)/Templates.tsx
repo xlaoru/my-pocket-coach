@@ -27,18 +27,24 @@ export default function Templates() {
     const [templateName, setTemplateName] = useState("")
     const [templateDescription, setTemplateDescription] = useState("")
 
+    const [isCreateTemplateDisabled, setCreateTemplateDisabled] = useState(false)
+    const [isDeleteTemplateDisabled, setDeleteTemplateDisabled] = useState(false)
+
     const handleCreateTemplate = useCallback(async () => {
         try {
-            setIsBottomSheetOpen(false)
-
             const trimmedTemplateName = templateName.trim()
             const trimmedTemplateDescription = templateDescription.trim()
 
             if (!trimmedTemplateName) return
 
+            setIsBottomSheetOpen(false)
+            setCreateTemplateDisabled(true)
+
             await createTemplateMutation.mutateAsync({
                 name: trimmedTemplateName,
                 description: trimmedTemplateDescription
+            }).finally(() => {
+                setCreateTemplateDisabled(false)
             })
 
             setTemplateName("")
@@ -50,8 +56,11 @@ export default function Templates() {
 
     const handleDeleteTemplate = useCallback(async (templateId: string) => {
         try {
+            setDeleteTemplateDisabled(true)
             await deleteTemplateMutation.mutateAsync({
                 templateId
+            }).finally(() => {
+                setDeleteTemplateDisabled(false)
             })
         } catch {
             Alert.alert("Failed to delete template", "Please try again.");
@@ -77,7 +86,7 @@ export default function Templates() {
                     {
                         isError
                             ? "Failed to fetch templates"
-                            : isLoading || createTemplateMutation.isPending
+                            : isLoading || isCreateTemplateDisabled || isDeleteTemplateDisabled
                                 ? "Loading templates..."
                                 : `${templates.length} template${templates.length !== 1 ? "s" : ""}`
                     }
@@ -94,7 +103,7 @@ export default function Templates() {
                                 onRetry={() => refetch()}
                             />
                         )
-                        : isLoading || createTemplateMutation.isPending
+                        : isLoading
                             ? (
                                 <Loader text="Loading your templates..." />
                             )
@@ -107,8 +116,9 @@ export default function Templates() {
                                 )
                 }
             </View>
-            <Button iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Template</Button>
+            <Button disabled={isCreateTemplateDisabled} iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Template</Button>
             <BottomSheetForm
+                disabled={isCreateTemplateDisabled}
                 isOpen={isBottomSheetOpen}
                 title="New Template"
                 onSubmit={handleCreateTemplate}

@@ -34,19 +34,26 @@ export default function Programs() {
     const [programName, setProgramName] = useState("");
     const [programDescription, setProgramDescription] = useState("");
 
+    const [isCreateProgramDisabled, setCreateProgramDisabled] = useState(false)
+    const [isDeleteProgramDisabled, setDeleteProgramDisabled] = useState(false)
+    const [isGenerateProgramDisabled, setGenerateProgramDisabled] = useState(false)
+
     const handleCreateProgram = async () => {
         try {
-            setIsBottomSheetOpen(false);
-
             const trimmedProgramName = programName.trim();
             const trimmedProgramDescription = programDescription.trim();
 
             if (!trimmedProgramName) return;
 
+            setIsBottomSheetOpen(false);
+            setCreateProgramDisabled(true)
+
             await createProgramMutation.mutateAsync({
                 name: trimmedProgramName,
                 description: trimmedProgramDescription || undefined,
-            });
+            }).finally(() => {
+                setCreateProgramDisabled(false)
+            })
 
             setProgramName("");
             setProgramDescription("");
@@ -57,8 +64,11 @@ export default function Programs() {
 
     const handleDeleteProgram = useCallback(async (programId: string) => {
         try {
+            setDeleteProgramDisabled(true)
             await deleteProgramMutation.mutateAsync({
                 programId
+            }).finally(() => {
+                setDeleteProgramDisabled(false)
             })
         } catch {
             Alert.alert("Failed to delete program", "Please try again.");
@@ -68,9 +78,12 @@ export default function Programs() {
     const handleGenerateProgramByTemplate = useCallback(async (templateId: string) => {
         try {
             setGeneratingProgramByTemplate(false)
+            setGenerateProgramDisabled(true)
 
             await generateProgramByTemplateMutation.mutateAsync({
                 templateId
+            }).finally(() => {
+                setGenerateProgramDisabled(false)
             })
         } catch {
             Alert.alert("Failed to generate program by template", "Please try again.");
@@ -93,13 +106,13 @@ export default function Programs() {
                 <HeadingLabel>Training</HeadingLabel>
                 <View style={styles.headingContainer}>
                     <Heading>Programs</Heading>
-                    <Button variant="secondary" iconName="sparkles" iconSize={14} onPress={() => { setGeneratingProgramByTemplate(true) }} style={{ paddingVertical: 6, paddingHorizontal: 16, borderRadius: 50 }}>Autofill</Button>
+                    <Button disabled={isGenerateProgramDisabled} variant="secondary" iconName="sparkles" iconSize={14} onPress={() => { setGeneratingProgramByTemplate(true) }} style={{ paddingVertical: 6, paddingHorizontal: 16, borderRadius: 50 }}>Autofill</Button>
                 </View>
                 <Paragraph>
                     {
                         isProgramsError
                             ? "Failed to load programs"
-                            : isProgramsLoading || createProgramMutation.isPending || deleteProgramMutation.isPending || generateProgramByTemplateMutation.isPending
+                            : isProgramsLoading || isCreateProgramDisabled || isDeleteProgramDisabled || isGenerateProgramDisabled
                                 ? "Loading programs..."
                                 : `${programs.length} program${programs.length !== 1 ? "s" : ""}`
                     }
@@ -116,7 +129,7 @@ export default function Programs() {
                                 onRetry={() => refetchPrograms()}
                             />
                         )
-                        : isProgramsLoading || createProgramMutation.isPending || generateProgramByTemplateMutation.isPending
+                        : isProgramsLoading
                             ? (
                                 <Loader text="Loading your programs..." />
                             )
@@ -129,7 +142,7 @@ export default function Programs() {
                                 )
                 }
             </View>
-            <Button iconName="add-outline" onPress={() => setIsBottomSheetOpen(true)}>New Program</Button>
+            <Button iconName="add-outline" disabled={isCreateProgramDisabled} onPress={() => setIsBottomSheetOpen(true)}>New Program</Button>
             <BottomSheetForm
                 isOpen={isBottomSheetOpen}
                 title="New Program"
@@ -140,7 +153,7 @@ export default function Programs() {
                 <BottomSheetInput label="Program Description" placeholder="e.g. A fullbody workout program" value={programDescription} onChangeText={setProgramDescription} />
             </BottomSheetForm>
             <BottomSheetForm isOpen={isGeneratingProgramByTemplate} title="Generate from Template" onClose={() => setGeneratingProgramByTemplate(false)} onSubmit={() => { }} isWithoutSubmition>
-                <GenerateProgramByTemplateForm templates={templates ?? []} isLoading={isTemplatesLoading} isError={isTemplatesError} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} refetchTemplates={refetchTemplates} />
+                <GenerateProgramByTemplateForm templates={templates ?? []} isLoading={isTemplatesLoading} isError={isTemplatesError} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} refetchTemplates={refetchTemplates} isGenerateProgramDisabled={isGenerateProgramDisabled} />
             </BottomSheetForm>
         </View >
     );

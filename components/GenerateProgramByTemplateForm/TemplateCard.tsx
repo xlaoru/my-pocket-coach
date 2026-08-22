@@ -33,7 +33,7 @@ function countSupersets(workout: ITemplateWorkoutItem[]): number {
     return count;
 }
 
-export default function TemplateCard({ template, onGenerateProgramByTemplate }: ITemplateCardProps) {
+export default function TemplateCard({ template, onGenerateProgramByTemplate, isGenerateProgramDisabled }: ITemplateCardProps) {
     const exercises = countExercises(template.templateWorkout);
     const supersets = countSupersets(template.templateWorkout);
 
@@ -42,7 +42,7 @@ export default function TemplateCard({ template, onGenerateProgramByTemplate }: 
     }, [onGenerateProgramByTemplate, template._id])
 
     return (
-        <Pressable style={({ pressed }) => [styles.container, pressed && styles.pressed]} onPress={handleGenerateProgramByTemplate}>
+        <Pressable style={({ pressed }) => [styles.container, pressed && styles.pressed, isGenerateProgramDisabled && styles.disabled]} onPress={handleGenerateProgramByTemplate} disabled={isGenerateProgramDisabled}>
             <View style={styles.iconContainer}>
                 <Ionicons name="document-text-outline" size={24} color={colors.red500} />
             </View>
@@ -90,5 +90,8 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity: 0.85,
+    },
+    disabled: {
+        opacity: 0.5
     }
 })

@@ -5,7 +5,7 @@ import EntityEmptyState from "../EntityEmptyState/EntityEmptyState";
 import Loader from "../Loader/Loader";
 import TemplateCard from "./TemplateCard";
 
-export default function GenerateProgramByTemplateForm({ templates, onGenerateProgramByTemplate, isLoading, isError, refetchTemplates }: IGenerateProgramByTemplateFormProps) {
+export default function GenerateProgramByTemplateForm({ templates, onGenerateProgramByTemplate, isLoading, isError, refetchTemplates, isGenerateProgramDisabled }: IGenerateProgramByTemplateFormProps) {
     return (
         <View style={styles.container}>
             {
@@ -35,7 +35,7 @@ export default function GenerateProgramByTemplateForm({ templates, onGeneratePro
                                     keyExtractor={(item) => item._id}
                                     showsVerticalScrollIndicator={false}
                                     renderItem={({ item, index }) => (
-                                        <TemplateCard template={item} key={index} onGenerateProgramByTemplate={onGenerateProgramByTemplate} />
+                                        <TemplateCard template={item} key={index} onGenerateProgramByTemplate={onGenerateProgramByTemplate} isGenerateProgramDisabled={isGenerateProgramDisabled} />
                                     )}
                                 />
                             )

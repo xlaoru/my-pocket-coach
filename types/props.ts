@@ -399,11 +399,13 @@ export interface IGenerateProgramByTemplateFormProps {
   isLoading: boolean
   isError: boolean
   refetchTemplates: () => void
+  isGenerateProgramDisabled: boolean
 }
 
 export interface ITemplateCardProps {
   template: ITemplate
   onGenerateProgramByTemplate: (templateId: string) => Promise<void>
+  isGenerateProgramDisabled: boolean
 }
 
 export interface ILoaderProps {

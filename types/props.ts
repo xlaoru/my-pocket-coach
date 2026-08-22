@@ -172,12 +172,12 @@ export interface IExerciseTableProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
-  isSupersetCombiningMode: boolean
   selectedExercises: string[]
   setSelectedExercises: Dispatch<SetStateAction<string[]>>
   setSelectedExercisesData: Dispatch<SetStateAction<IExercise[]>>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
   isMoveDisabled: boolean
+  isSupersetCombiningMode: boolean
 }
 
 export interface IExerciseTableRowProps {
@@ -187,6 +187,7 @@ export interface IExerciseTableRowProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   isDeleteExerciseDisabled: boolean
+  isSupersetCombiningMode: boolean
 }
 
 export interface ICheckboxProps {

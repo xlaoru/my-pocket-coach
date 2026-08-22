@@ -138,14 +138,14 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
                     <View style={styles.actionPlaceholder} />
                 </View>
                 {
-                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} isDeleteExerciseDisabled={isDeleteExerciseDisabled} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
+                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} isDeleteExerciseDisabled={isDeleteExerciseDisabled} isSupersetCombiningMode={isSupersetCombiningMode} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
                 }
             </View>
-            <AddSetOutlineButton disabled={isDeleteExerciseDisabled || isAddSetDisabled} onPress={handleAddExerciseSet} />
+            <AddSetOutlineButton disabled={isDeleteExerciseDisabled || isSupersetCombiningMode || isAddSetDisabled} onPress={handleAddExerciseSet} />
             {
                 (exercise.note || isNoteMode) && (
                     <View style={styles.noteContainer}>
-                        <Paragraph ref={noteInputRef} isEditable disabled={isDeleteExerciseDisabled || isNoteDisabled} autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
+                        <Paragraph ref={noteInputRef} isEditable disabled={isDeleteExerciseDisabled || isSupersetCombiningMode || isNoteDisabled} autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
                     </View>
                 )
             }

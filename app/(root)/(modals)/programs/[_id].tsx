@@ -120,6 +120,7 @@ export default function Program() {
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
     const [isAttachmentDisabled, setAttachmentDisabled] = useState(false)
     const [isMoveDisabled, setMoveDisabled] = useState(false)
+    const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
 
     useEffect(() => {
         if (program) {
@@ -334,6 +335,10 @@ export default function Program() {
 
     const handleCreateSuperset = useCallback(async () => {
         try {
+            setSupersetCombiningFormOpen(false)
+            setSupersetCombiningMode(false)
+            setSupersetCombiningDisabled(true)
+
             const trimmedSupertsetName = supersetName.trim()
 
             if (!trimmedSupertsetName) {
@@ -346,12 +351,12 @@ export default function Program() {
                     name: supersetName,
                     workoutItemIds: selectedExercises
                 }
+            }).finally(() => {
+                setSupersetCombiningDisabled(false)
             })
 
             setSupersetName("")
             setSelectedExercises([])
-            setSupersetCombiningMode(false)
-            setSupersetCombiningFormOpen(false)
             setSelectedExercisesData([])
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
@@ -570,7 +575,7 @@ export default function Program() {
                                     onRetry={() => refetchProgram()}
                                 />
                             )
-                            : isProgramLoading || createExerciseMutation.isPending
+                            : isProgramLoading || createExerciseMutation.isPending || createSupersetMutation.isPending
                                 ? (
                                     <Loader text="Loading your program..." />
                                 )
@@ -648,13 +653,13 @@ export default function Program() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button disabled={isCreateExerciseDisabled} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+                    <Button disabled={isCreateExerciseDisabled || isSupersetCombiningMode} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
                 <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                     <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
                 </BottomSheetForm>
-                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                <BottomSheetForm disabled={isSupersetCombiningDisabled} isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
                 <BottomSheetForm isWithoutSubmition isOpen={isAttachPeriodizationMode} title="Select Periodization" onSubmit={() => { }} onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>

@@ -9,7 +9,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabelRow from "./SubExerciseTabelRow";
 
-function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise, onSetExerciseNote, isDeleteSupersetDisabled }: ISubExerciseTabelProps) {
+function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise, onSetExerciseNote, isMoveDisabled, isDeleteSupersetDisabled }: ISubExerciseTabelProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [editableNote, setEditableNote] = useState(exercise.note)
 
@@ -69,7 +69,7 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
         <View style={[styles.outterContainer, isDeleteSupersetDisabled && styles.disabled]}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable onLongPress={onDrag} disabled={isDeleteSupersetDisabled} style={({ pressed }) => pressed && styles.pressed}>
+                    <Pressable onLongPress={onDrag} disabled={isMoveDisabled || isDeleteSupersetDisabled} style={({ pressed }) => [pressed && styles.pressed, (isMoveDisabled || isDeleteSupersetDisabled) && styles.disabled]}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
                     <Title isEditable disabled={isDeleteSupersetDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>

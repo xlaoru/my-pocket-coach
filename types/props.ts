@@ -239,6 +239,7 @@ export interface ISubExerciseTabelProps {
   onDeleteExercise: (exerciseId: string) => Promise<void>
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
+  isMoveDisabled: boolean
   isDeleteSupersetDisabled: boolean
 }
 

@@ -142,6 +142,7 @@ function SupersetTableComponent({ index, superset, workoutItemId, outsideSuperse
                         onDeleteExercise={onDeleteExercise}
                         onUnlinkExercise={onUnlinkExercise}
                         onSetExerciseNote={onSetExerciseNote}
+                        isMoveDisabled={isMoveDisabled}
                         isDeleteSupersetDisabled={isDeleteSupersetDisabled}
                     />
                 )}

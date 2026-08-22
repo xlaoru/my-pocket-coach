@@ -9,7 +9,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabelRow from "./SubExerciseTabelRow";
 
-function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise, onSetExerciseNote }: ISubExerciseTabelProps) {
+function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise, onSetExerciseNote, isDeleteSupersetDisabled }: ISubExerciseTabelProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [editableNote, setEditableNote] = useState(exercise.note)
 
@@ -66,18 +66,18 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
     }, [exercise._id, exercise.note, editableNote, onSetExerciseNote])
 
     return (
-        <View style={styles.outterContainer}>
+        <View style={[styles.outterContainer, isDeleteSupersetDisabled && styles.disabled]}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                    <Pressable onLongPress={onDrag} disabled={isDeleteSupersetDisabled} style={({ pressed }) => pressed && styles.pressed}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title isEditable disabled={isDeleteSupersetDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={handleUnlinkExercise} />
-                    <IconButton iconName="reader-outline" onPress={handleNotePress} />
-                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
+                    <IconButton disabled={isDeleteSupersetDisabled} iconName="unlink-outline" onPress={handleUnlinkExercise} />
+                    <IconButton disabled={isDeleteSupersetDisabled} iconName="reader-outline" onPress={handleNotePress} />
+                    <IconButton disabled={isDeleteSupersetDisabled} iconName="trash-bin-outline" onPress={handleDeleteExercise} />
                 </View>
             </View>
             <View style={styles.tableContainer}>
@@ -98,14 +98,14 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
                     </View>
                 </View>
                 {exercise.sets.map((set, index) => (
-                    <SubExerciseTabelRow key={index} index={index} exerciseId={exercise._id} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />
+                    <SubExerciseTabelRow isDeleteSupersetDisabled={isDeleteSupersetDisabled} key={index} index={index} exerciseId={exercise._id} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />
                 ))}
             </View>
-            <AddSetOutlineButton onPress={() => { onAddExerciseSet(exercise._id) }} />
+            <AddSetOutlineButton disabled={isDeleteSupersetDisabled} onPress={() => { onAddExerciseSet(exercise._id) }} />
             {
                 (exercise.note || isNoteMode) && (
                     <View style={styles.noteContainer}>
-                        <Paragraph ref={noteInputRef} isEditable autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
+                        <Paragraph disabled={isDeleteSupersetDisabled} ref={noteInputRef} isEditable autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
                     </View>
                 )
             }
@@ -185,6 +185,9 @@ const styles = StyleSheet.create({
         borderColor: colors.red500,
         paddingLeft: 8
     },
+    disabled: {
+        opacity: 0.5
+    }
 })
 
 export default React.memo(SubExerciseTabel)

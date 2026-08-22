@@ -6,7 +6,7 @@ import { StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
-export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet }: ISubExerciseTabelRowProps) {
+export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet, isDeleteSupersetDisabled }: ISubExerciseTabelRowProps) {
     const [exerciseSet, setExerciseSet] = useState({ weight: String(set.weight), reps: String(set.reps) })
 
     useEffect(() => {
@@ -31,13 +31,13 @@ export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExer
                 <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
+                <Title disabled={isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
+                <Title disabled={isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
             </View>
             <View style={styles.actionCell}>
-                <IconButton iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
+                <IconButton disabled={isDeleteSupersetDisabled} iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
             </View>
         </View>
     )

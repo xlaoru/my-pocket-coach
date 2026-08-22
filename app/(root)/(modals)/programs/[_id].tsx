@@ -634,6 +634,7 @@ export default function Program() {
                                                                         onLinkExercise={handleLinkExercise}
                                                                         onSetExerciseNote={handleSetExerciseNote}
                                                                         onSetSupersetNote={handleSetSupersetNote}
+                                                                        isMoveDisabled={isMoveDisabled}
                                                                     />
                                                                 )
                                                         }

@@ -225,6 +225,7 @@ export interface ISupersetTableProps {
   onLinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
   onSetSupersetNote: (supersetId: string, newNote: string) => Promise<void>
+  isMoveDisabled: boolean
 }
 
 export interface ISubExerciseTabelProps {
@@ -238,6 +239,7 @@ export interface ISubExerciseTabelProps {
   onDeleteExercise: (exerciseId: string) => Promise<void>
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
+  isDeleteSupersetDisabled: boolean
 }
 
 export interface ISubExerciseTabelRowProps {
@@ -246,6 +248,7 @@ export interface ISubExerciseTabelRowProps {
   set: ISet
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+  isDeleteSupersetDisabled: boolean
 }
 
 export interface IStageFormProps {

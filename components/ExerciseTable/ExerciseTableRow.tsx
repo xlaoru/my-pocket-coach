@@ -21,6 +21,8 @@ export default function ExerciseTableRow({ exerciseId, index, set, onEditExercis
 
     setExerciseSet({ weight: String(weight), reps: String(reps) })
 
+    if (weight === set.weight && reps === set.reps) return
+
     setSetDisabled(true)
 
     await onEditExerciseSet(exerciseId, index, { weight, reps }).finally(() => {

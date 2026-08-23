@@ -239,6 +239,8 @@ export interface ISupersetTableProps {
   isUnlinkAllExercisesDisabled: boolean
   isDeleteExerciseDisabled: boolean
   isCreateExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
+  movedSupersetId: string
 }
 
 export interface ISubExerciseTabelProps {
@@ -257,6 +259,8 @@ export interface ISubExerciseTabelProps {
   isUnlinkAllExercisesDisabled: boolean
   isCreateNewExerciseDisabled: boolean
   isLinkExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
+  isSubexercisesOfMovedSuperset: boolean
 }
 
 export interface ISubExerciseTabelRowProps {
@@ -272,6 +276,7 @@ export interface ISubExerciseTabelRowProps {
   isDeleteExerciseDisabled: boolean
   isCreateNewExerciseDisabled: boolean
   isLinkExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
 }
 
 export interface IStageFormProps {

@@ -120,11 +120,13 @@ export default function Program() {
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
     const [isAttachmentDisabled, setAttachmentDisabled] = useState(false)
     const [isMoveDisabled, setMoveDisabled] = useState(false)
+    const [isLocalMoveDisabled, setLocalMoveDisabled] = useState(false)
     const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
     const [linkedExerciseId, setLinkedExerciseId] = useState("")
     const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
     const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
     const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
+    const [movedSupersetId, setMovedSupersetId] = useState("")
 
     useEffect(() => {
         if (program) {
@@ -317,7 +319,12 @@ export default function Program() {
 
     const handleMoveExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
         try {
-            setMoveDisabled(true)
+            if (_id === containerId) {
+                setMoveDisabled(true)
+            } else {
+                setLocalMoveDisabled(true)
+                setMovedSupersetId(containerId)
+            }
 
             await moveExerciseMutation.mutateAsync({
                 programId: _id,
@@ -328,6 +335,8 @@ export default function Program() {
                 }
             }).finally(() => {
                 setMoveDisabled(false)
+                setLocalMoveDisabled(false)
+                setMovedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to move exercise", "Please try again.");
@@ -651,6 +660,8 @@ export default function Program() {
                                                                         isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled}
                                                                         isDeleteExerciseDisabled={isDeleteExerciseDisabled}
                                                                         isCreateExerciseDisabled={isCreateExerciseDisabled}
+                                                                        isLocalMoveDisabled={isLocalMoveDisabled}
+                                                                        movedSupersetId={movedSupersetId}
                                                                     />
                                                                 )
                                                         }

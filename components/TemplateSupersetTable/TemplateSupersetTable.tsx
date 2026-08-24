@@ -27,6 +27,11 @@ function TemplateSupersetTableComponent({
     onUnlinkAllExercises,
     onCreateNewExercise,
     onLinkExercise,
+    isSupersetCombiningDisabled,
+    isSupersetCombiningMode,
+    isCreateExerciseDisabled,
+    isGeneralMoveDisable,
+    isDeleteExerciseDisabled
 }: ITemplateSupersetTableProps) {
     const [editableName, setEditableName] = useState(superset.name)
     const [newExerciseName, setNewExerciseName] = useState("")
@@ -129,20 +134,20 @@ function TemplateSupersetTableComponent({
                             <Button variant="outlined" onPress={() => { setCreateNewExerciseMode(false); setNewExerciseName("") }} style={styles.buttons}>Cancel</Button>
                         </View>
                     </View>
-                ) : isPickExistingExerciseMode ? (
+                ) : (isPickExistingExerciseMode && !isSupersetCombiningDisabled && !isSupersetCombiningMode && !isGeneralMoveDisable && !isCreateExerciseDisabled && !isDeleteExerciseDisabled) ? (
                     <View style={styles.pickExistingExerciseContainer}>
                         {outsideSupersetExercises.map((exercise) => (
-                            <Pressable key={exercise._id} style={({ pressed }) => pressed ? [styles.pickExistingExerciseCard, styles.pressed] : styles.pickExistingExerciseCard} onPress={() => { handleLinkTemplateExercise(exercise.components[0]._id) }}>
+                            <Pressable key={exercise._id} disabled={isSupersetCombiningDisabled || isSupersetCombiningMode || isGeneralMoveDisable || isCreateExerciseDisabled || isDeleteExerciseDisabled} style={({ pressed }) => [styles.pickExistingExerciseCard, pressed && styles.pressed, (isSupersetCombiningDisabled || isSupersetCombiningMode || isGeneralMoveDisable || isCreateExerciseDisabled || isDeleteExerciseDisabled) && styles.disabled]} onPress={() => { handleLinkTemplateExercise(exercise.components[0]._id) }}>
                                 <Ionicons name="barbell-outline" size={22} color={colors.red500} />
                                 <Title>{exercise.name}</Title>
                             </Pressable>
                         ))}
-                        <Button variant="outlined" onPress={() => { setPickExistingExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
+                        <Button variant="outlined" disabled={isSupersetCombiningDisabled || isSupersetCombiningMode || isGeneralMoveDisable || isCreateExerciseDisabled || isDeleteExerciseDisabled} onPress={() => { setPickExistingExerciseMode(false) }} style={styles.buttons}>Cancel</Button>
                     </View>
                 ) : (
                     <>
                         <Button iconName="add-circle-outline" variant="dashed" onPress={() => { setCreateNewExerciseMode(true) }} style={styles.buttons}>New Exercise</Button>
-                        {outsideSupersetExercises.length >= 1 && <Button iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
+                        {outsideSupersetExercises.length >= 1 && <Button disabled={isSupersetCombiningDisabled || isSupersetCombiningMode || isGeneralMoveDisable || isCreateExerciseDisabled || isDeleteExerciseDisabled} iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
                     </>
                 )}
             </View>
@@ -189,7 +194,7 @@ const styles = StyleSheet.create({
         padding: 0,
     },
     pressed: {
-        opacity: 0.5,
+        opacity: 0.85,
     },
     headerIconButtonsContainer: {
         display: "flex",
@@ -245,6 +250,9 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 12,
         color: colors.white,
+    },
+    disabled: {
+        opacity: 0.5
     }
 })
 

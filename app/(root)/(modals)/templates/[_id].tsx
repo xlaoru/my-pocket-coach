@@ -72,7 +72,6 @@ export default function Template() {
 
     const [supersetName, setSupersetName] = useState("")
 
-    // const [isDisabled, setDisabled] = useState(false)
     const [isTemplateNameDisabled, setTemplateNameDisabled] = useState(false)
     const [isTemplateDescriptionDisabled, setTemplateDescriptionDisabled] = useState(false)
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
@@ -189,11 +188,11 @@ export default function Template() {
     }, [_id, createTemplateExerciseMutation, exerciseName, exerciseSets])
 
     const handleEditTemplateExerciseName = useCallback(async (exerciseId: string, newName: string) => {
-        const trimmedExerciseName = newName.trim();
-
-        if (!trimmedExerciseName) return;
-
         try {
+            const trimmedExerciseName = newName.trim();
+
+            if (!trimmedExerciseName) return;
+
             await editTemplateExerciseNameMutation.mutateAsync({
                 templateId: _id,
                 exerciseId,
@@ -207,9 +206,9 @@ export default function Template() {
     }, [_id, editTemplateExerciseNameMutation])
 
     const handleEditTemplateExerciseSets = useCallback(async (exerciseId: string, newSets: number) => {
-        if (newSets <= 0) return
-
         try {
+            if (newSets <= 0) return
+
             await editTemplateExerciseSetsMutation.mutateAsync({
                 templateId: _id,
                 exerciseId,

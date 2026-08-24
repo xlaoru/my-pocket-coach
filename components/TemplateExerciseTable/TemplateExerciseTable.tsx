@@ -24,6 +24,9 @@ function TemplateExerciseTableComponents({
     const [editableName, setEditableName] = useState(exercise.name);
     const [exerciseSets, setExerciseSets] = useState(exercise.sets)
 
+    const [isEditExerciseNameDisabled, setEditExerciseNameDisabled] = useState(false)
+    const [isEditExerciseSetDisabled, setEditExerciseSetDisabled] = useState(false)
+
     useEffect(() => {
         setEditableName(exercise.name);
     }, [exercise.name]);
@@ -32,7 +35,7 @@ function TemplateExerciseTableComponents({
         setExerciseSets(exercise.sets);
     }, [exercise.sets]);
 
-    const handleNameBlur = useCallback(() => {
+    const handleNameBlur = useCallback(async () => {
         const trimmedName = editableName.trim();
 
         if (!trimmedName) {
@@ -40,29 +43,37 @@ function TemplateExerciseTableComponents({
             return;
         }
 
-        if (trimmedName === exercise.name) {
-            return;
-        }
+        if (trimmedName === exercise.name) return
 
-        void onExerciseNameChange(exercise._id, trimmedName)
+        setEditExerciseNameDisabled(true)
+
+        await onExerciseNameChange(exercise._id, trimmedName).finally(() => {
+            setEditExerciseNameDisabled(false)
+        })
     }, [editableName, exercise._id, exercise.name, onExerciseNameChange])
 
-    const handleDecrementSets = useCallback(() => {
-        setExerciseSets((prev) => {
-            if (prev <= 1) return prev;
-            const next = prev - 1;
-            void onExerciseSetChange(exercise._id, next);
-            return next;
-        });
-    }, [exercise._id, onExerciseSetChange]);
+    const handleDecrementSets = useCallback(async () => {
+        if (exerciseSets <= 1) return;
+        const next = exerciseSets - 1;
+        setExerciseSets(next);
 
-    const handleIncrementSets = useCallback(() => {
-        setExerciseSets((prev) => {
-            const next = prev + 1;
-            void onExerciseSetChange(exercise._id, next);
-            return next;
-        });
-    }, [exercise._id, onExerciseSetChange]);
+        setEditExerciseSetDisabled(true)
+
+        await onExerciseSetChange(exercise._id, next).finally(() => {
+            setEditExerciseSetDisabled(false)
+        })
+    }, [exercise._id, exerciseSets, onExerciseSetChange]);
+
+    const handleIncrementSets = useCallback(async () => {
+        const next = exerciseSets + 1;
+        setExerciseSets(next);
+
+        setEditExerciseSetDisabled(true)
+
+        await onExerciseSetChange(exercise._id, next).finally(() => {
+            setEditExerciseSetDisabled(false)
+        })
+    }, [exercise._id, exerciseSets, onExerciseSetChange]);
 
     const handleDeleteTemplateExercise = useCallback(() => {
         void onDeleteExercise(exercise._id)
@@ -96,7 +107,7 @@ function TemplateExerciseTableComponents({
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                                <Title isEditable disabled={isEditExerciseNameDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
                             <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                         </View>
@@ -105,9 +116,9 @@ function TemplateExerciseTableComponents({
             <View
                 style={styles.setsContainer}
             >
-                <IconButton iconName="remove-circle-outline" onPress={handleDecrementSets} />
+                <IconButton disabled={isEditExerciseSetDisabled} iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton iconName="add-circle-outline" onPress={handleIncrementSets} />
+                <IconButton disabled={isEditExerciseSetDisabled} iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )

@@ -75,6 +75,7 @@ export default function Template() {
     // const [isDisabled, setDisabled] = useState(false)
     const [isTemplateNameDisabled, setTemplateNameDisabled] = useState(false)
     const [isTemplateDescriptionDisabled, setTemplateDescriptionDisabled] = useState(false)
+    const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
 
     useEffect(() => {
         if (template) {
@@ -162,22 +163,26 @@ export default function Template() {
     }, [_id, template?.description, editTemplateDescriptionMutation, templateDescription])
 
     const handleCreateTemplateExercise = useCallback(async () => {
-        const trimmedExerciseName = exerciseName.trim()
-
-        if (!trimmedExerciseName) return;
-
         try {
+            const trimmedExerciseName = exerciseName.trim()
+
+            if (!trimmedExerciseName) return;
+
+            setExerciseFormOpen(false)
+            setCreateExerciseDisabled(true)
+
             await createTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 payload: {
                     name: trimmedExerciseName,
                     sets: exerciseSets
                 }
+            }).finally(() => {
+                setCreateExerciseDisabled(false)
             })
 
             setExerciseName("")
             setExerciseSets(0)
-            setExerciseFormOpen(false)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
@@ -469,10 +474,10 @@ export default function Template() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    <Button iconName="add" disabled={isCreateExerciseDisabled} onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
                     {template?.templateWorkout && (templateBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
                 </View>
-                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
+                <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
                     <TemplateExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} exerciseSets={exerciseSets} setExerciseSets={setExerciseSets} />
                 </BottomSheetForm>
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateTemplateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>

@@ -351,6 +351,7 @@ export interface ITemplateExerciseTableProps {
   selectedExercises: string[]
   setSelectedExercises: Dispatch<SetStateAction<string[]>>
   setSelectedExercisesData: Dispatch<SetStateAction<ITemplateExercise[]>>
+  isGeneralMoveDisable: boolean
 }
 
 export interface ITemplateSupersetTableProps {

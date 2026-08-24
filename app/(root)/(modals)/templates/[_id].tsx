@@ -75,6 +75,7 @@ export default function Template() {
     const [isTemplateNameDisabled, setTemplateNameDisabled] = useState(false)
     const [isTemplateDescriptionDisabled, setTemplateDescriptionDisabled] = useState(false)
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
+    const [isGeneralMoveDisable, setGeneralMoveDisable] = useState(false)
 
     useEffect(() => {
         if (template) {
@@ -223,6 +224,12 @@ export default function Template() {
 
     const handleMoveTemplateExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
         try {
+            if (_id === containerId) {
+                setGeneralMoveDisable(true)
+            } else {
+
+            }
+
             await moveTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 payload: {
@@ -230,6 +237,8 @@ export default function Template() {
                     sourceIndex,
                     destinationIndex
                 }
+            }).finally(() => {
+                setGeneralMoveDisable(false)
             })
         } catch {
             Alert.alert("Failed to move exercise", "Please try again.");
@@ -436,7 +445,9 @@ export default function Template() {
                                                                             isSupersetCombiningMode={isSupersetCombiningMode}
                                                                             selectedExercises={selectedExercises}
                                                                             setSelectedExercises={setSelectedExercises}
-                                                                            setSelectedExercisesData={setSelectedExercisesData} />
+                                                                            setSelectedExercisesData={setSelectedExercisesData}
+                                                                            isGeneralMoveDisable={isGeneralMoveDisable}
+                                                                        />
                                                                     )
                                                                     : (
                                                                         <TemplateSupersetTable

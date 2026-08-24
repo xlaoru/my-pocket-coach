@@ -393,6 +393,7 @@ export interface ISubTemplateExerciseTableProps {
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
   isGeneralMoveDisable: boolean
   isUnlinkAllExercisesDisabled: boolean
+  isDeleteSupersetDisabled: boolean
 }
 
 export interface ITemplateExerciseFormProps {

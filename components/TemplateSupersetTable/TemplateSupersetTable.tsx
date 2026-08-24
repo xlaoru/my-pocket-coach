@@ -92,20 +92,20 @@ function TemplateSupersetTableComponent({
     }, [newExerciseName, onCreateNewExercise, superset._id])
 
     return (
-        <View style={styles.outterContainer}>
+        <View style={[styles.outterContainer, isGeneralMoveDisable && styles.disabled]}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                    <Pressable disabled={isGeneralMoveDisable} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, isGeneralMoveDisable && styles.disabled]}>
                         <Ionicons name="reorder-two" size={22} color={colors.red500} />
                     </Pressable>
                     <View style={styles.indexBox}>
                         <Paragraph style={styles.indexText}>{index + 1}</Paragraph>
                     </View>
-                    <Title isEditable disabled={isSupersetNameDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title isEditable disabled={isSupersetNameDisabled || isGeneralMoveDisable} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={handleUnlinkAllTemplateExercises} />
-                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateSuperset} />
+                    <IconButton disabled={isGeneralMoveDisable} iconName="unlink-outline" onPress={handleUnlinkAllTemplateExercises} />
+                    <IconButton disabled={isGeneralMoveDisable} iconName="trash-bin-outline" onPress={handleDeleteTemplateSuperset} />
                 </View>
             </View>
             <NestableDraggableFlatList
@@ -121,6 +121,7 @@ function TemplateSupersetTableComponent({
                         onExerciseSetChange={onExerciseSetChange}
                         onDeleteExercise={onDeleteExercise}
                         onUnlinkExercise={onUnlinkExercise}
+                        isGeneralMoveDisable={isGeneralMoveDisable}
                     />
                 )}
                 onDragEnd={({ from, to }) => {
@@ -149,7 +150,7 @@ function TemplateSupersetTableComponent({
                     </View>
                 ) : (
                     <>
-                        <Button iconName="add-circle-outline" variant="dashed" onPress={() => { setCreateNewExerciseMode(true) }} style={styles.buttons}>New Exercise</Button>
+                        <Button disabled={isGeneralMoveDisable} iconName="add-circle-outline" variant="dashed" onPress={() => { setCreateNewExerciseMode(true) }} style={styles.buttons}>New Exercise</Button>
                         {outsideSupersetExercises.length >= 1 && <Button disabled={isSupersetCombiningDisabled || isSupersetCombiningMode || isGeneralMoveDisable || isCreateExerciseDisabled || isDeleteExerciseDisabled} iconName="barbell-outline" variant="dashed" onPress={() => { setPickExistingExerciseMode(true) }} style={styles.buttons}>Pick existing</Button>}
                     </>
                 )}

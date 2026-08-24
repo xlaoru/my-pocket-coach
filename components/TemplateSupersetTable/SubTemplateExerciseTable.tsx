@@ -14,7 +14,7 @@ function SubTemplateExerciseTableComponent({
     onExerciseSetChange,
     onDeleteExercise,
     onUnlinkExercise,
-
+    isGeneralMoveDisable
 }: ISubTemplateExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [exerciseSets, setExerciseSets] = useState(exercise.sets)
@@ -68,25 +68,25 @@ function SubTemplateExerciseTableComponent({
     }, [exercise._id, onUnlinkExercise, supersetId])
 
     return (
-        <View style={styles.outterContainer}>
+        <View style={[styles.outterContainer, isGeneralMoveDisable && styles.disabled]}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                    <Pressable disabled={isGeneralMoveDisable} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, isGeneralMoveDisable && styles.disabled]}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title disabled={isGeneralMoveDisable} isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
-                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
+                    <IconButton disabled={isGeneralMoveDisable} iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
+                    <IconButton disabled={isGeneralMoveDisable} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                 </View>
             </View>
             <View
                 style={styles.setsContainer}
             >
-                <IconButton iconName="remove-circle-outline" onPress={handleDecrementSets} />
+                <IconButton disabled={isGeneralMoveDisable} iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton iconName="add-circle-outline" onPress={handleIncrementSets} />
+                <IconButton disabled={isGeneralMoveDisable} iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
         padding: 0,
     },
     pressed: {
-        opacity: 0.5,
+        opacity: 0.85,
     },
     setsContainer: {
         display: "flex",
@@ -129,6 +129,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 8
     },
+    disabled: {
+        opacity: 0.5
+    }
 })
 
 export default React.memo(SubTemplateExerciseTableComponent)

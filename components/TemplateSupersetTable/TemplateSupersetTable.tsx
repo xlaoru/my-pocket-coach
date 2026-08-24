@@ -141,12 +141,12 @@ function TemplateSupersetTableComponent({
                 }}
             />
             <View style={styles.buttonsContainer}>
-                {(isCreateNewExerciseMode && !isUnlinkAllExercisesDisabled && !isDeleteSupersetDisabled) ? (
+                {(isCreateNewExerciseMode && !isUnlinkAllExercisesDisabled && !isDeleteSupersetDisabled && !isGeneralMoveDisable) ? (
                     <View style={styles.createNewExerciseContainer}>
-                        <Input disabled={isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled} label="New exercise name:" placeholder="E.g. Arnold Press" value={newExerciseName} onChangeText={setNewExerciseName} style={styles.input} />
+                        <Input disabled={isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isGeneralMoveDisable} label="New exercise name:" placeholder="E.g. Arnold Press" value={newExerciseName} onChangeText={setNewExerciseName} style={styles.input} />
                         <View style={styles.createNewExerciseButtonsContainer}>
-                            <Button disabled={isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled} iconName="checkmark-outline" onPress={handleCreateNewTemplateExercise} style={styles.buttons}>Add</Button>
-                            <Button disabled={isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled} variant="outlined" onPress={() => { setCreateNewExerciseMode(false); setNewExerciseName("") }} style={styles.buttons}>Cancel</Button>
+                            <Button disabled={isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isGeneralMoveDisable} iconName="checkmark-outline" onPress={handleCreateNewTemplateExercise} style={styles.buttons}>Add</Button>
+                            <Button disabled={isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isGeneralMoveDisable} variant="outlined" onPress={() => { setCreateNewExerciseMode(false); setNewExerciseName("") }} style={styles.buttons}>Cancel</Button>
                         </View>
                     </View>
                 ) : (isPickExistingExerciseMode && !isSupersetCombiningDisabled && !isSupersetCombiningMode && !isGeneralMoveDisable && !isCreateExerciseDisabled && !isDeleteExerciseDisabled && !isUnlinkAllExercisesDisabled && !isUnlinkAllExercisesGeneralDisabled && !isDeleteSupersetDisabled) ? (

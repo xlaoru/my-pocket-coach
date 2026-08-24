@@ -72,6 +72,10 @@ export default function Template() {
 
     const [supersetName, setSupersetName] = useState("")
 
+    // const [isDisabled, setDisabled] = useState(false)
+    const [isTemplateNameDisabled, setTemplateNameDisabled] = useState(false)
+    const [isTemplateDescriptionDisabled, setTemplateDescriptionDisabled] = useState(false)
+
     useEffect(() => {
         if (template) {
             setTemplateName(template.name)
@@ -114,11 +118,17 @@ export default function Template() {
                 return
             }
 
+            if (templateName === template?.name) return
+
+            setTemplateNameDisabled(true)
+
             await editTemplateNameMutation.mutateAsync({
                 templateId: _id,
                 payload: {
                     name: trimmedTemplateName
                 }
+            }).finally(() => {
+                setTemplateNameDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit template name", "Please try again.");
@@ -134,11 +144,17 @@ export default function Template() {
                 return
             }
 
+            if (templateDescription === template?.description) return
+
+            setTemplateDescriptionDisabled(true)
+
             await editTemplateDescriptionMutation.mutateAsync({
                 templateId: _id,
                 payload: {
                     description: trimmedTemplateDescription
                 }
+            }).finally(() => {
+                setTemplateDescriptionDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit template description", "Please try again.");
@@ -349,8 +365,18 @@ export default function Template() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setTemplateName} onBlur={handleEditTemplateName}>{isLoading ? "Loading..." : templateName}</Heading>
-                    {template?.description && <Paragraph isEditable onChangeText={setTemplateDescription} onBlur={handleEditTemplateDescription}>{isLoading ? "Loading..." : templateDescription}</Paragraph>}
+                    {
+                        isLoading
+                            ? <Heading>Loading...</Heading>
+                            : <Heading isEditable disabled={isTemplateNameDisabled} onChangeText={setTemplateName} onBlur={handleEditTemplateName}>{templateName}</Heading>
+                    }
+                    {
+                        template?.description
+                            ? isLoading
+                                ? <Paragraph>Loading...</Paragraph>
+                                : <Paragraph isEditable disabled={isTemplateDescriptionDisabled} onChangeText={setTemplateDescription} onBlur={handleEditTemplateDescription}>{templateDescription}</Paragraph>
+                            : null
+                    }
                 </View>
                 {isSupersetCombiningMode && (
                     <View style={styles.combiningPanelContainer}>

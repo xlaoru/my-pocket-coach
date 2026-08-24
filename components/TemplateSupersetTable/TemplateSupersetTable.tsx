@@ -39,11 +39,13 @@ function TemplateSupersetTableComponent({
     const [isCreateNewExerciseMode, setCreateNewExerciseMode] = useState(false)
     const [isPickExistingExerciseMode, setPickExistingExerciseMode] = useState(false)
 
+    const [isSupersetNameDisabled, setSupersetNameDisabled] = useState(false)
+
     useEffect(() => {
         setEditableName(superset.name);
     }, [superset.name]);
 
-    const handleNameBlur = useCallback(() => {
+    const handleNameBlur = useCallback(async () => {
         const trimmedName = editableName.trim()
 
         if (!trimmedName) {
@@ -51,11 +53,13 @@ function TemplateSupersetTableComponent({
             return
         }
 
-        if (trimmedName === superset.name) {
-            return
-        }
+        if (trimmedName === superset.name) return
 
-        void onSupersetNameChange(superset._id, trimmedName)
+        setSupersetNameDisabled(true)
+
+        await onSupersetNameChange(superset._id, trimmedName).finally(() => {
+            setSupersetNameDisabled(false)
+        })
     }, [editableName, onSupersetNameChange, superset._id, superset.name])
 
     const handleDeleteTemplateSuperset = useCallback(() => {
@@ -97,8 +101,7 @@ function TemplateSupersetTableComponent({
                     <View style={styles.indexBox}>
                         <Paragraph style={styles.indexText}>{index + 1}</Paragraph>
                     </View>
-                    <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
-
+                    <Title isEditable disabled={isSupersetNameDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton iconName="unlink-outline" onPress={handleUnlinkAllTemplateExercises} />

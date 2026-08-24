@@ -558,13 +558,15 @@ export default function Program() {
                             )
                     }
                     {
-                        program?.description && isProgramLoading
-                            ? (
-                                <Paragraph>Loading...</Paragraph>
-                            )
-                            : (
-                                <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription} disabled={isProgramDescriptionDisabled}>{programDescription}</Paragraph>
-                            )
+                        program?.description
+                            ? isProgramLoading
+                                ? (
+                                    <Paragraph>Loading...</Paragraph>
+                                )
+                                : (
+                                    <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription} disabled={isProgramDescriptionDisabled}>{programDescription}</Paragraph>
+                                )
+                            : null
                     }
                     <AttachPeriodizationButton onPress={onHandleAttachment} isAttaced={Boolean(periodizationLabel)} value={isProgramLoading ? "Loading..." : periodizationLabel} disabled={isAttachmentDisabled} />
                 </View>

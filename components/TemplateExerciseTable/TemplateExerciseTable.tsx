@@ -27,6 +27,7 @@ function TemplateExerciseTableComponents({
 
     const [isEditExerciseNameDisabled, setEditExerciseNameDisabled] = useState(false)
     const [isEditExerciseSetDisabled, setEditExerciseSetDisabled] = useState(false)
+    const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
 
     useEffect(() => {
         setEditableName(exercise.name);
@@ -76,8 +77,11 @@ function TemplateExerciseTableComponents({
         })
     }, [exercise._id, exerciseSets, onExerciseSetChange]);
 
-    const handleDeleteTemplateExercise = useCallback(() => {
-        void onDeleteExercise(exercise._id)
+    const handleDeleteTemplateExercise = useCallback(async () => {
+        setDeleteExerciseDisabled(true)
+        await onDeleteExercise(exercise._id).finally(() => {
+            setDeleteExerciseDisabled(false)
+        })
     }, [exercise._id, onDeleteExercise])
 
     const toggleSelect = useCallback(() => {
@@ -90,7 +94,7 @@ function TemplateExerciseTableComponents({
     }, [templateWorkoutItemId, setSelectedExercises, setSelectedExercisesData, exercise])
 
     return (
-        <View style={[styles.outterContainer, selectedExercises.includes(templateWorkoutItemId) && styles.selected, isGeneralMoveDisable && styles.disabled]}>
+        <View style={[styles.outterContainer, selectedExercises.includes(templateWorkoutItemId) && styles.selected, (isGeneralMoveDisable || isDeleteExerciseDisabled) && styles.disabled]}>
             {
                 isSupersetCombiningMode
                     ? (
@@ -102,24 +106,24 @@ function TemplateExerciseTableComponents({
                     : (
                         <View style={styles.headerContainer}>
                             <View style={styles.headingContainer}>
-                                <Pressable onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, isGeneralMoveDisable && styles.disabled]}>
+                                <Pressable onLongPress={onDrag} disabled={isGeneralMoveDisable || isDeleteExerciseDisabled} style={({ pressed }) => [pressed && styles.pressed, (isGeneralMoveDisable || isDeleteExerciseDisabled) && styles.disabled]}>
                                     <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                                 </Pressable>
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable disabled={isEditExerciseNameDisabled || isGeneralMoveDisable} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                                <Title isEditable disabled={isEditExerciseNameDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
-                            <IconButton disabled={isGeneralMoveDisable} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
+                            <IconButton disabled={isGeneralMoveDisable || isDeleteExerciseDisabled} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                         </View>
                     )
             }
             <View
                 style={styles.setsContainer}
             >
-                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable} iconName="remove-circle-outline" onPress={handleDecrementSets} />
+                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled} iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable} iconName="add-circle-outline" onPress={handleIncrementSets} />
+                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled} iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     pressed: {
-        opacity: 0.5,
+        opacity: 0.85,
     },
     combiningCheckboxContainer: {
         display: "flex",

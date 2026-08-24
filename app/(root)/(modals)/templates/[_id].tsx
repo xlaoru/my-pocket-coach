@@ -78,6 +78,7 @@ export default function Template() {
     const [isGeneralMoveDisable, setGeneralMoveDisable] = useState(false)
     const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
     const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
+    const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
 
     useEffect(() => {
         if (template) {
@@ -290,11 +291,11 @@ export default function Template() {
     }, [_id, createTemplateSupersetMutation, selectedExercises, supersetName])
 
     const handleEditTemplateSupersetName = useCallback(async (supersetId: string, newName: string) => {
-        const trimmedTemplateSupersetName = newName.trim()
-
-        if (!trimmedTemplateSupersetName) return
-
         try {
+            const trimmedTemplateSupersetName = newName.trim()
+
+            if (!trimmedTemplateSupersetName) return
+
             await editTemplateSupersetNameMutation.mutateAsync({
                 templateId: _id,
                 supersetId,
@@ -320,9 +321,13 @@ export default function Template() {
 
     const handleUnlinkAllTemplateExercises = useCallback(async (supersetId: string) => {
         try {
+            setUnlinkAllExercisesDisabled(true)
+
             await unlinkAllTemplateExercisesMutation.mutateAsync({
                 templateId: _id,
                 supersetId
+            }).finally(() => {
+                setUnlinkAllExercisesDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercises", "Please try again.");
@@ -473,6 +478,7 @@ export default function Template() {
                                                                             isCreateExerciseDisabled={isCreateExerciseDisabled}
                                                                             isGeneralMoveDisable={isGeneralMoveDisable}
                                                                             isDeleteExerciseDisabled={isDeleteExerciseDisabled}
+                                                                            isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled}
                                                                         />
                                                                     )
                                                             }

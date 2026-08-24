@@ -14,7 +14,8 @@ function SubTemplateExerciseTableComponent({
     onExerciseSetChange,
     onDeleteExercise,
     onUnlinkExercise,
-    isGeneralMoveDisable
+    isGeneralMoveDisable,
+    isUnlinkAllExercisesDisabled
 }: ISubTemplateExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [exerciseSets, setExerciseSets] = useState(exercise.sets)
@@ -68,25 +69,25 @@ function SubTemplateExerciseTableComponent({
     }, [exercise._id, onUnlinkExercise, supersetId])
 
     return (
-        <View style={[styles.outterContainer, isGeneralMoveDisable && styles.disabled]}>
+        <View style={[styles.outterContainer, (isGeneralMoveDisable || isUnlinkAllExercisesDisabled) && styles.disabled]}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable disabled={isGeneralMoveDisable} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, isGeneralMoveDisable && styles.disabled]}>
+                    <Pressable disabled={isGeneralMoveDisable || isUnlinkAllExercisesDisabled} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, (isGeneralMoveDisable || isUnlinkAllExercisesDisabled) && styles.disabled]}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title disabled={isGeneralMoveDisable} isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title disabled={isGeneralMoveDisable || isUnlinkAllExercisesDisabled} isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton disabled={isGeneralMoveDisable} iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
-                    <IconButton disabled={isGeneralMoveDisable} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
+                    <IconButton disabled={isGeneralMoveDisable || isUnlinkAllExercisesDisabled} iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
+                    <IconButton disabled={isGeneralMoveDisable || isUnlinkAllExercisesDisabled} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                 </View>
             </View>
             <View
                 style={styles.setsContainer}
             >
-                <IconButton disabled={isGeneralMoveDisable} iconName="remove-circle-outline" onPress={handleDecrementSets} />
+                <IconButton disabled={isGeneralMoveDisable || isUnlinkAllExercisesDisabled} iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton disabled={isGeneralMoveDisable} iconName="add-circle-outline" onPress={handleIncrementSets} />
+                <IconButton disabled={isGeneralMoveDisable || isUnlinkAllExercisesDisabled} iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )

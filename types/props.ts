@@ -241,6 +241,8 @@ export interface ISupersetTableProps {
   isCreateExerciseDisabled: boolean
   isLocalMoveDisabled: boolean
   movedSupersetId: string
+  linkedSupersetId: string
+  isGeneralLinkingDisabled: boolean
 }
 
 export interface ISubExerciseTabelProps {

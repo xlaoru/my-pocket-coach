@@ -123,6 +123,8 @@ export default function Program() {
     const [isLocalMoveDisabled, setLocalMoveDisabled] = useState(false)
     const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
     const [linkedExerciseId, setLinkedExerciseId] = useState("")
+    const [linkedSupersetId, setLinkedSupersetId] = useState("")
+    const [isGeneralLinkingDisabled, setGeneralLinkingDisabled] = useState(false)
     const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
     const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
     const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
@@ -454,10 +456,15 @@ export default function Program() {
 
     const handleLinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setGeneralLinkingDisabled(true)
+            setLinkedSupersetId(supersetId)
             await linkExerciseMutation.mutateAsync({
                 programId: _id,
                 supersetId,
                 exerciseId
+            }).finally(() => {
+                setGeneralLinkingDisabled(false)
+                setLinkedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to link exercise", "Please try again.");
@@ -664,6 +671,8 @@ export default function Program() {
                                                                         isCreateExerciseDisabled={isCreateExerciseDisabled}
                                                                         isLocalMoveDisabled={isLocalMoveDisabled}
                                                                         movedSupersetId={movedSupersetId}
+                                                                        linkedSupersetId={linkedSupersetId}
+                                                                        isGeneralLinkingDisabled={isGeneralLinkingDisabled}
                                                                     />
                                                                 )
                                                         }

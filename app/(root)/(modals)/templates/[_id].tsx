@@ -79,6 +79,8 @@ export default function Template() {
     const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
     const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
     const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
+    const [isLocalMoveDisabled, setLocalMoveDisabled] = useState(false)
+    const [movedSupersetId, setMovedSupersetId] = useState("")
 
     useEffect(() => {
         if (template) {
@@ -230,7 +232,8 @@ export default function Template() {
             if (_id === containerId) {
                 setGeneralMoveDisable(true)
             } else {
-
+                setLocalMoveDisabled(true)
+                setMovedSupersetId(containerId)
             }
 
             await moveTemplateExerciseMutation.mutateAsync({
@@ -242,6 +245,8 @@ export default function Template() {
                 }
             }).finally(() => {
                 setGeneralMoveDisable(false)
+                setLocalMoveDisabled(false)
+                setMovedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to move exercise", "Please try again.");
@@ -479,6 +484,8 @@ export default function Template() {
                                                                             isGeneralMoveDisable={isGeneralMoveDisable}
                                                                             isDeleteExerciseDisabled={isDeleteExerciseDisabled}
                                                                             isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled}
+                                                                            isLocalMoveDisabled={isLocalMoveDisabled}
+                                                                            movedSupersetId={movedSupersetId}
                                                                         />
                                                                     )
                                                             }

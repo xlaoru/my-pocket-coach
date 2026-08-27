@@ -381,6 +381,8 @@ export interface ITemplateSupersetTableProps {
   isGeneralMoveDisable: boolean
   isDeleteExerciseDisabled: boolean
   isUnlinkAllExercisesDisabled: boolean
+  isLocalMoveDisabled: boolean
+  movedSupersetId: string
 }
 
 export interface ISubTemplateExerciseTableProps {
@@ -395,6 +397,8 @@ export interface ISubTemplateExerciseTableProps {
   isUnlinkAllExercisesDisabled: boolean
   isDeleteSupersetDisabled: boolean
   isCreateNewExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
+  isSubexercisesOfMovedSuperset: boolean
 }
 
 export interface ITemplateExerciseFormProps {

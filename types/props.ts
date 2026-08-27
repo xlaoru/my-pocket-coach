@@ -394,6 +394,7 @@ export interface ISubTemplateExerciseTableProps {
   isGeneralMoveDisable: boolean
   isUnlinkAllExercisesDisabled: boolean
   isDeleteSupersetDisabled: boolean
+  isCreateNewExerciseDisabled: boolean
 }
 
 export interface ITemplateExerciseFormProps {

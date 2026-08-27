@@ -35,8 +35,10 @@ function SubTemplateExerciseTableComponent({
 
     const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
     const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
+    const [isEditSubexerciseNameDisabled, setEditSubexerciseNameDisabled] = useState(false)
+    const [isEditSubexerciseSetDisabled, setEditSubexerciseSetDisabled] = useState(false)
 
-    const handleNameBlur = useCallback(() => {
+    const handleNameBlur = useCallback(async () => {
         const trimmedName = editableName.trim();
 
         if (!trimmedName) {
@@ -48,25 +50,38 @@ function SubTemplateExerciseTableComponent({
             return;
         }
 
-        void onExerciseNameChange(exercise._id, trimmedName)
+        setEditSubexerciseNameDisabled(true)
+
+        await onExerciseNameChange(exercise._id, trimmedName).finally(() => {
+            setEditSubexerciseNameDisabled(false)
+        })
     }, [editableName, exercise._id, exercise.name, onExerciseNameChange])
 
-    const handleDecrementSets = useCallback(() => {
-        setExerciseSets((prev) => {
-            if (prev <= 1) return prev;
-            const next = prev - 1;
-            void onExerciseSetChange(exercise._id, next);
-            return next;
-        });
-    }, [exercise._id, onExerciseSetChange]);
+    const handleDecrementSets = useCallback(async () => {
+        if (exerciseSets <= 1) return;
 
-    const handleIncrementSets = useCallback(() => {
-        setExerciseSets((prev) => {
-            const next = prev + 1;
-            void onExerciseSetChange(exercise._id, next);
-            return next;
-        });
-    }, [exercise._id, onExerciseSetChange]);
+        const next = exerciseSets - 1;
+
+        setExerciseSets(next);
+
+        setEditSubexerciseSetDisabled(true)
+
+        await onExerciseSetChange(exercise._id, next).finally(() => {
+            setEditSubexerciseSetDisabled(false)
+        })
+    }, [exercise._id, exerciseSets, onExerciseSetChange]);
+
+    const handleIncrementSets = useCallback(async () => {
+        const next = exerciseSets + 1
+
+        setExerciseSets(next)
+
+        setEditSubexerciseSetDisabled(true)
+
+        await onExerciseSetChange(exercise._id, next).finally(() => {
+            setEditSubexerciseSetDisabled(false)
+        })
+    }, [exercise._id, exerciseSets, onExerciseSetChange])
 
     const handleDeleteTemplateExercise = useCallback(async () => {
         setDeleteExerciseDisabled(true)
@@ -89,7 +104,7 @@ function SubTemplateExerciseTableComponent({
                     <Pressable disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, ((isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled) && styles.disabled]}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled || isEditSubexerciseNameDisabled} isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
                     <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
@@ -97,9 +112,9 @@ function SubTemplateExerciseTableComponent({
                 </View>
             </View>
             <View style={styles.setsContainer} >
-                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} iconName="remove-circle-outline" onPress={handleDecrementSets} />
+                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled || isEditSubexerciseSetDisabled} iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} iconName="add-circle-outline" onPress={handleIncrementSets} />
+                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled || isEditSubexerciseSetDisabled} iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )

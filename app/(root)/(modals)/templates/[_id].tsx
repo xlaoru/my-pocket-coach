@@ -82,6 +82,9 @@ export default function Template() {
     const [isLocalMoveDisabled, setLocalMoveDisabled] = useState(false)
     const [movedSupersetId, setMovedSupersetId] = useState("")
     const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
+    const [linkedExerciseId, setLinkedExerciseId] = useState("")
+    const [linkedSupersetId, setLinkedSupersetId] = useState("")
+    const [isGeneralLinkingDisabled, setGeneralLinkingDisabled] = useState(false)
 
     useEffect(() => {
         if (template) {
@@ -357,9 +360,14 @@ export default function Template() {
 
     const handleLinkTemplateExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setGeneralLinkingDisabled(true)
+            setLinkedSupersetId(supersetId)
             await linkTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 supersetId, exerciseId
+            }).finally(() => {
+                setGeneralLinkingDisabled(false)
+                setLinkedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to link exercise", "Please try again.");
@@ -463,6 +471,7 @@ export default function Template() {
                                                                             setSelectedExercisesData={setSelectedExercisesData}
                                                                             isGeneralMoveDisable={isGeneralMoveDisable}
                                                                             isSupersetCombiningDisabled={isSupersetCombiningDisabled}
+                                                                            linkedExerciseId={linkedExerciseId}
                                                                         />
                                                                     )
                                                                     : (
@@ -491,6 +500,9 @@ export default function Template() {
                                                                             isLocalMoveDisabled={isLocalMoveDisabled}
                                                                             movedSupersetId={movedSupersetId}
                                                                             isUnlinkExerciseDisabled={isUnlinkExerciseDisabled}
+                                                                            setLinkedExerciseId={setLinkedExerciseId}
+                                                                            linkedSupersetId={linkedSupersetId}
+                                                                            isGeneralLinkingDisabled={isGeneralLinkingDisabled}
                                                                         />
                                                                     )
                                                             }

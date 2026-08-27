@@ -19,7 +19,8 @@ function SubTemplateExerciseTableComponent({
     isDeleteSupersetDisabled,
     isCreateNewExerciseDisabled,
     isLocalMoveDisabled,
-    isSubexercisesOfMovedSuperset
+    isSubexercisesOfMovedSuperset,
+    isLinkExerciseDisabled
 }: ISubTemplateExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [exerciseSets, setExerciseSets] = useState(exercise.sets)
@@ -82,23 +83,23 @@ function SubTemplateExerciseTableComponent({
     }, [exercise._id, onUnlinkExercise, supersetId])
 
     return (
-        <View style={[styles.outterContainer, ((isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled) && styles.disabled]}>
+        <View style={[styles.outterContainer, ((isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled) && styles.disabled]}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, ((isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled) && styles.disabled]}>
+                    <Pressable disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, ((isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled) && styles.disabled]}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled} isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled} iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
-                    <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
+                    <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} iconName="unlink-outline" onPress={handleUnlinkTemplateExercise} />
+                    <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                 </View>
             </View>
             <View style={styles.setsContainer} >
-                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled} iconName="remove-circle-outline" onPress={handleDecrementSets} />
+                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled} iconName="add-circle-outline" onPress={handleIncrementSets} />
+                <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isGeneralMoveDisable || isUnlinkAllExercisesDisabled || isDeleteSupersetDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkExerciseDisabled || isLinkExerciseDisabled} iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )

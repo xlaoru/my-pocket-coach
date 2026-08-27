@@ -21,7 +21,8 @@ function TemplateExerciseTableComponents({
     setSelectedExercises,
     setSelectedExercisesData,
     isGeneralMoveDisable,
-    isSupersetCombiningDisabled
+    isSupersetCombiningDisabled,
+    linkedExerciseId
 }: ITemplateExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [exerciseSets, setExerciseSets] = useState(exercise.sets)
@@ -95,7 +96,7 @@ function TemplateExerciseTableComponents({
     }, [templateWorkoutItemId, setSelectedExercises, setSelectedExercisesData, exercise])
 
     return (
-        <View style={[styles.outterContainer, selectedExercises.includes(templateWorkoutItemId) && styles.selected, (isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId))) && styles.disabled]}>
+        <View style={[styles.outterContainer, selectedExercises.includes(templateWorkoutItemId) && styles.selected, (isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId)) || linkedExerciseId === exercise._id) && styles.disabled]}>
             {
                 isSupersetCombiningMode
                     ? (
@@ -107,24 +108,24 @@ function TemplateExerciseTableComponents({
                     : (
                         <View style={styles.headerContainer}>
                             <View style={styles.headingContainer}>
-                                <Pressable onLongPress={onDrag} disabled={isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId))} style={({ pressed }) => [pressed && styles.pressed, (isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId))) && styles.disabled]}>
+                                <Pressable onLongPress={onDrag} disabled={isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId)) || linkedExerciseId === exercise._id} style={({ pressed }) => [pressed && styles.pressed, (isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId)) || linkedExerciseId === exercise._id) && styles.disabled]}>
                                     <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                                 </Pressable>
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable disabled={isEditExerciseNameDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId))} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                                <Title isEditable disabled={isEditExerciseNameDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId)) || linkedExerciseId === exercise._id} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
-                            <IconButton disabled={isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId))} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
+                            <IconButton disabled={isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId)) || linkedExerciseId === exercise._id} iconName="trash-bin-outline" onPress={handleDeleteTemplateExercise} />
                         </View>
                     )
             }
             <View
                 style={styles.setsContainer}
             >
-                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId))} iconName="remove-circle-outline" onPress={handleDecrementSets} />
+                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId)) || linkedExerciseId === exercise._id} iconName="remove-circle-outline" onPress={handleDecrementSets} />
                 <Title>{exerciseSets} sets</Title>
-                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId))} iconName="add-circle-outline" onPress={handleIncrementSets} />
+                <IconButton disabled={isEditExerciseSetDisabled || isGeneralMoveDisable || isDeleteExerciseDisabled || (isSupersetCombiningDisabled && selectedExercises.includes(templateWorkoutItemId)) || linkedExerciseId === exercise._id} iconName="add-circle-outline" onPress={handleIncrementSets} />
             </View>
         </View>
     )

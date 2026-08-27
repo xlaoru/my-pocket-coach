@@ -353,6 +353,7 @@ export interface ITemplateExerciseTableProps {
   setSelectedExercisesData: Dispatch<SetStateAction<ITemplateExercise[]>>
   isGeneralMoveDisable: boolean
   isSupersetCombiningDisabled: boolean
+  linkedExerciseId: string
 }
 
 export interface ITemplateSupersetTableProps {
@@ -384,6 +385,9 @@ export interface ITemplateSupersetTableProps {
   isLocalMoveDisabled: boolean
   movedSupersetId: string
   isUnlinkExerciseDisabled: boolean
+  setLinkedExerciseId: (exerciseId: string) => void
+  isGeneralLinkingDisabled: boolean
+  linkedSupersetId: string
 }
 
 export interface ISubTemplateExerciseTableProps {
@@ -400,6 +404,7 @@ export interface ISubTemplateExerciseTableProps {
   isCreateNewExerciseDisabled: boolean
   isLocalMoveDisabled: boolean
   isSubexercisesOfMovedSuperset: boolean
+  isLinkExerciseDisabled: boolean
 }
 
 export interface ITemplateExerciseFormProps {

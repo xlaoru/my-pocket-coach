@@ -383,6 +383,7 @@ export interface ITemplateSupersetTableProps {
   isUnlinkAllExercisesDisabled: boolean
   isLocalMoveDisabled: boolean
   movedSupersetId: string
+  isUnlinkExerciseDisabled: boolean
 }
 
 export interface ISubTemplateExerciseTableProps {

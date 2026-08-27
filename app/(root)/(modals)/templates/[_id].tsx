@@ -81,6 +81,7 @@ export default function Template() {
     const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
     const [isLocalMoveDisabled, setLocalMoveDisabled] = useState(false)
     const [movedSupersetId, setMovedSupersetId] = useState("")
+    const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
 
     useEffect(() => {
         if (template) {
@@ -341,10 +342,13 @@ export default function Template() {
 
     const handleUnlinkTemplateExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setUnlinkExerciseDisabled(true)
             await unlinkTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 supersetId,
                 exerciseId
+            }).finally(() => {
+                setUnlinkExerciseDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercise", "Please try again.");
@@ -486,6 +490,7 @@ export default function Template() {
                                                                             isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled}
                                                                             isLocalMoveDisabled={isLocalMoveDisabled}
                                                                             movedSupersetId={movedSupersetId}
+                                                                            isUnlinkExerciseDisabled={isUnlinkExerciseDisabled}
                                                                         />
                                                                     )
                                                             }

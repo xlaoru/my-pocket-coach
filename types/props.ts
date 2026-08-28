@@ -295,6 +295,7 @@ export interface IStageCardProps {
   onDeleteStage: (stageId: string) => Promise<void>
   onEditStageName: (stageId: string, name: string) => Promise<void>
   onEditStageDescription: (stageId: string, description: string) => Promise<void>
+  isMoveStageDisabled: boolean
 }
 
 export interface IAttachPeriodizationFormProps {

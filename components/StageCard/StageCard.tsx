@@ -7,7 +7,7 @@ import IconButton from "../IconButton/IconButton"
 import Paragraph from "../Paragraph/Paragraph"
 import Title from "../Title/Title"
 
-function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageName, onEditStageDescription }: IStageCardProps) {
+function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageName, onEditStageDescription, isMoveStageDisabled }: IStageCardProps) {
     const [editableName, setEditableName] = useState(stage.name)
     const [editableDescription, setEditableDescription] = useState(stage.description)
 
@@ -48,20 +48,20 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
     }, [onDeleteStage, stage._id])
 
     return (
-        <View style={[styles.outterContainer, isDeleteStageDisabled && styles.disabled]}>
+        <View style={[styles.outterContainer, (isDeleteStageDisabled || isMoveStageDisabled) && styles.disabled]}>
             <View style={styles.innerConainer}>
-                <Pressable disabled={isDeleteStageDisabled} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, isDeleteStageDisabled && styles.disabled]}>
+                <Pressable disabled={isDeleteStageDisabled || isMoveStageDisabled} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, (isDeleteStageDisabled || isMoveStageDisabled) && styles.disabled]}>
                     <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                 </Pressable>
                 <View style={styles.indexBox}>
                     <Paragraph>{index + 1}</Paragraph>
                 </View>
                 <View style={styles.textContainer}>
-                    <Title disabled={isDeleteStageDisabled} isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
-                    {stage.description && <Paragraph disabled={isDeleteStageDisabled} isEditable onChangeText={setEditableDescription} onBlur={handleDescriptionBlur} style={styles.descriptionText}>{editableDescription}</Paragraph>}
+                    <Title disabled={isDeleteStageDisabled || isMoveStageDisabled} isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    {stage.description && <Paragraph disabled={isDeleteStageDisabled || isMoveStageDisabled} isEditable onChangeText={setEditableDescription} onBlur={handleDescriptionBlur} style={styles.descriptionText}>{editableDescription}</Paragraph>}
                 </View>
             </View>
-            <IconButton disabled={isDeleteStageDisabled} iconName="trash-bin-outline" onPress={handleDeleteStage} />
+            <IconButton disabled={isDeleteStageDisabled || isMoveStageDisabled} iconName="trash-bin-outline" onPress={handleDeleteStage} />
         </View>
     )
 }

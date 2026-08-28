@@ -48,6 +48,7 @@ export default function Periodization() {
     const [isPeriodizationNameDisabled, setPeriodizationNameDisabled] = useState(false)
     const [isPeriodizationDescriptionDisabled, setPeriodizationDescriptionDisabled] = useState(false)
     const [isCreateStageDisabled, setCreateStageDisabled] = useState(false)
+    const [isMoveStageDisabled, setMoveStageDisabled] = useState(false)
 
     useEffect(() => {
         if (periodization) {
@@ -143,12 +144,16 @@ export default function Periodization() {
 
     const handleMoveStage = useCallback(async (sourceIndex: number, destinationIndex: number) => {
         try {
+            setMoveStageDisabled(true)
+
             await moveStageMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     sourceIndex,
                     destinationIndex
                 }
+            }).finally(() => {
+                setMoveStageDisabled(false)
             })
         } catch {
             Alert.alert("Failed to move stage", "Please try again.");
@@ -259,7 +264,7 @@ export default function Periodization() {
                                                 const index = getIndex()
                                                 return (
                                                     <View style={styles.itemWrapper}>
-                                                        <StageCard index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} onEditStageName={handleEditStageName} onEditStageDescription={handleEditStageDescription} />
+                                                        <StageCard isMoveStageDisabled={isMoveStageDisabled} index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} onEditStageName={handleEditStageName} onEditStageDescription={handleEditStageDescription} />
                                                     </View>
                                                 )
                                             }}

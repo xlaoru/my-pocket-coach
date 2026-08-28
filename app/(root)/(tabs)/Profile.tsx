@@ -15,24 +15,18 @@ export default function Profile() {
 
     const { user, logOut } = useAuth();
 
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
+    const [isLogOutDisabled, setLogOutDisabled] = useState(false);
 
-    const handleLogOut = () => {
-        Alert.alert("Log Out", "Are you sure you want to log out?", [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Log Out",
-                style: "destructive",
-                onPress: async () => {
-                    setIsLoggingOut(true);
-                    try {
-                        await logOut();
-                    } finally {
-                        setIsLoggingOut(false);
-                    }
-                },
-            },
-        ]);
+    const handleLogOut = async () => {
+        try {
+            setLogOutDisabled(true);
+
+            await logOut().finally(() => {
+                setLogOutDisabled(false);
+            })
+        } catch {
+            Alert.alert("Failed to log out", "Please try again.");
+        }
     };
 
     return (
@@ -61,8 +55,8 @@ export default function Profile() {
                 </View>
             </View>
             <View style={styles.spacer} />
-            <Button variant="secondary" iconName="log-out-outline" onPress={handleLogOut}>
-                {isLoggingOut ? "Logging out..." : "Log Out"}
+            <Button disabled={isLogOutDisabled} variant="secondary" iconName="log-out-outline" onPress={handleLogOut}>
+                Log Out
             </Button>
         </View>
     );

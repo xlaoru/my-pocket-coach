@@ -1,11 +1,10 @@
 import Button from "@/components/Button/Button";
 import Heading from "@/components/Heading/Heading";
 import Input from "@/components/Input/Input";
-import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLogIn } from "@/features/auth/hooks/use-log-in";
 import { router } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function LogIn() {
@@ -16,12 +15,18 @@ export default function LogIn() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const [isLogInDisabled, setLogInDisabled] = useState(false)
+
     const handleLogIn = async () => {
         try {
-            await logInMutation.mutateAsync({ email: email.trim(), password });
-            router.replace("/");
+            setLogInDisabled(true)
+
+            await logInMutation.mutateAsync({ email: email.trim(), password }).finally(() => {
+                setLogInDisabled(false)
+                router.replace("/");
+            })
         } catch {
-            // error is already exposed via logInMutation.error below
+            Alert.alert("Failed to log in", "Please try again.");
         }
     };
 
@@ -41,15 +46,10 @@ export default function LogIn() {
             <View style={styles.form}>
                 <Input label="Email" placeholder="you@example.com" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
                 <Input label="Password" placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry />
-                {logInMutation.isError && (
-                    <Paragraph style={styles.error}>
-                        {logInMutation.error?.response?.data?.message ?? "Log in failed. Please try again."}
-                    </Paragraph>
-                )}
             </View>
             <View style={styles.actions}>
-                <Button onPress={handleLogIn}>
-                    {logInMutation.isPending ? "Logging in..." : "Log In"}
+                <Button disabled={isLogInDisabled} onPress={handleLogIn}>
+                    Log In
                 </Button>
                 <Button variant="text" style={{ alignSelf: "center" }} onPress={() => router.push("/sign-up")}>
                     Don&apos;t have an account? Sign Up

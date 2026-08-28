@@ -17,8 +17,10 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
     }, [stage.name, stage.description])
 
     const [isDeleteStageDisabled, setDeleteStageDisabled] = useState(false)
+    const [isEditStageNameDisabled, setEditStageNameDisabled] = useState(false)
+    const [isEditStageDescriptionDisabled, setEditStageDescriptionDisabled] = useState(false)
 
-    const handleNameBlur = useCallback(() => {
+    const handleNameBlur = useCallback(async () => {
         const trimmedName = editableName.trim()
 
         if (!trimmedName) {
@@ -26,10 +28,16 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
             return
         }
 
-        void onEditStageName(stage._id, trimmedName)
+        if (trimmedName === stage.name) return
+
+        setEditStageNameDisabled(true)
+
+        await onEditStageName(stage._id, trimmedName).finally(() => {
+            setEditStageNameDisabled(false)
+        })
     }, [editableName, stage.name, onEditStageName, stage._id])
 
-    const handleDescriptionBlur = useCallback(() => {
+    const handleDescriptionBlur = useCallback(async () => {
         const trimmedDescription = (editableDescription ?? "").trim()
 
         if (!trimmedDescription) {
@@ -37,7 +45,13 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
             return
         }
 
-        void onEditStageDescription(stage._id, trimmedDescription)
+        if (trimmedDescription === stage.description) return
+
+        setEditStageDescriptionDisabled(true)
+
+        await onEditStageDescription(stage._id, trimmedDescription).finally(() => {
+            setEditStageDescriptionDisabled(false)
+        })
     }, [editableDescription, stage.description, onEditStageDescription, stage._id])
 
     const handleDeleteStage = useCallback(async () => {
@@ -57,8 +71,8 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
                     <Paragraph>{index + 1}</Paragraph>
                 </View>
                 <View style={styles.textContainer}>
-                    <Title disabled={isDeleteStageDisabled || isMoveStageDisabled} isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
-                    {stage.description && <Paragraph disabled={isDeleteStageDisabled || isMoveStageDisabled} isEditable onChangeText={setEditableDescription} onBlur={handleDescriptionBlur} style={styles.descriptionText}>{editableDescription}</Paragraph>}
+                    <Title disabled={isDeleteStageDisabled || isMoveStageDisabled || isEditStageNameDisabled} isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    {stage.description && <Paragraph disabled={isDeleteStageDisabled || isMoveStageDisabled || isEditStageDescriptionDisabled} isEditable onChangeText={setEditableDescription} onBlur={handleDescriptionBlur} style={styles.descriptionText}>{editableDescription}</Paragraph>}
                 </View>
             </View>
             <IconButton disabled={isDeleteStageDisabled || isMoveStageDisabled} iconName="trash-bin-outline" onPress={handleDeleteStage} />

@@ -16,6 +16,8 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
         setEditableDescription(stage.description)
     }, [stage.name, stage.description])
 
+    const [isDeleteStageDisabled, setDeleteStageDisabled] = useState(false)
+
     const handleNameBlur = useCallback(() => {
         const trimmedName = editableName.trim()
 
@@ -38,25 +40,28 @@ function StageCardComponent({ index, stage, onDrag, onDeleteStage, onEditStageNa
         void onEditStageDescription(stage._id, trimmedDescription)
     }, [editableDescription, stage.description, onEditStageDescription, stage._id])
 
-    const handleDeleteStage = useCallback(() => {
-        void onDeleteStage(stage._id)
+    const handleDeleteStage = useCallback(async () => {
+        setDeleteStageDisabled(true)
+        await onDeleteStage(stage._id).finally(() => {
+            setDeleteStageDisabled(false)
+        })
     }, [onDeleteStage, stage._id])
 
     return (
-        <View style={styles.outterContainer}>
+        <View style={[styles.outterContainer, isDeleteStageDisabled && styles.disabled]}>
             <View style={styles.innerConainer}>
-                <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                <Pressable disabled={isDeleteStageDisabled} onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, isDeleteStageDisabled && styles.disabled]}>
                     <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                 </Pressable>
                 <View style={styles.indexBox}>
                     <Paragraph>{index + 1}</Paragraph>
                 </View>
                 <View style={styles.textContainer}>
-                    <Title isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
-                    {stage.description && <Paragraph isEditable onChangeText={setEditableDescription} onBlur={handleDescriptionBlur} style={styles.descriptionText}>{editableDescription}</Paragraph>}
+                    <Title disabled={isDeleteStageDisabled} isEditable onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    {stage.description && <Paragraph disabled={isDeleteStageDisabled} isEditable onChangeText={setEditableDescription} onBlur={handleDescriptionBlur} style={styles.descriptionText}>{editableDescription}</Paragraph>}
                 </View>
             </View>
-            <IconButton iconName="trash-bin-outline" onPress={handleDeleteStage} />
+            <IconButton disabled={isDeleteStageDisabled} iconName="trash-bin-outline" onPress={handleDeleteStage} />
         </View>
     )
 }
@@ -98,8 +103,11 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     pressed: {
-        opacity: 0.5,
+        opacity: 0.85,
     },
+    disabled: {
+        opacity: 0.5,
+    }
 })
 
 export default React.memo(StageCardComponent)

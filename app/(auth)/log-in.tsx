@@ -4,7 +4,7 @@ import Input from "@/components/Input/Input";
 import { useLogIn } from "@/features/auth/hooks/use-log-in";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, Keyboard, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function LogIn() {
@@ -31,7 +31,7 @@ export default function LogIn() {
     };
 
     return (
-        <View
+        <Pressable
             style={[
                 styles.screen,
                 {
@@ -41,6 +41,7 @@ export default function LogIn() {
                     paddingBottom: insets.bottom + 24,
                 },
             ]}
+            onPress={Keyboard.dismiss}
         >
             <Heading>Log In</Heading>
             <View style={styles.form}>
@@ -55,7 +56,7 @@ export default function LogIn() {
                     Don&apos;t have an account? Sign Up
                 </Button>
             </View>
-        </View>
+        </Pressable>
     );
 }
 

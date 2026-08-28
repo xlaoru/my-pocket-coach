@@ -5,7 +5,7 @@ import { useSignUp } from "@/features/auth/hooks/use-sign-up";
 import { colors } from "@/styles/colors";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, Keyboard, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SignUp() {
@@ -44,7 +44,7 @@ export default function SignUp() {
     };
 
     return (
-        <View
+        <Pressable
             style={[
                 styles.screen,
                 {
@@ -54,6 +54,7 @@ export default function SignUp() {
                     paddingBottom: insets.bottom + 24,
                 },
             ]}
+            onPress={Keyboard.dismiss}
         >
             <Heading>Sign Up</Heading>
             <View style={styles.form}>
@@ -70,7 +71,7 @@ export default function SignUp() {
                     Already have an account? Log In
                 </Button>
             </View>
-        </View>
+        </Pressable>
     );
 }
 

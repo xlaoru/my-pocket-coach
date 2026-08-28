@@ -47,6 +47,7 @@ export default function Periodization() {
 
     const [isPeriodizationNameDisabled, setPeriodizationNameDisabled] = useState(false)
     const [isPeriodizationDescriptionDisabled, setPeriodizationDescriptionDisabled] = useState(false)
+    const [isCreateStageDisabled, setCreateStageDisabled] = useState(false)
 
     useEffect(() => {
         if (periodization) {
@@ -62,23 +63,27 @@ export default function Periodization() {
     }, [periodization, navigation])
 
     const handleCreateStage = useCallback(async () => {
-        const trimmedStageName = stageName.trim()
-        const trimmedStageDescription = stageDescription.trim()
-
-        if (!trimmedStageName) return
-
         try {
+            const trimmedStageName = stageName.trim()
+            const trimmedStageDescription = stageDescription.trim()
+
+            if (!trimmedStageName) return
+
+            setBottomSheetOpen(false)
+            setCreateStageDisabled(true)
+
             await createStageMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     name: trimmedStageName,
                     description: trimmedStageDescription
                 }
+            }).finally(() => {
+                setCreateStageDisabled(false)
             })
 
             setStageName("")
             setStageDescription("")
-            setBottomSheetOpen(false)
         } catch {
             Alert.alert("Failed to create stage", "Please try again.")
         }
@@ -273,9 +278,9 @@ export default function Periodization() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button iconName="add" onPress={() => { setBottomSheetOpen(true) }} style={styles.button}>New Stage</Button>
+                    <Button disabled={isCreateStageDisabled} iconName="add" onPress={() => { setBottomSheetOpen(true) }} style={styles.button}>New Stage</Button>
                 </View>
-                <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} onSubmit={handleCreateStage} title="Add Stage">
+                <BottomSheetForm disabled={isCreateStageDisabled} isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} onSubmit={handleCreateStage} title="Add Stage">
                     <StageForm stageName={stageName} setStageName={setStageName} stageDescription={stageDescription} setStageDescription={setStageDescription} />
                 </BottomSheetForm>
             </View>

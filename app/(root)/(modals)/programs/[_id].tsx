@@ -557,7 +557,6 @@ export default function Program() {
                     {
                         isProgramLoading
                             ? (
-
                                 <Heading>Loading...</Heading>
                             )
                             : (

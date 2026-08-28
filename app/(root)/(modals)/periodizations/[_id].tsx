@@ -45,6 +45,9 @@ export default function Periodization() {
     const [stageName, setStageName] = useState("")
     const [stageDescription, setStageDescription] = useState("")
 
+    const [isPeriodizationNameDisabled, setPeriodizationNameDisabled] = useState(false)
+    const [isPeriodizationDescriptionDisabled, setPeriodizationDescriptionDisabled] = useState(false)
+
     useEffect(() => {
         if (periodization) {
             setPeriodizationName(periodization.name)
@@ -90,11 +93,17 @@ export default function Periodization() {
                 return
             }
 
+            if (periodizationName === periodization?.name) return
+
+            setPeriodizationNameDisabled(true)
+
             await editPeriodizationNameMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     name: trimmedPeriodizationName
                 }
+            }).finally(() => {
+                setPeriodizationNameDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit periodization name", "Please try again.");
@@ -110,11 +119,17 @@ export default function Periodization() {
                 return
             }
 
+            if (periodizationDescription === periodization?.description) return
+
+            setPeriodizationDescriptionDisabled(true)
+
             await editPeriodizationDescriptionMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     description: trimmedPeriodizationDescription
                 }
+            }).finally(() => {
+                setPeriodizationDescriptionDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit periodization description", "Please try again.");
@@ -194,8 +209,26 @@ export default function Periodization() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setPeriodizationName} onBlur={handleEditPeriodizationName}>{isLoading ? "Loading..." : periodizationName}</Heading>
-                    {periodization?.description && <Paragraph isEditable onChangeText={setPeriodizationDescription} onBlur={handleEditPeriodizationDescription}>{periodizationDescription}</Paragraph>}
+                    {
+                        isLoading
+                            ? (
+                                <Heading>Loading...</Heading>
+                            )
+                            : (
+                                <Heading isEditable onChangeText={setPeriodizationName} onBlur={handleEditPeriodizationName} disabled={isPeriodizationNameDisabled}>{periodizationName}</Heading>
+                            )
+                    }
+                    {
+                        periodization?.description
+                            ? isLoading
+                                ? (
+                                    <Paragraph>Loading...</Paragraph>
+                                )
+                                : (
+                                    <Paragraph isEditable onChangeText={setPeriodizationDescription} onBlur={handleEditPeriodizationDescription} disabled={isPeriodizationDescriptionDisabled}>{periodizationDescription}</Paragraph>
+                                )
+                            : null
+                    }
                 </View>
                 <View style={styles.listContainer}>
                     {

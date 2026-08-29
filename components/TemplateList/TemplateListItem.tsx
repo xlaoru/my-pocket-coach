@@ -8,7 +8,7 @@ import { Pressable, StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 
-export default function TemplateListItem({ templateId, title, description, exercises, supersets, onPress, onDeleteTemplate }: ITemplateListItemProps) {
+export default function TemplateListItem({ templateId, title, description, exercises, supersets, onPress, onDeleteTemplate, isNavigating }: ITemplateListItemProps) {
     const [disabled, setDisabled] = useState(false)
 
     const handleDeleteTemplate = useCallback(async () => {
@@ -19,7 +19,7 @@ export default function TemplateListItem({ templateId, title, description, exerc
     }, [templateId, onDeleteTemplate])
 
     return (
-        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed, disabled && styles.disabled]} disabled={disabled}>
+        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed, (disabled || isNavigating) && styles.disabled]} disabled={disabled || isNavigating}>
             <View style={styles.iconContainer}>
                 <Ionicons name="document-text-outline" size={24} color={colors.red500} />
             </View>
@@ -32,8 +32,8 @@ export default function TemplateListItem({ templateId, title, description, exerc
                 </View>
             </View>
             <View style={styles.buttonsContainer}>
-                <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplate} disabled={disabled} />
-                <IconButton iconName="chevron-forward-outline" onPress={onPress} disabled={disabled} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteTemplate} disabled={disabled || isNavigating} />
+                <IconButton iconName="chevron-forward-outline" onPress={onPress} disabled={disabled || isNavigating} />
             </View>
         </Pressable>
     )

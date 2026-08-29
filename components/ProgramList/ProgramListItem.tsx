@@ -7,7 +7,7 @@ import IconButton from "../IconButton/IconButton";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function ProgramListItem({ programId, title, description, exercises, supersets, onPress, onDeleteProgram }: IProgramListItemsProps) {
+export default function ProgramListItem({ programId, title, description, exercises, supersets, onPress, onDeleteProgram, isNavigating }: IProgramListItemsProps) {
     const [disabled, setDisabled] = useState(false)
 
     const handleDeleteProgram = useCallback(async () => {
@@ -18,7 +18,7 @@ export default function ProgramListItem({ programId, title, description, exercis
     }, [onDeleteProgram, programId])
 
     return (
-        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed, disabled && styles.disabled]} disabled={disabled}>
+        <Pressable onPress={onPress} style={({ pressed }) => [styles.container, pressed && styles.pressed, (disabled || isNavigating) && styles.disabled]} disabled={disabled || isNavigating}>
             <View style={styles.iconContainer}>
                 <Ionicons name="barbell-outline" size={24} color={colors.red500} />
             </View>
@@ -31,8 +31,8 @@ export default function ProgramListItem({ programId, title, description, exercis
                 </View>
             </View>
             <View style={styles.buttonsContainer}>
-                <IconButton iconName="trash-bin-outline" onPress={handleDeleteProgram} disabled={disabled} />
-                <IconButton iconName="chevron-forward-outline" onPress={onPress} disabled={disabled} />
+                <IconButton iconName="trash-bin-outline" onPress={handleDeleteProgram} disabled={disabled || isNavigating} />
+                <IconButton iconName="chevron-forward-outline" onPress={onPress} disabled={disabled || isNavigating} />
             </View>
         </Pressable>
     );

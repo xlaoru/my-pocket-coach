@@ -1,7 +1,7 @@
 import { IWorkoutItem } from "@/types/models";
 import { IProgramListProps } from "@/types/props";
-import { useRouter } from "expo-router";
-import React from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import ProgramListItem from "./ProgramListItem";
 
@@ -34,6 +34,29 @@ function countSupersets(workout: IWorkoutItem[]): number {
 export default function ProgramList({ programs, onDeleteProgram }: IProgramListProps) {
     const router = useRouter()
 
+    const isNavigatingRef = useRef(false)
+    const [isNavigating, setIsNavigating] = useState(false)
+
+    const handlePressProgram = (id: string) => {
+        if (isNavigatingRef.current) return
+        isNavigatingRef.current = true
+        setIsNavigating(true)
+
+        requestAnimationFrame(() => {
+            router.push({
+                pathname: "/(root)/(modals)/programs/[_id]",
+                params: { _id: id }
+            })
+        })
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            isNavigatingRef.current = false
+            setIsNavigating(false)
+        }, [])
+    )
+
     return (
         <FlatList
             style={styles.container}
@@ -48,13 +71,9 @@ export default function ProgramList({ programs, onDeleteProgram }: IProgramListP
                     description={item.description}
                     exercises={countExercises(item.workout)}
                     supersets={countSupersets(item.workout)}
-                    onPress={() => {
-                        router.push({
-                            pathname: "/(root)/(modals)/programs/[_id]",
-                            params: { _id: item._id }
-                        })
-                    }}
+                    onPress={() => handlePressProgram(item._id)}
                     onDeleteProgram={onDeleteProgram}
+                    isNavigating={isNavigating}
                 />
             )}
         />

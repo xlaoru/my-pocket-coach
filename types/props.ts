@@ -61,6 +61,7 @@ export interface IProgramListItemsProps {
   supersets: number
   onPress: VoidFunction
   onDeleteProgram: (programId: string) => Promise<void>
+  isNavigating: boolean
 }
 
 export interface ITitleProps {
@@ -102,6 +103,7 @@ export interface IPeriodizationListItemProps {
   stages: number
   onPress: VoidFunction
   onDeletePeriodization: (periodizationId: string) => Promise<void>
+  isNavigating: boolean
 }
 
 export interface IBottomSheetFormProps {
@@ -340,6 +342,7 @@ export interface ITemplateListItemProps {
   supersets: number
   onPress: VoidFunction
   onDeleteTemplate: (templateId: string) => Promise<void>
+  isNavigating: boolean
 }
 
 export interface ITemplateExerciseTableProps {

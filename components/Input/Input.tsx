@@ -5,9 +5,9 @@ import { StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Paragraph from "../Paragraph/Paragraph";
 
-export default function Input({ placeholder, value, label, onChangeText, style, secureTextEntry, autoCapitalize, keyboardType, onBlur }: IInputProps) {
+export default function Input({ placeholder, value, label, onChangeText, style, secureTextEntry, autoCapitalize, keyboardType, onBlur, disabled }: IInputProps) {
     return (
-        <View style={[styles.container, style]}>
+        <View style={[styles.container, disabled && styles.disabled, style]}>
             {label && <Paragraph style={styles.label}>{label.toUpperCase()}</Paragraph>}
             <TextInput
                 style={styles.input}
@@ -19,6 +19,7 @@ export default function Input({ placeholder, value, label, onChangeText, style, 
                 autoCapitalize={autoCapitalize}
                 keyboardType={keyboardType}
                 onBlur={onBlur}
+                editable={!disabled}
             />
         </View>
     );
@@ -37,5 +38,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 12,
         color: colors.white,
+    },
+    disabled: {
+        opacity: 0.5
     }
 });

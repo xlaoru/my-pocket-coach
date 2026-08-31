@@ -15,12 +15,14 @@ export function useUnlinkExercise() {
     mutationFn: ({ programId, supersetId, exerciseId }: UnlinkExerciseVariables) =>
       unlinkExercise(programId, supersetId, exerciseId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.byId(variables.programId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.byId(variables.programId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.all,
+        }),
+      ])
     },
   })
 }

@@ -14,12 +14,14 @@ export function useDeleteSuperset() {
     mutationFn: ({ programId, supersetId }: DeleteSupersetVariables) =>
       deleteSuperset(programId, supersetId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.byId(variables.programId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.byId(variables.programId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.all,
+        }),
+      ])
     },
   })
 }

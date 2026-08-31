@@ -9,19 +9,25 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import SubExerciseTabelRow from "./SubExerciseTabelRow";
 
-function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise, onSetExerciseNote }: ISubExerciseTabelProps) {
+function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, onUnlinkExercise, onSetExerciseNote, isMoveDisabled, isDeleteSupersetDisabled, isUnlinkAllExercisesDisabled, isCreateNewExerciseDisabled, isLinkExerciseDisabled, isLocalMoveDisabled, isSubexercisesOfMovedSuperset }: ISubExerciseTabelProps) {
     const [editableName, setEditableName] = useState(exercise.name);
     const [editableNote, setEditableNote] = useState(exercise.note)
 
     const [isNoteMode, setNoteMode] = useState(false)
     const noteInputRef = useRef<TextInput>(null)
 
+    const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
+    const [isEditSubxerciseNameDisabled, setEditSubxerciseNameDisabled] = useState(false)
+    const [isAddExerciseSetDisabled, setAddExerciseSetDisabled] = useState(false)
+    const [isExerciseNoteDisabled, setExerciseNoteDisabled] = useState(false)
+    const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
+
     useEffect(() => {
         setEditableName(exercise.name);
         setEditableNote(exercise.note)
     }, [exercise.name, exercise.note]);
 
-    const handleNameBlur = useCallback(() => {
+    const handleNameBlur = useCallback(async () => {
         const trimmedName = editableName.trim();
 
         if (!trimmedName) {
@@ -29,19 +35,27 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
             return;
         }
 
-        if (trimmedName === exercise.name) {
-            return;
-        }
+        if (trimmedName === exercise.name) return
 
-        void onExerciseNameChange(exercise._id, trimmedName);
+        setEditSubxerciseNameDisabled(true)
+
+        await onExerciseNameChange(exercise._id, trimmedName).finally(() => {
+            setEditSubxerciseNameDisabled(false)
+        })
     }, [editableName, exercise._id, exercise.name, onExerciseNameChange]);
 
-    const handleDeleteExercise = useCallback(() => {
-        void onDeleteExercise(exercise._id)
+    const handleDeleteExercise = useCallback(async () => {
+        setDeleteExerciseDisabled(true)
+        await onDeleteExercise(exercise._id).finally(() => {
+            setDeleteExerciseDisabled(false)
+        })
     }, [exercise, onDeleteExercise])
 
-    const handleUnlinkExercise = useCallback(() => {
-        void onUnlinkExercise(supersetId, exercise._id)
+    const handleUnlinkExercise = useCallback(async () => {
+        setUnlinkExerciseDisabled(true)
+        await onUnlinkExercise(supersetId, exercise._id).finally(() => {
+            setUnlinkExerciseDisabled(false)
+        })
     }, [supersetId, exercise._id, onUnlinkExercise])
 
     const handleNotePress = useCallback(() => {
@@ -53,7 +67,7 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
         setNoteMode(true)
     }, [exercise.note])
 
-    const handleNoteBlur = useCallback(() => {
+    const handleNoteBlur = useCallback(async () => {
         const trimmedNote = editableNote.trim()
 
         if (!trimmedNote) {
@@ -62,22 +76,33 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
 
         if (trimmedNote === exercise.note) return
 
-        void onSetExerciseNote(exercise._id, trimmedNote)
+        setExerciseNoteDisabled(true)
+
+        await onSetExerciseNote(exercise._id, trimmedNote).finally(() => {
+            setExerciseNoteDisabled(false)
+        })
     }, [exercise._id, exercise.note, editableNote, onSetExerciseNote])
 
+    const handleAddExerciseSet = useCallback(async () => {
+        setAddExerciseSetDisabled(true)
+        await onAddExerciseSet(exercise._id).finally(() => {
+            setAddExerciseSetDisabled(false)
+        })
+    }, [exercise._id, onAddExerciseSet])
+
     return (
-        <View style={styles.outterContainer}>
+        <View style={[styles.outterContainer, ((isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled) && styles.disabled]}>
             <View style={styles.headerContainer}>
                 <View style={styles.headingContainer}>
-                    <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                    <Pressable onLongPress={onDrag} disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isMoveDisabled || isDeleteSupersetDisabled} style={({ pressed }) => [pressed && styles.pressed, ((isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isMoveDisabled || isDeleteSupersetDisabled) && styles.disabled]}>
                         <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                     </Pressable>
-                    <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                    <Title isEditable disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isEditSubxerciseNameDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                 </View>
                 <View style={styles.headerIconButtonsContainer}>
-                    <IconButton iconName="unlink-outline" onPress={handleUnlinkExercise} />
-                    <IconButton iconName="reader-outline" onPress={handleNotePress} />
-                    <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
+                    <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} iconName="unlink-outline" onPress={handleUnlinkExercise} />
+                    <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isExerciseNoteDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} iconName="reader-outline" onPress={handleNotePress} />
+                    <IconButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} iconName="trash-bin-outline" onPress={handleDeleteExercise} />
                 </View>
             </View>
             <View style={styles.tableContainer}>
@@ -98,14 +123,14 @@ function SubExerciseTabel({ supersetId, exercise, onDrag, onExerciseNameChange, 
                     </View>
                 </View>
                 {exercise.sets.map((set, index) => (
-                    <SubExerciseTabelRow key={index} index={index} exerciseId={exercise._id} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />
+                    <SubExerciseTabelRow isLocalMoveDisabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled)} isLinkExerciseDisabled={isLinkExerciseDisabled} isCreateNewExerciseDisabled={isCreateNewExerciseDisabled} isDeleteExerciseDisabled={isDeleteExerciseDisabled} isMoveDisabled={isMoveDisabled} isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled} isUnlinkExerciseDisabled={isUnlinkExerciseDisabled} isDeleteSupersetDisabled={isDeleteSupersetDisabled} key={index} index={index} exerciseId={exercise._id} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />
                 ))}
             </View>
-            <AddSetOutlineButton onPress={() => { onAddExerciseSet(exercise._id) }} />
+            <AddSetOutlineButton disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isAddExerciseSetDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} onPress={handleAddExerciseSet} />
             {
                 (exercise.note || isNoteMode) && (
                     <View style={styles.noteContainer}>
-                        <Paragraph ref={noteInputRef} isEditable autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
+                        <Paragraph disabled={(isSubexercisesOfMovedSuperset && isLocalMoveDisabled) || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isExerciseNoteDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} ref={noteInputRef} isEditable autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
                     </View>
                 )
             }
@@ -185,6 +210,9 @@ const styles = StyleSheet.create({
         borderColor: colors.red500,
         paddingLeft: 8
     },
+    disabled: {
+        opacity: 0.5
+    }
 })
 
 export default React.memo(SubExerciseTabel)

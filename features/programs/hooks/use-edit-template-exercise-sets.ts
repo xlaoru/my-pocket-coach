@@ -16,7 +16,7 @@ export function useEditTemplateExerciseSets() {
     mutationFn: ({ templateId, exerciseId, payload }: EditTemplateExerciseSetsVariables) =>
       editTemplateExerciseSets(templateId, exerciseId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.templates.byId(variables.templateId),
       })
     },

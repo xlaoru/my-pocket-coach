@@ -10,7 +10,7 @@ import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 import ExerciseTableRow from "./ExerciseTableRow";
 
-function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, selectedExercises, setSelectedExercises, setSelectedExercisesData, onSetExerciseNote }: IExerciseTableProps) {
+function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExerciseNameChange, onAddExerciseSet, onEditExerciseSet, onDeleteExerciseSet, onDeleteExercise, isSupersetCombiningMode, selectedExercises, setSelectedExercises, setSelectedExercisesData, onSetExerciseNote, isMoveDisabled, linkedExerciseId, isSupersetCombiningDisabled }: IExerciseTableProps) {
     const [editableName, setEditableName] = useState(exercise.name)
     const [editableNote, setEditableNote] = useState(exercise.note)
 
@@ -22,7 +22,12 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
         setEditableNote(exercise.note)
     }, [exercise.name, exercise.note]);
 
-    const handleNameBlur = useCallback(() => {
+    const [isExerciseNameDisabled, setExerciseNameDisabled] = useState(false)
+    const [isAddSetDisabled, setAddSetDisabled] = useState(false)
+    const [isNoteDisabled, setNoteDisabled] = useState(false)
+    const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
+
+    const handleNameBlur = useCallback(async () => {
         const trimmedName = editableName.trim();
 
         if (!trimmedName) {
@@ -30,15 +35,27 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
             return;
         }
 
-        if (trimmedName === exercise.name) {
-            return;
-        }
+        if (trimmedName === exercise.name) return
 
-        void onExerciseNameChange(exercise._id, trimmedName);
+        setExerciseNameDisabled(true)
+
+        await onExerciseNameChange(exercise._id, trimmedName).finally(() => {
+            setExerciseNameDisabled(false)
+        })
     }, [editableName, exercise._id, exercise.name, onExerciseNameChange]);
 
-    const handleDeleteExercise = useCallback(() => {
-        void onDeleteExercise(exercise._id)
+    const handleAddExerciseSet = useCallback(async () => {
+        setAddSetDisabled(true)
+        await onAddExerciseSet(exercise._id).finally(() => {
+            setAddSetDisabled(false)
+        })
+    }, [exercise._id, onAddExerciseSet])
+
+    const handleDeleteExercise = useCallback(async () => {
+        setDeleteExerciseDisabled(true)
+        await onDeleteExercise(exercise._id).finally(() => {
+            setDeleteExerciseDisabled(false)
+        })
     }, [exercise, onDeleteExercise])
 
     const toggleSelect = useCallback(() => {
@@ -59,7 +76,7 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
         setNoteMode(true)
     }, [exercise.note])
 
-    const handleNoteBlur = useCallback(() => {
+    const handleNoteBlur = useCallback(async () => {
         const trimmedNote = editableNote.trim()
 
         if (!trimmedNote) {
@@ -68,11 +85,15 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
 
         if (trimmedNote === exercise.note) return
 
-        void onSetExerciseNote(exercise._id, trimmedNote)
+        setNoteDisabled(true)
+
+        await onSetExerciseNote(exercise._id, trimmedNote).finally(() => {
+            setNoteDisabled(false)
+        })
     }, [exercise._id, exercise.note, editableNote, onSetExerciseNote])
 
     return (
-        <View style={[styles.outterContainer, selectedExercises.includes(workoutItemId) && styles.selected]}>
+        <View style={[styles.outterContainer, selectedExercises.includes(workoutItemId) && styles.selected, ((isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isMoveDisabled || isDeleteExerciseDisabled) && styles.disabled]}>
             {
                 isSupersetCombiningMode
                     ?
@@ -86,17 +107,17 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
                     (
                         <View style={styles.headerContainer}>
                             <View style={styles.headingContainer}>
-                                <Pressable onLongPress={onDrag} style={({ pressed }) => pressed && styles.pressed}>
+                                <Pressable onLongPress={onDrag} style={({ pressed }) => [pressed && styles.pressed, ((isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isMoveDisabled || isDeleteExerciseDisabled) && styles.disabled]} disabled={(isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isDeleteExerciseDisabled || isMoveDisabled}>
                                     <Ionicons name="reorder-two" size={22} color={colors.gray100} />
                                 </Pressable>
                                 <View style={styles.indexBox}>
                                     <Paragraph>{index + 1}</Paragraph>
                                 </View>
-                                <Title isEditable style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
+                                <Title isEditable disabled={(isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isMoveDisabled || isDeleteExerciseDisabled || isExerciseNameDisabled} style={styles.nameInput} onChangeText={setEditableName} onBlur={handleNameBlur}>{editableName}</Title>
                             </View>
                             <View style={styles.headerIconButtonsContainer}>
-                                <IconButton iconName="reader-outline" onPress={handleNotePress} />
-                                <IconButton iconName="trash-bin-outline" onPress={handleDeleteExercise} />
+                                <IconButton disabled={(isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isMoveDisabled || isDeleteExerciseDisabled || isNoteDisabled} iconName="reader-outline" onPress={handleNotePress} />
+                                <IconButton disabled={(isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isMoveDisabled || isDeleteExerciseDisabled} iconName="trash-bin-outline" onPress={handleDeleteExercise} />
                             </View>
                         </View>
                     )
@@ -117,14 +138,14 @@ function ExerciseTableComponent({ index, exercise, workoutItemId, onDrag, onExer
                     <View style={styles.actionPlaceholder} />
                 </View>
                 {
-                    exercise.sets.map((set, setIndex) => <ExerciseTableRow key={setIndex} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
+                    exercise.sets.map((set, setIndex) => <ExerciseTableRow isCombinedExercise={(isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId))} isLinkedExercise={linkedExerciseId === exercise._id} key={setIndex} isMoveDisabled={isMoveDisabled} isDeleteExerciseDisabled={isDeleteExerciseDisabled} isSupersetCombiningMode={isSupersetCombiningMode} exerciseId={exercise._id} index={setIndex} set={set} onEditExerciseSet={onEditExerciseSet} onDeleteExerciseSet={onDeleteExerciseSet} />)
                 }
             </View>
-            <AddSetOutlineButton onPress={() => onAddExerciseSet(exercise._id)} />
+            <AddSetOutlineButton disabled={(isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isAddSetDisabled} onPress={handleAddExerciseSet} />
             {
                 (exercise.note || isNoteMode) && (
                     <View style={styles.noteContainer}>
-                        <Paragraph ref={noteInputRef} isEditable autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
+                        <Paragraph ref={noteInputRef} isEditable disabled={(isSupersetCombiningDisabled && selectedExercises.includes(workoutItemId)) || linkedExerciseId === exercise._id || isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isNoteDisabled} autoFocus={isNoteMode && !exercise.note} onChangeText={setEditableNote} onBlur={handleNoteBlur} style={{ fontSize: 14 }}>{editableNote}</Paragraph>
                     </View>
                 )
             }
@@ -215,6 +236,9 @@ const styles = StyleSheet.create({
         borderColor: colors.red500,
         paddingLeft: 8
     },
+    disabled: {
+        opacity: 0.5
+    }
 });
 
 export default React.memo(ExerciseTableComponent);

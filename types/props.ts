@@ -21,6 +21,7 @@ export interface IHeadingProps {
   isEditable?: boolean
   onChangeText?: (text: string) => void
   onBlur?: VoidFunction
+  disabled?: boolean
 }
 
 export interface IHeadingLabelProps {
@@ -35,6 +36,7 @@ export interface IParagraphProps {
   autoFocus?: boolean
   onChangeText?: (text: string) => void
   onBlur?: VoidFunction
+  disabled?: boolean
 }
 
 export interface IEntityEmptyStateProps {
@@ -42,6 +44,8 @@ export interface IEntityEmptyStateProps {
   title: string
   message: string
   wrapperStyle?: StyleProp<ViewStyle>
+  onRetry?: () => void
+  retryLabel?: string
 }
 
 export interface IProgramListProps {
@@ -57,6 +61,7 @@ export interface IProgramListItemsProps {
   supersets: number
   onPress: VoidFunction
   onDeleteProgram: (programId: string) => Promise<void>
+  isNavigating: boolean
 }
 
 export interface ITitleProps {
@@ -67,11 +72,13 @@ export interface ITitleProps {
   onBlur?: VoidFunction
   onSubmitEditing?: VoidFunction
   keyboardType?: KeyboardTypeOptions
+  disabled?: boolean
 }
 
 export interface IIconButtonProps {
   iconName: TIoniconName
   onPress: VoidFunction
+  disabled?: boolean
 }
 
 export interface IButtonProps {
@@ -81,6 +88,7 @@ export interface IButtonProps {
   onPress: VoidFunction
   style?: PressableProps['style']
   iconSize?: number
+  disabled?: boolean
 }
 
 export interface IPeriodizationListProps {
@@ -95,6 +103,7 @@ export interface IPeriodizationListItemProps {
   stages: number
   onPress: VoidFunction
   onDeletePeriodization: (periodizationId: string) => Promise<void>
+  isNavigating: boolean
 }
 
 export interface IBottomSheetFormProps {
@@ -104,6 +113,7 @@ export interface IBottomSheetFormProps {
   onSubmit: VoidFunction
   onClose: VoidFunction
   isWithoutSubmition?: boolean
+  disabled?: boolean
 }
 
 export interface IInputProps {
@@ -116,12 +126,14 @@ export interface IInputProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters'
   keyboardType?: 'default' | 'email-address'
   onBlur?: VoidFunction
+  disabled?: boolean
 }
 
 export interface IAttachPeriodizationButtonProps {
   isAttaced: boolean
   value: string | null
   onPress: VoidFunction
+  disabled?: boolean
 }
 
 export interface IExerciseFormProps {
@@ -149,6 +161,7 @@ export interface IExerciseFormRowInputProps {
 }
 
 export interface IAddSetOutlineButtonProps {
+  disabled?: boolean
   onPress: VoidFunction
 }
 
@@ -162,11 +175,14 @@ export interface IExerciseTableProps {
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
-  isSupersetCombiningMode: boolean
   selectedExercises: string[]
   setSelectedExercises: Dispatch<SetStateAction<string[]>>
   setSelectedExercisesData: Dispatch<SetStateAction<IExercise[]>>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
+  isMoveDisabled: boolean
+  isSupersetCombiningMode: boolean
+  linkedExerciseId: string
+  isSupersetCombiningDisabled: boolean
 }
 
 export interface IExerciseTableRowProps {
@@ -175,6 +191,11 @@ export interface IExerciseTableRowProps {
   set: ISet
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+  isDeleteExerciseDisabled: boolean
+  isSupersetCombiningMode: boolean
+  isMoveDisabled: boolean
+  isLinkedExercise: boolean
+  isCombinedExercise: boolean
 }
 
 export interface ICheckboxProps {
@@ -212,6 +233,18 @@ export interface ISupersetTableProps {
   onLinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
   onSetSupersetNote: (supersetId: string, newNote: string) => Promise<void>
+  isMoveDisabled: boolean
+  setLinkedExerciseId: (exerciseId: string) => void
+  isSupersetCombiningMode: boolean
+  isSupersetCombiningDisabled: boolean
+  isUnlinkExerciseDisabled: boolean
+  isUnlinkAllExercisesDisabled: boolean
+  isDeleteExerciseDisabled: boolean
+  isCreateExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
+  movedSupersetId: string
+  linkedSupersetId: string
+  isGeneralLinkingDisabled: boolean
 }
 
 export interface ISubExerciseTabelProps {
@@ -225,6 +258,13 @@ export interface ISubExerciseTabelProps {
   onDeleteExercise: (exerciseId: string) => Promise<void>
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
   onSetExerciseNote: (exerciseId: string, newNote: string) => Promise<void>
+  isMoveDisabled: boolean
+  isDeleteSupersetDisabled: boolean
+  isUnlinkAllExercisesDisabled: boolean
+  isCreateNewExerciseDisabled: boolean
+  isLinkExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
+  isSubexercisesOfMovedSuperset: boolean
 }
 
 export interface ISubExerciseTabelRowProps {
@@ -233,6 +273,14 @@ export interface ISubExerciseTabelRowProps {
   set: ISet
   onEditExerciseSet: (exerciseId: string, setIndex: number, set: ISet) => Promise<void>
   onDeleteExerciseSet: (exerciseId: string, setIndex: number) => Promise<void>
+  isDeleteSupersetDisabled: boolean
+  isUnlinkExerciseDisabled: boolean
+  isUnlinkAllExercisesDisabled: boolean
+  isMoveDisabled: boolean
+  isDeleteExerciseDisabled: boolean
+  isCreateNewExerciseDisabled: boolean
+  isLinkExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
 }
 
 export interface IStageFormProps {
@@ -249,6 +297,7 @@ export interface IStageCardProps {
   onDeleteStage: (stageId: string) => Promise<void>
   onEditStageName: (stageId: string, name: string) => Promise<void>
   onEditStageDescription: (stageId: string, description: string) => Promise<void>
+  isMoveStageDisabled: boolean
 }
 
 export interface IAttachPeriodizationFormProps {
@@ -259,6 +308,9 @@ export interface IAttachPeriodizationFormProps {
   periodizations: IPeriodization[]
   onLinkStage: (periodizationId: string, stageId: string) => Promise<void>
   setAttachPeriodizationMode: (value: boolean) => void
+  isLoading: boolean
+  isError: boolean
+  refetchPeriodizations: () => void
 }
 
 export interface IPeriodizationCardProps {
@@ -290,6 +342,7 @@ export interface ITemplateListItemProps {
   supersets: number
   onPress: VoidFunction
   onDeleteTemplate: (templateId: string) => Promise<void>
+  isNavigating: boolean
 }
 
 export interface ITemplateExerciseTableProps {
@@ -304,6 +357,9 @@ export interface ITemplateExerciseTableProps {
   selectedExercises: string[]
   setSelectedExercises: Dispatch<SetStateAction<string[]>>
   setSelectedExercisesData: Dispatch<SetStateAction<ITemplateExercise[]>>
+  isGeneralMoveDisable: boolean
+  isSupersetCombiningDisabled: boolean
+  linkedExerciseId: string
 }
 
 export interface ITemplateSupersetTableProps {
@@ -326,6 +382,18 @@ export interface ITemplateSupersetTableProps {
   onUnlinkAllExercises: (supersetId: string) => Promise<void>
   onCreateNewExercise: (supersetId: string, newName: string) => Promise<void>
   onLinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
+  isSupersetCombiningDisabled: boolean
+  isSupersetCombiningMode: boolean
+  isCreateExerciseDisabled: boolean
+  isGeneralMoveDisable: boolean
+  isDeleteExerciseDisabled: boolean
+  isUnlinkAllExercisesDisabled: boolean
+  isLocalMoveDisabled: boolean
+  movedSupersetId: string
+  isUnlinkExerciseDisabled: boolean
+  setLinkedExerciseId: (exerciseId: string) => void
+  isGeneralLinkingDisabled: boolean
+  linkedSupersetId: string
 }
 
 export interface ISubTemplateExerciseTableProps {
@@ -336,6 +404,13 @@ export interface ISubTemplateExerciseTableProps {
   onExerciseSetChange: (exerciseId: string, sets: number) => Promise<void>
   onDeleteExercise: (exerciseId: string) => Promise<void>
   onUnlinkExercise: (supersetId: string, exerciseId: string) => Promise<void>
+  isGeneralMoveDisable: boolean
+  isUnlinkAllExercisesDisabled: boolean
+  isDeleteSupersetDisabled: boolean
+  isCreateNewExerciseDisabled: boolean
+  isLocalMoveDisabled: boolean
+  isSubexercisesOfMovedSuperset: boolean
+  isLinkExerciseDisabled: boolean
 }
 
 export interface ITemplateExerciseFormProps {
@@ -354,9 +429,18 @@ export interface ITemplateSupersetFormProps {
 export interface IGenerateProgramByTemplateFormProps {
   templates: ITemplate[]
   onGenerateProgramByTemplate: (templateId: string) => Promise<void>
+  isLoading: boolean
+  isError: boolean
+  refetchTemplates: () => void
+  isGenerateProgramDisabled: boolean
 }
 
 export interface ITemplateCardProps {
   template: ITemplate
   onGenerateProgramByTemplate: (templateId: string) => Promise<void>
+  isGenerateProgramDisabled: boolean
+}
+
+export interface ILoaderProps {
+  text?: string
 }

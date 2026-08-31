@@ -6,23 +6,36 @@ import { StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
-export default function ExerciseTableRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet }: IExerciseTableRowProps) {
+export default function ExerciseTableRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet, isDeleteExerciseDisabled, isSupersetCombiningMode, isMoveDisabled, isLinkedExercise, isCombinedExercise }: IExerciseTableRowProps) {
   const [exerciseSet, setExerciseSet] = useState({ weight: String(set.weight), reps: String(set.reps) })
+
+  const [isSetDisabled, setSetDisabled] = useState(false)
 
   useEffect(() => {
     setExerciseSet({ weight: String(set.weight), reps: String(set.reps) })
   }, [set])
 
-  const handleSetBlur = useCallback(() => {
+  const handleSetBlur = useCallback(async () => {
     const weight = parseNumericInput(exerciseSet.weight, set.weight)
     const reps = parseNumericInput(exerciseSet.reps, set.reps)
 
     setExerciseSet({ weight: String(weight), reps: String(reps) })
-    void onEditExerciseSet(exerciseId, index, { weight, reps })
+
+    if (weight === set.weight && reps === set.reps) return
+
+    setSetDisabled(true)
+
+    await onEditExerciseSet(exerciseId, index, { weight, reps }).finally(() => {
+      setSetDisabled(false)
+    })
   }, [exerciseSet, exerciseId, index, set, onEditExerciseSet])
 
-  const handleDeleteExerciseSet = useCallback(() => {
-    void onDeleteExerciseSet(exerciseId, index)
+  const handleDeleteExerciseSet = useCallback(async () => {
+    setSetDisabled(true)
+
+    await onDeleteExerciseSet(exerciseId, index).finally(() => {
+      setSetDisabled(false)
+    })
   }, [exerciseId, index, onDeleteExerciseSet])
 
   return (
@@ -31,13 +44,13 @@ export default function ExerciseTableRow({ exerciseId, index, set, onEditExercis
         <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
+        <Title keyboardType="decimal-pad" disabled={isCombinedExercise || isLinkedExercise || isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
       </View>
       <View style={styles.dataCell}>
-        <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
+        <Title keyboardType="decimal-pad" disabled={isCombinedExercise || isLinkedExercise || isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
       </View>
       <View style={styles.actionCell}>
-        <IconButton iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
+        <IconButton disabled={isCombinedExercise || isLinkedExercise || isMoveDisabled || isDeleteExerciseDisabled || isSupersetCombiningMode || isSetDisabled} iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
       </View>
     </View>
   );

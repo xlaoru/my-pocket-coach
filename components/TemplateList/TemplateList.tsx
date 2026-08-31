@@ -1,6 +1,7 @@
 import { ITemplateWorkoutItem } from "@/types/models";
 import { ITemplateListProps } from "@/types/props";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useRef, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import TemplateListItem from "./TemplateListItem";
 
@@ -33,6 +34,29 @@ function countSupersets(workout: ITemplateWorkoutItem[]): number {
 export default function TemplateList({ templates, onDeleteTemplate }: ITemplateListProps) {
     const router = useRouter()
 
+    const isNavigatingRef = useRef(false)
+    const [isNavigating, setIsNavigating] = useState(false)
+
+    const handlePressTemplate = (id: string) => {
+        if (isNavigatingRef.current) return
+        isNavigatingRef.current = true
+        setIsNavigating(true)
+
+        requestAnimationFrame(() => {
+            router.push({
+                pathname: "/(root)/(modals)/templates/[_id]",
+                params: { _id: id }
+            })
+        })
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            isNavigatingRef.current = false
+            setIsNavigating(false)
+        }, [])
+    )
+
     return (
         <FlatList
             style={styles.container}
@@ -47,13 +71,9 @@ export default function TemplateList({ templates, onDeleteTemplate }: ITemplateL
                     description={item.description ?? ""}
                     exercises={countExercises(item.templateWorkout)}
                     supersets={countSupersets(item.templateWorkout)}
-                    onPress={() => {
-                        router.push({
-                            pathname: "/(modals)/templates/[_id]",
-                            params: { _id: item._id }
-                        })
-                    }}
+                    onPress={() => handlePressTemplate(item._id)}
                     onDeleteTemplate={onDeleteTemplate}
+                    isNavigating={isNavigating}
                 />
             )}
         />

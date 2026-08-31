@@ -15,7 +15,7 @@ export function useUnlinkStage() {
     mutationFn: ({ programId, periodizationId, stageId }: UnlinkStageVariables) =>
       unlinkStage(programId, periodizationId, stageId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.programs.byId(variables.programId),
       })
     },

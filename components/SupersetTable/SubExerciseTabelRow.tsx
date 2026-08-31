@@ -6,23 +6,36 @@ import { StyleSheet, View } from "react-native";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
-export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet }: ISubExerciseTabelRowProps) {
+export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExerciseSet, onDeleteExerciseSet, isDeleteSupersetDisabled, isUnlinkExerciseDisabled, isUnlinkAllExercisesDisabled, isMoveDisabled, isDeleteExerciseDisabled, isCreateNewExerciseDisabled, isLinkExerciseDisabled, isLocalMoveDisabled }: ISubExerciseTabelRowProps) {
     const [exerciseSet, setExerciseSet] = useState({ weight: String(set.weight), reps: String(set.reps) })
+
+    const [isEditSubexerciseSetDisabled, setEditSubexerciseSetDisabled] = useState(false)
+    const [isDeleteSubexerciseSetDisabled, setDeleteSubexerciseSetDisabled] = useState(false)
 
     useEffect(() => {
         setExerciseSet({ weight: String(set.weight), reps: String(set.reps) })
     }, [set])
 
-    const handleSetBlur = useCallback(() => {
+    const handleSetBlur = useCallback(async () => {
         const weight = parseNumericInput(exerciseSet.weight, set.weight)
         const reps = parseNumericInput(exerciseSet.reps, set.reps)
 
         setExerciseSet({ weight: String(weight), reps: String(reps) })
-        void onEditExerciseSet(exerciseId, index, { weight, reps })
+
+        if (weight === set.weight && reps === set.reps) return
+
+        setEditSubexerciseSetDisabled(true)
+
+        await onEditExerciseSet(exerciseId, index, { weight, reps }).finally(() => {
+            setEditSubexerciseSetDisabled(false)
+        })
     }, [exerciseSet, exerciseId, index, set, onEditExerciseSet])
 
-    const handleDeleteExerciseSet = useCallback(() => {
-        void onDeleteExerciseSet(exerciseId, index)
+    const handleDeleteExerciseSet = useCallback(async () => {
+        setDeleteSubexerciseSetDisabled(true)
+        await onDeleteExerciseSet(exerciseId, index).finally(() => {
+            setDeleteSubexerciseSetDisabled(false)
+        })
     }, [exerciseId, index, onDeleteExerciseSet])
 
     return (
@@ -31,13 +44,13 @@ export default function SubExerciseTabelRow({ exerciseId, index, set, onEditExer
                 <Title style={[styles.title, styles.indexTitle]}>{index + 1}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
+                <Title disabled={isLocalMoveDisabled || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isDeleteSubexerciseSetDisabled || isEditSubexerciseSetDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, weight: text })} onBlur={handleSetBlur}>{exerciseSet.weight}</Title>
             </View>
             <View style={styles.dataCell}>
-                <Title keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
+                <Title disabled={isLocalMoveDisabled || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isDeleteSubexerciseSetDisabled || isEditSubexerciseSetDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} keyboardType="decimal-pad" isEditable style={[styles.title, styles.editableTitle]} onChangeText={(text) => setExerciseSet({ ...exerciseSet, reps: text })} onBlur={handleSetBlur}>{exerciseSet.reps}</Title>
             </View>
             <View style={styles.actionCell}>
-                <IconButton iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
+                <IconButton disabled={isLocalMoveDisabled || isLinkExerciseDisabled || isCreateNewExerciseDisabled || isDeleteExerciseDisabled || isDeleteSubexerciseSetDisabled || isEditSubexerciseSetDisabled || isMoveDisabled || isUnlinkAllExercisesDisabled || isUnlinkExerciseDisabled || isDeleteSupersetDisabled} iconName="remove-circle-outline" onPress={handleDeleteExerciseSet} />
             </View>
         </View>
     )

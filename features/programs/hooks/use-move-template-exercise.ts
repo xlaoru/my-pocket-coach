@@ -1,8 +1,8 @@
+import { queryKeys } from '@/lib/query/query-keys'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { moveTemplateExercise } from '../api/move-template-exercise'
 import { IMoveTemplateExercisePayload } from '../types/templateExercise.dto'
 import { ITemplateDto } from '../types/templates.dto'
-import { queryKeys } from '@/lib/query/query-keys'
 
 interface MoveTemplateExericseVariables {
   templateId: string
@@ -61,7 +61,7 @@ export function useMoveTemplateExercise() {
       }
     },
     onSettled: (_data, _error, variables) => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.templates.byId(variables.templateId),
       })
     },

@@ -49,8 +49,8 @@ export default function Program() {
 
     const { _id } = useLocalSearchParams<{ _id: string }>()
 
-    const { data: program, isLoading, isError } = useProgram(_id)
-    const { data: periodizations } = usePeriodizations()
+    const { data: program, isLoading: isProgramLoading, isError: isProgramError, refetch: refetchProgram } = useProgram(_id)
+    const { data: periodizations, isLoading: isPeriodizationsLoading, isError: isPeriodizationsError, refetch: refetchPeriodizations } = usePeriodizations()
 
     const createExerciseMutation = useCreateExercise()
     const editExerciseNameMutation = useEditExerciseName()
@@ -115,6 +115,21 @@ export default function Program() {
     const [exerciseName, setExerciseName] = useState("")
     const [supersetName, setSupersetName] = useState("")
 
+    const [isProgramNameDisabled, setProgramNameDisabled] = useState(false)
+    const [isProgramDescriptionDisabled, setProgramDescriptionDisabled] = useState(false)
+    const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
+    const [isAttachmentDisabled, setAttachmentDisabled] = useState(false)
+    const [isMoveDisabled, setMoveDisabled] = useState(false)
+    const [isLocalMoveDisabled, setLocalMoveDisabled] = useState(false)
+    const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
+    const [linkedExerciseId, setLinkedExerciseId] = useState("")
+    const [linkedSupersetId, setLinkedSupersetId] = useState("")
+    const [isGeneralLinkingDisabled, setGeneralLinkingDisabled] = useState(false)
+    const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
+    const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
+    const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
+    const [movedSupersetId, setMovedSupersetId] = useState("")
+
     useEffect(() => {
         if (program) {
             setProgramName(program.name)
@@ -158,11 +173,17 @@ export default function Program() {
                 return
             }
 
+            if (programName === program?.name) return
+
+            setProgramNameDisabled(true)
+
             await editProgramMutation.mutateAsync({
                 programId: _id,
                 payload: {
                     name: trimmedName
                 }
+            }).finally(() => {
+                setProgramNameDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit program name", "Please try again.")
@@ -178,11 +199,17 @@ export default function Program() {
                 return
             }
 
+            if (programDescription === program?.description) return
+
+            setProgramDescriptionDisabled(true)
+
             await editProgramMutation.mutateAsync({
                 programId: _id,
                 payload: {
                     description: trimmedDescription
                 }
+            }).finally(() => {
+                setProgramDescriptionDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit program description", "Please try again.")
@@ -190,26 +217,28 @@ export default function Program() {
     }, [_id, program?.description, editProgramMutation, programDescription])
 
     const handleCreateExercise = useCallback(async () => {
-        const trimmedExerciseName = exerciseName.trim()
-
-        if (!trimmedExerciseName) return;
-
-        if (createExerciseMutation.isPending) return;
-
         try {
+            const trimmedExerciseName = exerciseName.trim()
+
+            if (!trimmedExerciseName) return;
+
+            setExerciseFormOpen(false)
+            setCreateExerciseDisabled(true)
+
             await createExerciseMutation.mutateAsync({
                 programId: _id,
                 payload: {
                     name: trimmedExerciseName,
                     sets: sets
                 }
+            }).finally(() => {
+                setCreateExerciseDisabled(false)
             })
 
             setExerciseName("")
             setSets([
                 { weight: 0, reps: 0 },
             ])
-            setExerciseFormOpen(false)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
@@ -278,9 +307,12 @@ export default function Program() {
 
     const handleDeleteExercise = useCallback(async (exerciseId: string) => {
         try {
+            setDeleteExerciseDisabled(true)
             await deleteExerciseMutation.mutateAsync({
                 programId: _id,
                 exerciseId: exerciseId
+            }).finally(() => {
+                setDeleteExerciseDisabled(false)
             })
         } catch {
             Alert.alert("Failed to delete exercise", "Please try again.");
@@ -289,6 +321,13 @@ export default function Program() {
 
     const handleMoveExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
         try {
+            if (_id === containerId) {
+                setMoveDisabled(true)
+            } else {
+                setLocalMoveDisabled(true)
+                setMovedSupersetId(containerId)
+            }
+
             await moveExerciseMutation.mutateAsync({
                 programId: _id,
                 payload: {
@@ -296,17 +335,15 @@ export default function Program() {
                     sourceIndex,
                     destinationIndex
                 }
+            }).finally(() => {
+                setMoveDisabled(false)
+                setLocalMoveDisabled(false)
+                setMovedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to move exercise", "Please try again.");
         }
     }, [_id, moveExerciseMutation])
-
-    useEffect(() => {
-        if (!isSupersetCombiningMode) {
-            setSelectedExercises([])
-        }
-    }, [isSupersetCombiningMode])
 
     const handleCreateSuperset = useCallback(async () => {
         try {
@@ -316,19 +353,23 @@ export default function Program() {
                 return
             }
 
+            setSupersetCombiningFormOpen(false)
+            setSupersetCombiningMode(false)
+            setSupersetCombiningDisabled(true)
+
             await createSupersetMutation.mutateAsync({
                 programId: _id,
                 payload: {
-                    name: supersetName,
+                    name: trimmedSupertsetName,
                     workoutItemIds: selectedExercises
                 }
+            }).finally(() => {
+                setSupersetCombiningDisabled(false)
+                setSelectedExercises([])
+                setSelectedExercisesData([])
             })
 
             setSupersetName("")
-            setSelectedExercises([])
-            setSupersetCombiningMode(false)
-            setSupersetCombiningFormOpen(false)
-            setSelectedExercisesData([])
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
         }
@@ -367,10 +408,13 @@ export default function Program() {
 
     const handleUnlinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setUnlinkExerciseDisabled(true)
             await unlinkExerciseMutation.mutateAsync({
                 programId: _id,
                 supersetId,
                 exerciseId
+            }).finally(() => {
+                setUnlinkExerciseDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercise", "Please try again.");
@@ -379,9 +423,12 @@ export default function Program() {
 
     const handleUnlinkAllExercises = useCallback(async (supersetId: string) => {
         try {
+            setUnlinkAllExercisesDisabled(true)
             await unlinkAllExercisesMutation.mutateAsync({
                 programId: _id,
                 supersetId
+            }).finally(() => {
+                setUnlinkAllExercisesDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercises", "Please try again.");
@@ -409,10 +456,15 @@ export default function Program() {
 
     const handleLinkExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setGeneralLinkingDisabled(true)
+            setLinkedSupersetId(supersetId)
             await linkExerciseMutation.mutateAsync({
                 programId: _id,
                 supersetId,
                 exerciseId
+            }).finally(() => {
+                setGeneralLinkingDisabled(false)
+                setLinkedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to link exercise", "Please try again.");
@@ -421,10 +473,15 @@ export default function Program() {
 
     const handleLinkStage = useCallback(async (periodizationId: string, stageId: string) => {
         try {
+            setAttachPeriodizationMode(false)
+            setAttachmentDisabled(true)
+
             await linkStageMutation.mutateAsync({
                 programId: _id,
                 periodizationId,
                 stageId
+            }).finally(() => {
+                setAttachmentDisabled(false)
             })
         } catch {
             Alert.alert("Failed to link stage", "Please try again.");
@@ -433,10 +490,14 @@ export default function Program() {
 
     const handleUnlinkStage = useCallback(async (periodizationId: string, stageId: string) => {
         try {
+            setAttachmentDisabled(true)
+
             await unlinkStageMutation.mutateAsync({
                 programId: _id,
                 periodizationId,
                 stageId
+            }).finally(() => {
+                setAttachmentDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink stage", "Please try again.");
@@ -493,9 +554,27 @@ export default function Program() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setProgramName} onBlur={handleEditProgramName}>{isLoading ? "Loading..." : programName}</Heading>
-                    {program?.description && <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription}>{isLoading ? "Loading..." : programDescription}</Paragraph>}
-                    <AttachPeriodizationButton onPress={onHandleAttachment} isAttaced={Boolean(periodizationLabel)} value={isLoading ? "Loading..." : periodizationLabel} />
+                    {
+                        isProgramLoading
+                            ? (
+                                <Heading>Loading...</Heading>
+                            )
+                            : (
+                                <Heading isEditable onChangeText={setProgramName} onBlur={handleEditProgramName} disabled={isProgramNameDisabled}>{programName}</Heading>
+                            )
+                    }
+                    {
+                        program?.description
+                            ? isProgramLoading
+                                ? (
+                                    <Paragraph>Loading...</Paragraph>
+                                )
+                                : (
+                                    <Paragraph isEditable onChangeText={setProgramDescription} onBlur={handleEditProgramDescription} disabled={isProgramDescriptionDisabled}>{programDescription}</Paragraph>
+                                )
+                            : null
+                    }
+                    <AttachPeriodizationButton onPress={onHandleAttachment} isAttaced={Boolean(periodizationLabel)} value={isProgramLoading ? "Loading..." : periodizationLabel} disabled={isAttachmentDisabled} />
                 </View>
                 {isSupersetCombiningMode && (
                     <View style={styles.combiningPanelContainer}>
@@ -511,17 +590,18 @@ export default function Program() {
                 )}
                 <View style={styles.listContainer}>
                     {
-                        isError
+                        isProgramError
                             ? (
                                 <EntityEmptyState
                                     iconName="alert-circle-outline"
-                                    title="Failed to load exercises"
+                                    title="Failed to load program"
                                     message="Please check the API connection and try again."
+                                    onRetry={() => refetchProgram()}
                                 />
                             )
-                            : isLoading
+                            : isProgramLoading
                                 ? (
-                                    <Loader />
+                                    <Loader text="Loading your program..." />
                                 )
                                 : programExercisesAmount === 0
                                     ? (
@@ -554,6 +634,9 @@ export default function Program() {
                                                                         setSelectedExercises={setSelectedExercises}
                                                                         setSelectedExercisesData={setSelectedExercisesData}
                                                                         onSetExerciseNote={handleSetExerciseNote}
+                                                                        isMoveDisabled={isMoveDisabled}
+                                                                        linkedExerciseId={linkedExerciseId}
+                                                                        isSupersetCombiningDisabled={isSupersetCombiningDisabled}
                                                                     />
                                                                 )
                                                                 : (
@@ -577,6 +660,18 @@ export default function Program() {
                                                                         onLinkExercise={handleLinkExercise}
                                                                         onSetExerciseNote={handleSetExerciseNote}
                                                                         onSetSupersetNote={handleSetSupersetNote}
+                                                                        isMoveDisabled={isMoveDisabled}
+                                                                        setLinkedExerciseId={setLinkedExerciseId}
+                                                                        isSupersetCombiningMode={isSupersetCombiningMode}
+                                                                        isSupersetCombiningDisabled={isSupersetCombiningDisabled}
+                                                                        isUnlinkExerciseDisabled={isUnlinkExerciseDisabled}
+                                                                        isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled}
+                                                                        isDeleteExerciseDisabled={isDeleteExerciseDisabled}
+                                                                        isCreateExerciseDisabled={isCreateExerciseDisabled}
+                                                                        isLocalMoveDisabled={isLocalMoveDisabled}
+                                                                        movedSupersetId={movedSupersetId}
+                                                                        linkedSupersetId={linkedSupersetId}
+                                                                        isGeneralLinkingDisabled={isGeneralLinkingDisabled}
                                                                     />
                                                                 )
                                                         }
@@ -596,17 +691,17 @@ export default function Program() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+                    <Button disabled={isCreateExerciseDisabled || isSupersetCombiningMode} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button disabled={isSupersetCombiningDisabled} iconName="layers" variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
-                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
+                <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
                     <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
                 </BottomSheetForm>
-                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                <BottomSheetForm disabled={isSupersetCombiningDisabled} isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
                 <BottomSheetForm isWithoutSubmition isOpen={isAttachPeriodizationMode} title="Select Periodization" onSubmit={() => { }} onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>
-                    <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} />
+                    <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} isLoading={isPeriodizationsLoading} isError={isPeriodizationsError} refetchPeriodizations={refetchPeriodizations} />
                 </BottomSheetForm>
             </View>
         </KeyboardAvoidingView>

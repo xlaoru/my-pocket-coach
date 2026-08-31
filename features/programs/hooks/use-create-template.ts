@@ -8,7 +8,7 @@ export function useCreateTemplate() {
   return useMutation({
     mutationFn: createTemplate,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.templates.all })
+      return queryClient.invalidateQueries({ queryKey: queryKeys.templates.all })
     },
   })
 }

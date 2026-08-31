@@ -4,18 +4,19 @@ import React from "react";
 import { StyleSheet, Text } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
-export default function Heading({ children, style, isEditable, onChangeText, onBlur }: IHeadingProps) {
+export default function Heading({ children, style, isEditable, onChangeText, onBlur, disabled }: IHeadingProps) {
     if (!isEditable) {
         return <Text style={[styles.heading, style]}>{children}</Text>;
     } else {
         return (
             <TextInput
-                style={[styles.heading, style]}
+                style={[styles.heading, disabled && styles.disabled, style]}
                 value={String(children)}
                 multiline
                 onChangeText={onChangeText}
                 onBlur={onBlur}
                 scrollEnabled={false}
+                editable={!disabled}
             />
         )
     }
@@ -27,5 +28,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: colors.white,
         padding: 0
+    },
+    disabled: {
+        opacity: 0.5
     }
 });

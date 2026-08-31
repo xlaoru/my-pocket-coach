@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 export default function Templates() {
     const insets = useSafeAreaInsets();
 
-    const { data: templates = [], isLoading, isError } = useTemplates()
+    const { data: templates = [], isLoading, isError, refetch } = useTemplates()
 
     const createTemplateMutation = useCreateTemplate()
     const deleteTemplateMutation = useDeleteTemplate()
@@ -27,26 +27,40 @@ export default function Templates() {
     const [templateName, setTemplateName] = useState("")
     const [templateDescription, setTemplateDescription] = useState("")
 
+    const [isCreateTemplateDisabled, setCreateTemplateDisabled] = useState(false)
+    const [isDeleteTemplateDisabled, setDeleteTemplateDisabled] = useState(false)
+
     const handleCreateTemplate = useCallback(async () => {
-        const trimmedTemplateName = templateName.trim()
-        const trimmedTemplateDescription = templateDescription.trim()
+        try {
+            const trimmedTemplateName = templateName.trim()
+            const trimmedTemplateDescription = templateDescription.trim()
 
-        if (!trimmedTemplateName) return
+            if (!trimmedTemplateName) return
 
-        await createTemplateMutation.mutateAsync({
-            name: trimmedTemplateName,
-            description: trimmedTemplateDescription
-        })
+            setIsBottomSheetOpen(false)
+            setCreateTemplateDisabled(true)
 
-        setTemplateName("")
-        setTemplateDescription("")
-        setIsBottomSheetOpen(false)
+            await createTemplateMutation.mutateAsync({
+                name: trimmedTemplateName,
+                description: trimmedTemplateDescription
+            }).finally(() => {
+                setCreateTemplateDisabled(false)
+            })
+
+            setTemplateName("")
+            setTemplateDescription("")
+        } catch {
+            Alert.alert("Failed to create template", "Please try again.");
+        }
     }, [createTemplateMutation, templateDescription, templateName])
 
     const handleDeleteTemplate = useCallback(async (templateId: string) => {
         try {
+            setDeleteTemplateDisabled(true)
             await deleteTemplateMutation.mutateAsync({
                 templateId
+            }).finally(() => {
+                setDeleteTemplateDisabled(false)
             })
         } catch {
             Alert.alert("Failed to delete template", "Please try again.");
@@ -70,9 +84,11 @@ export default function Templates() {
                 <Heading>Templates</Heading>
                 <Paragraph>
                     {
-                        isLoading
-                            ? "Loading templates..."
-                            : `${templates.length} template${templates.length !== 1 ? "s" : ""}`
+                        isError
+                            ? "Failed to fetch templates"
+                            : isLoading || isCreateTemplateDisabled || isDeleteTemplateDisabled
+                                ? "Loading templates..."
+                                : `${templates.length} template${templates.length !== 1 ? "s" : ""}`
                     }
                 </Paragraph>
             </View>
@@ -84,21 +100,25 @@ export default function Templates() {
                                 iconName="alert-circle-outline"
                                 title="Failed to load templates"
                                 message="Please check the API connection and try again."
+                                onRetry={() => refetch()}
                             />
                         )
                         : isLoading
                             ? (
-                                <Loader />
+                                <Loader text="Loading your templates..." />
                             )
-                            : templates.length === 0 ? (
-                                <EntityEmptyState iconName="document-text-outline" title="No templates yet" message="Create a template" />
-                            ) : (
-                                <TemplateList templates={templates} onDeleteTemplate={handleDeleteTemplate} />
-                            )
+                            : templates.length === 0
+                                ? (
+                                    <EntityEmptyState iconName="document-text-outline" title="No templates yet" message="Create a template" />
+                                )
+                                : (
+                                    <TemplateList templates={templates} onDeleteTemplate={handleDeleteTemplate} />
+                                )
                 }
             </View>
-            <Button iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Template</Button>
+            <Button disabled={isCreateTemplateDisabled} iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Template</Button>
             <BottomSheetForm
+                disabled={isCreateTemplateDisabled}
                 isOpen={isBottomSheetOpen}
                 title="New Template"
                 onSubmit={handleCreateTemplate}

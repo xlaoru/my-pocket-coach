@@ -45,6 +45,11 @@ export default function Periodization() {
     const [stageName, setStageName] = useState("")
     const [stageDescription, setStageDescription] = useState("")
 
+    const [isPeriodizationNameDisabled, setPeriodizationNameDisabled] = useState(false)
+    const [isPeriodizationDescriptionDisabled, setPeriodizationDescriptionDisabled] = useState(false)
+    const [isCreateStageDisabled, setCreateStageDisabled] = useState(false)
+    const [isMoveStageDisabled, setMoveStageDisabled] = useState(false)
+
     useEffect(() => {
         if (periodization) {
             setPeriodizationName(periodization.name)
@@ -59,23 +64,27 @@ export default function Periodization() {
     }, [periodization, navigation])
 
     const handleCreateStage = useCallback(async () => {
-        const trimmedStageName = stageName.trim()
-        const trimmedStageDescription = stageDescription.trim()
-
-        if (!trimmedStageName) return
-
         try {
+            const trimmedStageName = stageName.trim()
+            const trimmedStageDescription = stageDescription.trim()
+
+            if (!trimmedStageName) return
+
+            setBottomSheetOpen(false)
+            setCreateStageDisabled(true)
+
             await createStageMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     name: trimmedStageName,
                     description: trimmedStageDescription
                 }
+            }).finally(() => {
+                setCreateStageDisabled(false)
             })
 
             setStageName("")
             setStageDescription("")
-            setBottomSheetOpen(false)
         } catch {
             Alert.alert("Failed to create stage", "Please try again.")
         }
@@ -90,11 +99,17 @@ export default function Periodization() {
                 return
             }
 
+            if (periodizationName === periodization?.name) return
+
+            setPeriodizationNameDisabled(true)
+
             await editPeriodizationNameMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     name: trimmedPeriodizationName
                 }
+            }).finally(() => {
+                setPeriodizationNameDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit periodization name", "Please try again.");
@@ -110,11 +125,17 @@ export default function Periodization() {
                 return
             }
 
+            if (periodizationDescription === periodization?.description) return
+
+            setPeriodizationDescriptionDisabled(true)
+
             await editPeriodizationDescriptionMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     description: trimmedPeriodizationDescription
                 }
+            }).finally(() => {
+                setPeriodizationDescriptionDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit periodization description", "Please try again.");
@@ -123,12 +144,16 @@ export default function Periodization() {
 
     const handleMoveStage = useCallback(async (sourceIndex: number, destinationIndex: number) => {
         try {
+            setMoveStageDisabled(true)
+
             await moveStageMutation.mutateAsync({
                 periodizationId: _id,
                 payload: {
                     sourceIndex,
                     destinationIndex
                 }
+            }).finally(() => {
+                setMoveStageDisabled(false)
             })
         } catch {
             Alert.alert("Failed to move stage", "Please try again.");
@@ -194,8 +219,26 @@ export default function Periodization() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setPeriodizationName} onBlur={handleEditPeriodizationName}>{isLoading ? "Loading..." : periodizationName}</Heading>
-                    {periodization?.description && <Paragraph isEditable onChangeText={setPeriodizationDescription} onBlur={handleEditPeriodizationDescription}>{periodizationDescription}</Paragraph>}
+                    {
+                        isLoading
+                            ? (
+                                <Heading>Loading...</Heading>
+                            )
+                            : (
+                                <Heading isEditable onChangeText={setPeriodizationName} onBlur={handleEditPeriodizationName} disabled={isPeriodizationNameDisabled}>{periodizationName}</Heading>
+                            )
+                    }
+                    {
+                        periodization?.description
+                            ? isLoading
+                                ? (
+                                    <Paragraph>Loading...</Paragraph>
+                                )
+                                : (
+                                    <Paragraph isEditable onChangeText={setPeriodizationDescription} onBlur={handleEditPeriodizationDescription} disabled={isPeriodizationDescriptionDisabled}>{periodizationDescription}</Paragraph>
+                                )
+                            : null
+                    }
                 </View>
                 <View style={styles.listContainer}>
                     {
@@ -221,7 +264,7 @@ export default function Periodization() {
                                                 const index = getIndex()
                                                 return (
                                                     <View style={styles.itemWrapper}>
-                                                        <StageCard index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} onEditStageName={handleEditStageName} onEditStageDescription={handleEditStageDescription} />
+                                                        <StageCard isMoveStageDisabled={isMoveStageDisabled} index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} onEditStageName={handleEditStageName} onEditStageDescription={handleEditStageDescription} />
                                                     </View>
                                                 )
                                             }}
@@ -240,9 +283,9 @@ export default function Periodization() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button iconName="add" onPress={() => { setBottomSheetOpen(true) }} style={styles.button}>New Stage</Button>
+                    <Button disabled={isCreateStageDisabled} iconName="add" onPress={() => { setBottomSheetOpen(true) }} style={styles.button}>New Stage</Button>
                 </View>
-                <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} onSubmit={handleCreateStage} title="Add Stage">
+                <BottomSheetForm disabled={isCreateStageDisabled} isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} onSubmit={handleCreateStage} title="Add Stage">
                     <StageForm stageName={stageName} setStageName={setStageName} stageDescription={stageDescription} setStageDescription={setStageDescription} />
                 </BottomSheetForm>
             </View>

@@ -13,7 +13,7 @@ export function useGenerateProgramByTemplate() {
     mutationFn: ({ templateId }: GenerateProgramByTemplateVariables) =>
       generateProgramByTemplate(templateId),
     onSuccess: () => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.programs.all,
       })
     },

@@ -3,13 +3,13 @@ import { ITitleProps } from "@/types/props";
 import { StyleSheet, Text, TextInput } from "react-native";
 
 
-export default function Title({ children, style, isEditable, onChangeText, onBlur, onSubmitEditing, keyboardType }: ITitleProps) {
+export default function Title({ children, style, isEditable, onChangeText, onBlur, onSubmitEditing, keyboardType, disabled }: ITitleProps) {
     if (!isEditable) {
         return <Text style={[styles.title, style]}>{children}</Text>;
     } else {
         return (
             <TextInput
-                style={[styles.title, style]}
+                style={[styles.title, disabled && styles.disabled, style]}
                 multiline
                 scrollEnabled={false}
                 value={String(children)}
@@ -17,6 +17,7 @@ export default function Title({ children, style, isEditable, onChangeText, onBlu
                 onBlur={onBlur}
                 onSubmitEditing={onSubmitEditing}
                 keyboardType={keyboardType}
+                editable={!disabled}
             />
         )
     }
@@ -28,5 +29,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: colors.white,
         padding: 0
+    },
+    disabled: {
+        opacity: 0.5
     }
 });

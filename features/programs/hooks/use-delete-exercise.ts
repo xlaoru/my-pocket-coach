@@ -14,12 +14,14 @@ export function useDeleteExercise() {
     mutationFn: ({ programId, exerciseId }: DeleteExerciseVariables) =>
       deleteExercise(programId, exerciseId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.byId(variables.programId),
-      })
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.programs.all,
-      })
+      return Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.byId(variables.programId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.programs.all,
+        }),
+      ])
     },
   })
 }

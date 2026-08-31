@@ -16,7 +16,7 @@ export function useEditTemplateSupersetName() {
     mutationFn: ({ templateId, supersetId, payload }: EditTemplateSupersetNameVaribales) =>
       editTemplateSupersetName(templateId, supersetId, payload),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
+      return queryClient.invalidateQueries({
         queryKey: queryKeys.templates.byId(variables.templateId),
       })
     },

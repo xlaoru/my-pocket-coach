@@ -1,11 +1,34 @@
 import { IPeriodizationListProps } from "@/types/props";
-import { useRouter } from "expo-router";
-import React from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useRef, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import PeriodizationListItem from "./PeriodizationListItem";
 
 export default function PeriodizationList({ periodizations, onDeletePeriodization }: IPeriodizationListProps) {
     const router = useRouter()
+
+    const isNavigatingRef = useRef(false)
+    const [isNavigating, setIsNavigating] = useState(false)
+
+    const handlePressPeriodization = (id: string) => {
+        if (isNavigatingRef.current) return
+        isNavigatingRef.current = true
+        setIsNavigating(true)
+
+        requestAnimationFrame(() => {
+            router.push({
+                pathname: "/(root)/(modals)/periodizations/[_id]",
+                params: { _id: id }
+            })
+        })
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            isNavigatingRef.current = false
+            setIsNavigating(false)
+        }, [])
+    )
 
     return (
         <FlatList
@@ -20,13 +43,9 @@ export default function PeriodizationList({ periodizations, onDeletePeriodizatio
                     title={item.name}
                     description={item.description}
                     stages={item.stages.length}
-                    onPress={() => {
-                        router.push({
-                            pathname: "/(modals)/periodizations/[_id]",
-                            params: { _id: item._id }
-                        })
-                    }}
+                    onPress={() => handlePressPeriodization(item._id)}
                     onDeletePeriodization={onDeletePeriodization}
+                    isNavigating={isNavigating}
                 />
             )}
         />

@@ -72,6 +72,20 @@ export default function Template() {
 
     const [supersetName, setSupersetName] = useState("")
 
+    const [isTemplateNameDisabled, setTemplateNameDisabled] = useState(false)
+    const [isTemplateDescriptionDisabled, setTemplateDescriptionDisabled] = useState(false)
+    const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
+    const [isGeneralMoveDisable, setGeneralMoveDisable] = useState(false)
+    const [isSupersetCombiningDisabled, setSupersetCombiningDisabled] = useState(false)
+    const [isDeleteExerciseDisabled, setDeleteExerciseDisabled] = useState(false)
+    const [isUnlinkAllExercisesDisabled, setUnlinkAllExercisesDisabled] = useState(false)
+    const [isLocalMoveDisabled, setLocalMoveDisabled] = useState(false)
+    const [movedSupersetId, setMovedSupersetId] = useState("")
+    const [isUnlinkExerciseDisabled, setUnlinkExerciseDisabled] = useState(false)
+    const [linkedExerciseId, setLinkedExerciseId] = useState("")
+    const [linkedSupersetId, setLinkedSupersetId] = useState("")
+    const [isGeneralLinkingDisabled, setGeneralLinkingDisabled] = useState(false)
+
     useEffect(() => {
         if (template) {
             setTemplateName(template.name)
@@ -114,11 +128,17 @@ export default function Template() {
                 return
             }
 
+            if (templateName === template?.name) return
+
+            setTemplateNameDisabled(true)
+
             await editTemplateNameMutation.mutateAsync({
                 templateId: _id,
                 payload: {
                     name: trimmedTemplateName
                 }
+            }).finally(() => {
+                setTemplateNameDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit template name", "Please try again.");
@@ -134,11 +154,17 @@ export default function Template() {
                 return
             }
 
+            if (templateDescription === template?.description) return
+
+            setTemplateDescriptionDisabled(true)
+
             await editTemplateDescriptionMutation.mutateAsync({
                 templateId: _id,
                 payload: {
                     description: trimmedTemplateDescription
                 }
+            }).finally(() => {
+                setTemplateDescriptionDisabled(false)
             })
         } catch {
             Alert.alert("Failed to edit template description", "Please try again.");
@@ -146,33 +172,37 @@ export default function Template() {
     }, [_id, template?.description, editTemplateDescriptionMutation, templateDescription])
 
     const handleCreateTemplateExercise = useCallback(async () => {
-        const trimmedExerciseName = exerciseName.trim()
-
-        if (!trimmedExerciseName) return;
-
         try {
+            const trimmedExerciseName = exerciseName.trim()
+
+            if (!trimmedExerciseName) return;
+
+            setExerciseFormOpen(false)
+            setCreateExerciseDisabled(true)
+
             await createTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 payload: {
                     name: trimmedExerciseName,
                     sets: exerciseSets
                 }
+            }).finally(() => {
+                setCreateExerciseDisabled(false)
             })
 
             setExerciseName("")
             setExerciseSets(0)
-            setExerciseFormOpen(false)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
     }, [_id, createTemplateExerciseMutation, exerciseName, exerciseSets])
 
     const handleEditTemplateExerciseName = useCallback(async (exerciseId: string, newName: string) => {
-        const trimmedExerciseName = newName.trim();
-
-        if (!trimmedExerciseName) return;
-
         try {
+            const trimmedExerciseName = newName.trim();
+
+            if (!trimmedExerciseName) return;
+
             await editTemplateExerciseNameMutation.mutateAsync({
                 templateId: _id,
                 exerciseId,
@@ -186,9 +216,9 @@ export default function Template() {
     }, [_id, editTemplateExerciseNameMutation])
 
     const handleEditTemplateExerciseSets = useCallback(async (exerciseId: string, newSets: number) => {
-        if (newSets <= 0) return
-
         try {
+            if (newSets <= 0) return
+
             await editTemplateExerciseSetsMutation.mutateAsync({
                 templateId: _id,
                 exerciseId,
@@ -203,6 +233,13 @@ export default function Template() {
 
     const handleMoveTemplateExercise = useCallback(async (containerId: string, sourceIndex: number, destinationIndex: number) => {
         try {
+            if (_id === containerId) {
+                setGeneralMoveDisable(true)
+            } else {
+                setLocalMoveDisabled(true)
+                setMovedSupersetId(containerId)
+            }
+
             await moveTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 payload: {
@@ -210,6 +247,10 @@ export default function Template() {
                     sourceIndex,
                     destinationIndex
                 }
+            }).finally(() => {
+                setGeneralMoveDisable(false)
+                setLocalMoveDisabled(false)
+                setMovedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to move exercise", "Please try again.");
@@ -218,53 +259,52 @@ export default function Template() {
 
     const handleDeleteTemplateExercise = useCallback(async (exerciseId: string) => {
         try {
+            setDeleteExerciseDisabled(true)
             await deleteTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 exerciseId
+            }).finally(() => {
+                setDeleteExerciseDisabled(false)
             })
         } catch {
             Alert.alert("Failed to delete exercise", "Please try again.");
         }
     }, [_id, deleteTemplateExerciseMutation])
 
-    useEffect(() => {
-        if (!isSupersetCombiningMode) {
-            setSelectedExercises([])
-        }
-    }, [isSupersetCombiningMode])
-
     const handleCreateTemplateSuperset = useCallback(async () => {
-        const trimmedSupertsetName = supersetName.trim()
-
-        if (!trimmedSupertsetName) {
-            return
-        }
-
         try {
+            const trimmedSupertsetName = supersetName.trim()
+
+            if (!trimmedSupertsetName) return
+
+            setSupersetCombiningFormOpen(false)
+            setSupersetCombiningMode(false)
+            setSupersetCombiningDisabled(true)
+
             await createTemplateSupersetMutation.mutateAsync({
                 templateId: _id,
                 payload: {
                     name: trimmedSupertsetName,
                     templateWorkoutItemIds: selectedExercises
                 }
+            }).finally(() => {
+                setSupersetCombiningDisabled(false)
+                setSelectedExercises([])
+                setSelectedExercisesData([])
             })
 
             setSupersetName("")
-            setSelectedExercises([])
-            setSupersetCombiningMode(false)
-            setSupersetCombiningFormOpen(false)
-            setSelectedExercisesData([])
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
         }
     }, [_id, createTemplateSupersetMutation, selectedExercises, supersetName])
 
     const handleEditTemplateSupersetName = useCallback(async (supersetId: string, newName: string) => {
-        const trimmedTemplateSupersetName = newName.trim()
-
-        if (!trimmedTemplateSupersetName) return
-
         try {
+            const trimmedTemplateSupersetName = newName.trim()
+
+            if (!trimmedTemplateSupersetName) return
+
             await editTemplateSupersetNameMutation.mutateAsync({
                 templateId: _id,
                 supersetId,
@@ -290,9 +330,13 @@ export default function Template() {
 
     const handleUnlinkAllTemplateExercises = useCallback(async (supersetId: string) => {
         try {
+            setUnlinkAllExercisesDisabled(true)
+
             await unlinkAllTemplateExercisesMutation.mutateAsync({
                 templateId: _id,
                 supersetId
+            }).finally(() => {
+                setUnlinkAllExercisesDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercises", "Please try again.");
@@ -301,10 +345,13 @@ export default function Template() {
 
     const handleUnlinkTemplateExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setUnlinkExerciseDisabled(true)
             await unlinkTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 supersetId,
                 exerciseId
+            }).finally(() => {
+                setUnlinkExerciseDisabled(false)
             })
         } catch {
             Alert.alert("Failed to unlink exercise", "Please try again.");
@@ -313,9 +360,14 @@ export default function Template() {
 
     const handleLinkTemplateExercise = useCallback(async (supersetId: string, exerciseId: string) => {
         try {
+            setGeneralLinkingDisabled(true)
+            setLinkedSupersetId(supersetId)
             await linkTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 supersetId, exerciseId
+            }).finally(() => {
+                setGeneralLinkingDisabled(false)
+                setLinkedSupersetId("")
             })
         } catch {
             Alert.alert("Failed to link exercise", "Please try again.");
@@ -349,8 +401,18 @@ export default function Template() {
                 ]}
             >
                 <View style={styles.header}>
-                    <Heading isEditable onChangeText={setTemplateName} onBlur={handleEditTemplateName}>{isLoading ? "Loading..." : templateName}</Heading>
-                    {template?.description && <Paragraph isEditable onChangeText={setTemplateDescription} onBlur={handleEditTemplateDescription}>{isLoading ? "Loading..." : templateDescription}</Paragraph>}
+                    {
+                        isLoading
+                            ? <Heading>Loading...</Heading>
+                            : <Heading isEditable disabled={isTemplateNameDisabled} onChangeText={setTemplateName} onBlur={handleEditTemplateName}>{templateName}</Heading>
+                    }
+                    {
+                        template?.description
+                            ? isLoading
+                                ? <Paragraph>Loading...</Paragraph>
+                                : <Paragraph isEditable disabled={isTemplateDescriptionDisabled} onChangeText={setTemplateDescription} onBlur={handleEditTemplateDescription}>{templateDescription}</Paragraph>
+                            : null
+                    }
                 </View>
                 {isSupersetCombiningMode && (
                     <View style={styles.combiningPanelContainer}>
@@ -406,7 +468,11 @@ export default function Template() {
                                                                             isSupersetCombiningMode={isSupersetCombiningMode}
                                                                             selectedExercises={selectedExercises}
                                                                             setSelectedExercises={setSelectedExercises}
-                                                                            setSelectedExercisesData={setSelectedExercisesData} />
+                                                                            setSelectedExercisesData={setSelectedExercisesData}
+                                                                            isGeneralMoveDisable={isGeneralMoveDisable}
+                                                                            isSupersetCombiningDisabled={isSupersetCombiningDisabled}
+                                                                            linkedExerciseId={linkedExerciseId}
+                                                                        />
                                                                     )
                                                                     : (
                                                                         <TemplateSupersetTable
@@ -425,6 +491,18 @@ export default function Template() {
                                                                             onUnlinkAllExercises={handleUnlinkAllTemplateExercises}
                                                                             onCreateNewExercise={handleCreateNewTemplateExercise}
                                                                             onLinkExercise={handleLinkTemplateExercise}
+                                                                            isSupersetCombiningDisabled={isSupersetCombiningDisabled}
+                                                                            isSupersetCombiningMode={isSupersetCombiningMode}
+                                                                            isCreateExerciseDisabled={isCreateExerciseDisabled}
+                                                                            isGeneralMoveDisable={isGeneralMoveDisable}
+                                                                            isDeleteExerciseDisabled={isDeleteExerciseDisabled}
+                                                                            isUnlinkAllExercisesDisabled={isUnlinkAllExercisesDisabled}
+                                                                            isLocalMoveDisabled={isLocalMoveDisabled}
+                                                                            movedSupersetId={movedSupersetId}
+                                                                            isUnlinkExerciseDisabled={isUnlinkExerciseDisabled}
+                                                                            setLinkedExerciseId={setLinkedExerciseId}
+                                                                            linkedSupersetId={linkedSupersetId}
+                                                                            isGeneralLinkingDisabled={isGeneralLinkingDisabled}
                                                                         />
                                                                     )
                                                             }
@@ -443,13 +521,13 @@ export default function Template() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {template?.templateWorkout && (templateBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" variant="secondary" onPress={() => setSupersetCombiningMode((prev) => !prev)} style={styles.button}>Add Superset</Button>}
+                    <Button iconName="add" disabled={isCreateExerciseDisabled || isSupersetCombiningMode} onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    {template?.templateWorkout && (templateBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" disabled={isSupersetCombiningDisabled} variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
-                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
+                <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
                     <TemplateExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} exerciseSets={exerciseSets} setExerciseSets={setExerciseSets} />
                 </BottomSheetForm>
-                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateTemplateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} disabled={isSupersetCombiningDisabled} title="Create Superset" onSubmit={handleCreateTemplateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <TemplateSupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
                 </BottomSheetForm>
             </View>

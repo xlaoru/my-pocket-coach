@@ -17,8 +17,8 @@ export default function ExerciseFormRow({ index, set, onChange, onRemove }: IExe
         <View style={styles.outterContainer}>
             <Paragraph style={styles.index}>{index + 1}</Paragraph>
             <View style={styles.inputsContainer}>
-                <ExerciseFormRowInput keyboardType="decimal-pad" placeholder="0" value={setText.weight} onChangeText={(text) => setSetText({ ...setText, weight: text })} onBlur={() => onChange(index, "weight", setText.weight)} />
-                <ExerciseFormRowInput keyboardType="decimal-pad" placeholder="0" value={setText.reps} onChangeText={(text) => setSetText({ ...setText, reps: text })} onBlur={() => onChange(index, "reps", setText.reps)} />
+                <ExerciseFormRowInput keyboardType="decimal-pad" placeholder="0" value={setText.weight} onChangeText={(text) => { setSetText({ ...setText, weight: text }); onChange(index, "weight", text); }} />
+                <ExerciseFormRowInput keyboardType="decimal-pad" placeholder="0" value={setText.reps} onChangeText={(text) => { setSetText({ ...setText, reps: text }); onChange(index, "reps", text); }} />
             </View>
             <IconButton iconName="remove" onPress={() => onRemove(index)} />
         </View>

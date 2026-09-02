@@ -28,7 +28,7 @@ import { colors } from "@/styles/colors";
 import { ITemplateExercise } from "@/types/models";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import { NestableDraggableFlatList, NestableScrollContainer } from "react-native-draggable-flatlist";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -377,11 +377,12 @@ export default function Template() {
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View
+            <Pressable
                 style={[
                     { paddingBottom: insets.bottom + 12 },
                     styles.outerContainer,
                 ]}
+                onPress={Keyboard.dismiss}
             >
                 <View style={styles.header}>
                     {
@@ -513,7 +514,7 @@ export default function Template() {
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <TemplateSupersetForm selectedExercisesData={selectedExercisesData} onCreateTemplateSuperset={handleCreateTemplateSuperset} />
                 </BottomSheetForm>
-            </View>
+            </Pressable>
         </KeyboardAvoidingView>
     )
 }

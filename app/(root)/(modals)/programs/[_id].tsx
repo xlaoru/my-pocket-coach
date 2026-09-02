@@ -5,7 +5,7 @@ import Heading from "@/components/Heading/Heading";
 import Paragraph from "@/components/Paragraph/Paragraph";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { NestableDraggableFlatList, NestableScrollContainer } from "react-native-draggable-flatlist";
@@ -506,11 +506,12 @@ export default function Program() {
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View
+            <Pressable
                 style={[
                     { paddingBottom: insets.bottom + 12 },
                     styles.outerContainer,
                 ]}
+                onPress={Keyboard.dismiss}
             >
                 <View style={styles.header}>
                     {
@@ -662,7 +663,7 @@ export default function Program() {
                 <BottomSheetForm isOpen={isAttachPeriodizationMode} title="Select Periodization" onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>
                     <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} isLoading={isPeriodizationsLoading} isError={isPeriodizationsError} refetchPeriodizations={refetchPeriodizations} />
                 </BottomSheetForm>
-            </View>
+            </Pressable>
         </KeyboardAvoidingView>
     );
 }

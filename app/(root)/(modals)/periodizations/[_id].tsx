@@ -16,7 +16,7 @@ import { useMoveStage } from "@/features/programs/hooks/use-move-stage";
 import { usePeriodization } from "@/features/programs/hooks/use-periodization";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, StyleSheet, View } from "react-native";
 import { NestableDraggableFlatList, NestableScrollContainer } from "react-native-draggable-flatlist";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -201,11 +201,12 @@ export default function Periodization() {
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <View
+            <Pressable
                 style={[
                     { paddingBottom: insets.bottom + 12 },
                     styles.outerContainer,
                 ]}
+                onPress={Keyboard.dismiss}
             >
                 <View style={styles.header}>
                     {
@@ -277,7 +278,7 @@ export default function Periodization() {
                 <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} title="Add Stage">
                     <StageForm onCreateStage={handleCreateStage} />
                 </BottomSheetForm>
-            </View>
+            </Pressable>
         </KeyboardAvoidingView>
     )
 }

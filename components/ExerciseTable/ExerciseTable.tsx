@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         flexDirection: "row",
+        gap: 8,
         alignItems: "center",
         justifyContent: "space-between",
     },

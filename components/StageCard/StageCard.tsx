@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
         padding: 16,
         backgroundColor: colors.gray900,
         borderRadius: 14,
-        gap: 12,
+        gap: 8,
         borderWidth: 1,
         borderColor: colors.gray500,
         display: "flex",

@@ -4,7 +4,7 @@ import Input from "@/components/Input/Input";
 import { useLogIn } from "@/features/auth/hooks/use-log-in";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Keyboard, Pressable, StyleSheet, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function LogIn() {
@@ -31,40 +31,53 @@ export default function LogIn() {
     };
 
     return (
-        <Pressable
-            style={[
-                styles.screen,
-                {
-                    paddingTop: insets.top + 24,
-                    paddingLeft: insets.left + 24,
-                    paddingRight: insets.right + 24,
-                    paddingBottom: insets.bottom + 24,
-                },
-            ]}
-            onPress={Keyboard.dismiss}
+        <KeyboardAvoidingView
+            style={styles.screen}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <Heading>Log In</Heading>
-            <View style={styles.form}>
-                <Input label="Email" placeholder="you@example.com" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-                <Input label="Password" placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry />
-            </View>
-            <View style={styles.actions}>
-                <Button disabled={isLogInDisabled} onPress={handleLogIn}>
-                    Log In
-                </Button>
-                <Button variant="text" style={{ alignSelf: "center" }} onPress={() => router.push("/sign-up")}>
-                    Don&apos;t have an account? Sign Up
-                </Button>
-            </View>
-        </Pressable>
+            <ScrollView
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    {
+                        paddingTop: insets.top + 24,
+                        paddingLeft: insets.left + 24,
+                        paddingRight: insets.right + 24,
+                        paddingBottom: insets.bottom + 24,
+                    },
+                ]}
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="interactive"
+            >
+                <Pressable style={styles.content} onPress={Keyboard.dismiss}>
+                    <Heading>Log In</Heading>
+                    <View style={styles.form}>
+                        <Input label="Email" placeholder="you@example.com" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
+                        <Input label="Password" placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry />
+                    </View>
+                    <View style={styles.actions}>
+                        <Button disabled={isLogInDisabled} onPress={handleLogIn}>
+                            Log In
+                        </Button>
+                        <Button variant="text" style={{ alignSelf: "center" }} onPress={() => router.push("/sign-up")}>
+                            Don&apos;t have an account? Sign Up
+                        </Button>
+                    </View>
+                </Pressable>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        gap: 24,
+    },
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: "center",
+    },
+    content: {
+        gap: 24,
     },
     form: {
         gap: 16,

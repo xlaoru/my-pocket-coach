@@ -129,6 +129,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
+        gap: 8,
     },
     headingContainer: {
         flex: 1,

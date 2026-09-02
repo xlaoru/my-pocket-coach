@@ -5,7 +5,7 @@ import { useSignUp } from "@/features/auth/hooks/use-sign-up";
 import { colors } from "@/styles/colors";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Keyboard, Pressable, StyleSheet, View } from "react-native";
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SignUp() {
@@ -44,42 +44,55 @@ export default function SignUp() {
     };
 
     return (
-        <Pressable
-            style={[
-                styles.screen,
-                {
-                    paddingTop: insets.top + 24,
-                    paddingLeft: insets.left + 24,
-                    paddingRight: insets.right + 24,
-                    paddingBottom: insets.bottom + 24,
-                },
-            ]}
-            onPress={Keyboard.dismiss}
+        <KeyboardAvoidingView
+            style={styles.screen}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <Heading>Sign Up</Heading>
-            <View style={styles.form}>
-                <Input label="Name" placeholder="John Doe" value={name} onChangeText={setName} autoCapitalize="words" />
-                <Input label="Email" placeholder="you@example.com" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
-                <Input label="Password" placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry />
-                <Input label="Confirm Password" placeholder="••••••••" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
-            </View>
-            <View style={styles.actions}>
-                <Button disabled={isSignUpDisabled} onPress={handleSignUp}>
-                    Sign Up
-                </Button>
-                <Button variant="text" style={{ alignSelf: "center" }} onPress={() => router.push("/log-in")}>
-                    Already have an account? Log In
-                </Button>
-            </View>
-        </Pressable>
+            <ScrollView
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    {
+                        paddingTop: insets.top + 24,
+                        paddingLeft: insets.left + 24,
+                        paddingRight: insets.right + 24,
+                        paddingBottom: insets.bottom + 24,
+                    },
+                ]}
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="interactive"
+            >
+                <Pressable style={styles.content} onPress={Keyboard.dismiss}>
+                    <Heading>Sign Up</Heading>
+                    <View style={styles.form}>
+                        <Input label="Name" placeholder="John Doe" value={name} onChangeText={setName} autoCapitalize="words" />
+                        <Input label="Email" placeholder="you@example.com" value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
+                        <Input label="Password" placeholder="••••••••" value={password} onChangeText={setPassword} secureTextEntry />
+                        <Input label="Confirm Password" placeholder="••••••••" value={confirmPassword} onChangeText={setConfirmPassword} secureTextEntry />
+                    </View>
+                    <View style={styles.actions}>
+                        <Button disabled={isSignUpDisabled} onPress={handleSignUp}>
+                            Sign Up
+                        </Button>
+                        <Button variant="text" style={{ alignSelf: "center" }} onPress={() => router.push("/log-in")}>
+                            Already have an account? Log In
+                        </Button>
+                    </View>
+                </Pressable>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        gap: 24,
+    },
+    scrollContent: {
+        flexGrow: 1,
         justifyContent: "center",
+    },
+    content: {
+        gap: 24,
     },
     form: {
         gap: 16,

@@ -39,7 +39,7 @@ export default function TemplateSupersetForm({ selectedExercisesData, onCreateTe
                         <View key={exercise._id} style={styles.exercisesTableRow}>
                             <Paragraph style={styles.exercisesTableIndex}>{index + 1}.</Paragraph>
                             <View style={styles.exercisesTableRowValueContainer}>
-                                <Title>{exercise.name}</Title>
+                                <Title style={styles.candidateExerciseTitle}>{exercise.name}</Title>
                                 <Paragraph>{exercise.sets} set{exercise.sets > 1 ? "s" : ""}</Paragraph>
                             </View>
                         </View>
@@ -98,6 +98,11 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         gap: 8,
-        alignItems: "center"
+        alignItems: "center",
+        flex: 1,
+        flexShrink: 1,
+    },
+    candidateExerciseTitle: {
+        flexShrink: 1,
     }
 })

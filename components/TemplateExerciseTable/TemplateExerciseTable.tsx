@@ -102,7 +102,7 @@ function TemplateExerciseTableComponents({
                     ? (
                         <View style={styles.combiningCheckboxContainer}>
                             <Checkbox isSelected={selectedExercises.includes(templateWorkoutItemId)} toggleSelect={toggleSelect} />
-                            <Title>{editableName}</Title>
+                            <Title style={styles.combiningTitle}>{editableName}</Title>
                         </View>
                     )
                     : (
@@ -180,7 +180,12 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        gap: 8
+        gap: 8,
+        flex: 1
+    },
+    combiningTitle: {
+        flex: 1,
+        flexShrink: 1,
     },
     selected: {
         borderWidth: 2,

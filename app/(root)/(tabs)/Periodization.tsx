@@ -1,11 +1,11 @@
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
-import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import PeriodizationForm from "@/components/PeriodizationForm/PeriodizationForm";
 import PeriodizationList from "@/components/PeriodizationList/PeriodizationList";
 import { useCreatePeriodization } from "@/features/programs/hooks/use-create-periodization";
 import { useDeletePeriodization } from "@/features/programs/hooks/use-delete-periodization";
@@ -24,35 +24,24 @@ export default function Periodization() {
 
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-    const [periodizationName, setPeriodizationName] = useState("");
-    const [periodizationDescription, setPeriodizationDescription] = useState("");
-
     const [isCreatePeriodization, setCreatePeriodization] = useState(false)
     const [isDeletePeriodization, setDeletePeriodization] = useState(false)
 
-    const handleCreatePeriodization = useCallback(async () => {
+    const handleCreatePeriodization = useCallback(async (name: string, description: string) => {
         try {
-            const trimmedPeriodizationName = periodizationName.trim()
-            const trimmedPeriodizationDescription = periodizationDescription.trim()
-
-            if (!trimmedPeriodizationName) return
-
             setIsBottomSheetOpen(false)
             setCreatePeriodization(true)
 
             await createPeriodizationMutation.mutateAsync({
-                name: trimmedPeriodizationName,
-                description: trimmedPeriodizationDescription || undefined
+                name,
+                description
             }).finally(() => {
                 setCreatePeriodization(false)
             })
-
-            setPeriodizationName("")
-            setPeriodizationDescription("")
         } catch {
             Alert.alert("Failed to create periodization", "Please try again.");
         }
-    }, [createPeriodizationMutation, periodizationDescription, periodizationName])
+    }, [createPeriodizationMutation])
 
     const handleDeletePeriodization = useCallback(async (periodizationId: string) => {
         try {
@@ -119,14 +108,11 @@ export default function Periodization() {
             </View>
             <Button disabled={isCreatePeriodization} iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Periodization</Button>
             <BottomSheetForm
-                disabled={isCreatePeriodization}
                 isOpen={isBottomSheetOpen}
                 title="New Periodization"
-                onSubmit={handleCreatePeriodization}
                 onClose={() => setIsBottomSheetOpen(false)}
             >
-                <BottomSheetInput label="Program Name" placeholder="e.g. Fullbody" value={periodizationName} onChangeText={setPeriodizationName} />
-                <BottomSheetInput label="Program Description" placeholder="e.g. A fullbody workout program" value={periodizationDescription} onChangeText={setPeriodizationDescription} />
+                <PeriodizationForm onCreatePeriodization={handleCreatePeriodization} />
             </BottomSheetForm>
         </View>
     );

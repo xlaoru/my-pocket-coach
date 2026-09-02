@@ -1,8 +1,7 @@
 import { colors } from "@/styles/colors";
 import { IInputProps } from "@/types/props";
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { StyleSheet, TextInput, View } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
 
 export default function Input({ placeholder, value, label, onChangeText, style, secureTextEntry, autoCapitalize, keyboardType, onBlur, disabled }: IInputProps) {

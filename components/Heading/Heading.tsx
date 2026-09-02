@@ -1,8 +1,7 @@
 import { colors } from "@/styles/colors";
 import { IHeadingProps } from "@/types/props";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
+import { StyleSheet, Text, TextInput } from "react-native";
 
 export default function Heading({ children, style, isEditable, onChangeText, onBlur, disabled }: IHeadingProps) {
     if (!isEditable) {

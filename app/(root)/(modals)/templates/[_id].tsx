@@ -67,11 +67,6 @@ export default function Template() {
     const [isExerciseFormOpen, setExerciseFormOpen] = useState(false);
     const [isSupersetCombiningFormOpen, setSupersetCombiningFormOpen] = useState(false);
 
-    const [exerciseName, setExerciseName] = useState("")
-    const [exerciseSets, setExerciseSets] = useState(0)
-
-    const [supersetName, setSupersetName] = useState("")
-
     const [isTemplateNameDisabled, setTemplateNameDisabled] = useState(false)
     const [isTemplateDescriptionDisabled, setTemplateDescriptionDisabled] = useState(false)
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
@@ -171,31 +166,24 @@ export default function Template() {
         }
     }, [_id, template?.description, editTemplateDescriptionMutation, templateDescription])
 
-    const handleCreateTemplateExercise = useCallback(async () => {
+    const handleCreateTemplateExercise = useCallback(async (name: string, sets: number) => {
         try {
-            const trimmedExerciseName = exerciseName.trim()
-
-            if (!trimmedExerciseName) return;
-
             setExerciseFormOpen(false)
             setCreateExerciseDisabled(true)
 
             await createTemplateExerciseMutation.mutateAsync({
                 templateId: _id,
                 payload: {
-                    name: trimmedExerciseName,
-                    sets: exerciseSets
+                    name,
+                    sets
                 }
             }).finally(() => {
                 setCreateExerciseDisabled(false)
             })
-
-            setExerciseName("")
-            setExerciseSets(0)
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
-    }, [_id, createTemplateExerciseMutation, exerciseName, exerciseSets])
+    }, [_id, createTemplateExerciseMutation])
 
     const handleEditTemplateExerciseName = useCallback(async (exerciseId: string, newName: string) => {
         try {
@@ -271,12 +259,8 @@ export default function Template() {
         }
     }, [_id, deleteTemplateExerciseMutation])
 
-    const handleCreateTemplateSuperset = useCallback(async () => {
+    const handleCreateTemplateSuperset = useCallback(async (name: string) => {
         try {
-            const trimmedSupertsetName = supersetName.trim()
-
-            if (!trimmedSupertsetName) return
-
             setSupersetCombiningFormOpen(false)
             setSupersetCombiningMode(false)
             setSupersetCombiningDisabled(true)
@@ -284,7 +268,7 @@ export default function Template() {
             await createTemplateSupersetMutation.mutateAsync({
                 templateId: _id,
                 payload: {
-                    name: trimmedSupertsetName,
+                    name,
                     templateWorkoutItemIds: selectedExercises
                 }
             }).finally(() => {
@@ -293,11 +277,10 @@ export default function Template() {
                 setSelectedExercisesData([])
             })
 
-            setSupersetName("")
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
         }
-    }, [_id, createTemplateSupersetMutation, selectedExercises, supersetName])
+    }, [_id, createTemplateSupersetMutation, selectedExercises])
 
     const handleEditTemplateSupersetName = useCallback(async (supersetId: string, newName: string) => {
         try {
@@ -524,11 +507,11 @@ export default function Template() {
                     <Button iconName="add" disabled={isCreateExerciseDisabled || isSupersetCombiningMode} onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
                     {template?.templateWorkout && (templateBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" disabled={isSupersetCombiningDisabled} variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
-                <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateTemplateExercise} title="Add Exercise">
-                    <TemplateExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} exerciseSets={exerciseSets} setExerciseSets={setExerciseSets} />
+                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} title="Add Exercise">
+                    <TemplateExerciseForm onCreateTemplateExercise={handleCreateTemplateExercise} />
                 </BottomSheetForm>
-                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} disabled={isSupersetCombiningDisabled} title="Create Superset" onSubmit={handleCreateTemplateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
-                    <TemplateSupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
+                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                    <TemplateSupersetForm selectedExercisesData={selectedExercisesData} onCreateTemplateSuperset={handleCreateTemplateSuperset} />
                 </BottomSheetForm>
             </View>
         </KeyboardAvoidingView>

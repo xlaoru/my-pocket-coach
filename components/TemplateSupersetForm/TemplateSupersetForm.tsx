@@ -1,12 +1,32 @@
 import { colors } from "@/styles/colors";
 import { ITemplateSupersetFormProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
+import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
+import Button from "../Button/Button";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function TemplateSupersetForm({ supersetName, setSupersetName, selectedExercisesData }: ITemplateSupersetFormProps) {
+export default function TemplateSupersetForm({ selectedExercisesData, onCreateTemplateSuperset }: ITemplateSupersetFormProps) {
+    const [supersetName, setSupersetName] = useState("")
+
+    const [isCreateTemplateSupersetDisabled, setCreateTemplateSupersetDisabled] = useState(false)
+
+    const handleCreateTemplateSuperset = useCallback(async () => {
+        const trimmedName = supersetName.trim()
+
+        if (!trimmedName) return
+
+        setCreateTemplateSupersetDisabled(true)
+
+        await onCreateTemplateSuperset(trimmedName).finally(() => {
+            setCreateTemplateSupersetDisabled(false)
+        })
+
+        setSupersetName("")
+    }, [onCreateTemplateSuperset, supersetName])
+
     return (
         <View style={styles.supersetFormContainer}>
             <View style={styles.supersetVisualizingTableContainer}>
@@ -27,14 +47,16 @@ export default function TemplateSupersetForm({ supersetName, setSupersetName, se
                 </View>
             </View>
             <BottomSheetInput label="Superset Name" placeholder="e.g. Shoulder Circuit" value={supersetName} onChangeText={setSupersetName} />
+            <Button iconName="checkmark" disabled={isCreateTemplateSupersetDisabled} onPress={handleCreateTemplateSuperset}>Submit</Button>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     supersetFormContainer: {
+        flex: 1,
         display: "flex",
-        gap: 16
+        gap: 12
     },
     supersetVisualizingTableContainer: {
         display: "flex",

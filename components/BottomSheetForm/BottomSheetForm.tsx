@@ -5,11 +5,10 @@ import { Keyboard, Pressable, StyleSheet, View } from "react-native";
 import { colors } from "@/styles/colors";
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
 
-export default function BottomSheetForm({ isOpen, title, children, onSubmit, onClose, isWithoutSubmition, disabled }: IBottomSheetFormProps) {
+export default function BottomSheetForm({ isOpen, title, children, onClose, }: IBottomSheetFormProps) {
     const insets = useSafeAreaInsets();
 
     const bottomSheetRef = useRef<BottomSheetModal>(null);
@@ -64,7 +63,6 @@ export default function BottomSheetForm({ isOpen, title, children, onSubmit, onC
                 <Pressable style={styles.childrenContainer} onPress={() => Keyboard.dismiss()}>
                     {children}
                 </Pressable>
-                {isWithoutSubmition || <Button disabled={disabled} iconName="checkmark" onPress={onSubmit}>Submit</Button>}
             </BottomSheetView>
         </BottomSheetModal>
     );

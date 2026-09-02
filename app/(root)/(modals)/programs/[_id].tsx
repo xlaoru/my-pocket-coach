@@ -42,7 +42,6 @@ import { useUnlinkExercise } from "@/features/programs/hooks/use-unlink-exercise
 import { useUnlinkStage } from "@/features/programs/hooks/use-unlink-stage";
 import { colors } from "@/styles/colors";
 import { IExercise, IPeriodization, ISet } from "@/types/models";
-import { parseNumericInput } from "@/utils/parseNumericInput";
 
 export default function Program() {
     const insets = useSafeAreaInsets()
@@ -112,9 +111,6 @@ export default function Program() {
     const [programName, setProgramName] = useState(program?.name ?? "")
     const [programDescription, setProgramDescription] = useState(program?.description ?? "")
 
-    const [exerciseName, setExerciseName] = useState("")
-    const [supersetName, setSupersetName] = useState("")
-
     const [isProgramNameDisabled, setProgramNameDisabled] = useState(false)
     const [isProgramDescriptionDisabled, setProgramDescriptionDisabled] = useState(false)
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
@@ -141,28 +137,7 @@ export default function Program() {
         ? `${program.periodizationStage.periodizationId?.name} — ${program.periodizationStage.name}`
         : null
 
-    const [sets, setSets] = useState<ISet[]>([
-        { weight: 0, reps: 0 },
-    ])
-
     const outsideSupersetExercises = program?.workout.filter(item => item.type === "exercise") || []
-
-    const handleSetChange = (index: number, field: "weight" | "reps", value: string) => {
-        setSets((prevSets) => {
-            const numeric = parseNumericInput(value, prevSets[index][field]);
-            const newSets = [...prevSets];
-            newSets[index] = { ...newSets[index], [field]: numeric };
-            return newSets;
-        });
-    }
-
-    const addSet = () => {
-        setSets((prevSets) => [...prevSets, { weight: 0, reps: 0 }]);
-    }
-
-    const removeSet = (index: number) => {
-        setSets((prevSets) => prevSets.filter((_, i) => i !== index));
-    }
 
     const handleEditProgramName = useCallback(async () => {
         try {
@@ -216,33 +191,24 @@ export default function Program() {
         }
     }, [_id, program?.description, editProgramMutation, programDescription])
 
-    const handleCreateExercise = useCallback(async () => {
+    const handleCreateExercise = useCallback(async (name: string, sets: ISet[]) => {
         try {
-            const trimmedExerciseName = exerciseName.trim()
-
-            if (!trimmedExerciseName) return;
-
             setExerciseFormOpen(false)
             setCreateExerciseDisabled(true)
 
             await createExerciseMutation.mutateAsync({
                 programId: _id,
                 payload: {
-                    name: trimmedExerciseName,
-                    sets: sets
+                    name,
+                    sets
                 }
             }).finally(() => {
                 setCreateExerciseDisabled(false)
             })
-
-            setExerciseName("")
-            setSets([
-                { weight: 0, reps: 0 },
-            ])
         } catch {
             Alert.alert("Failed to create exercise", "Please try again.")
         }
-    }, [_id, createExerciseMutation, exerciseName, sets])
+    }, [_id, createExerciseMutation])
 
     const handleEditExerciseName = useCallback(async (exerciseId: string, newName: string) => {
         try {
@@ -345,14 +311,8 @@ export default function Program() {
         }
     }, [_id, moveExerciseMutation])
 
-    const handleCreateSuperset = useCallback(async () => {
+    const handleCreateSuperset = useCallback(async (name: string) => {
         try {
-            const trimmedSupertsetName = supersetName.trim()
-
-            if (!trimmedSupertsetName) {
-                return
-            }
-
             setSupersetCombiningFormOpen(false)
             setSupersetCombiningMode(false)
             setSupersetCombiningDisabled(true)
@@ -360,7 +320,7 @@ export default function Program() {
             await createSupersetMutation.mutateAsync({
                 programId: _id,
                 payload: {
-                    name: trimmedSupertsetName,
+                    name,
                     workoutItemIds: selectedExercises
                 }
             }).finally(() => {
@@ -369,11 +329,10 @@ export default function Program() {
                 setSelectedExercisesData([])
             })
 
-            setSupersetName("")
         } catch {
             Alert.alert("Failed to create superset", "Please try again.")
         }
-    }, [_id, createSupersetMutation, selectedExercises, supersetName])
+    }, [_id, createSupersetMutation, selectedExercises])
 
     const handleEditSupersetName = useCallback(async (supersetId: string, newName: string) => {
         const trimmedSupersetName = newName.trim()
@@ -694,13 +653,13 @@ export default function Program() {
                     <Button disabled={isCreateExerciseDisabled || isSupersetCombiningMode} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
                     {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button disabled={isSupersetCombiningDisabled} iconName="layers" variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
-                <BottomSheetForm disabled={isCreateExerciseDisabled} isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} onSubmit={handleCreateExercise} title="Add Exercise">
-                    <ExerciseForm exerciseName={exerciseName} setExerciseName={setExerciseName} sets={sets} onSetChange={handleSetChange} onAddSet={addSet} onRemoveSet={removeSet} />
+                <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} title="Add Exercise">
+                    <ExerciseForm onCreateExercise={handleCreateExercise} />
                 </BottomSheetForm>
-                <BottomSheetForm disabled={isSupersetCombiningDisabled} isOpen={isSupersetCombiningFormOpen} title="Create Superset" onSubmit={handleCreateSuperset} onClose={() => { setSupersetCombiningFormOpen(false) }}>
-                    <SupersetForm supersetName={supersetName} setSupersetName={setSupersetName} selectedExercisesData={selectedExercisesData} />
+                <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onClose={() => { setSupersetCombiningFormOpen(false) }}>
+                    <SupersetForm selectedExercisesData={selectedExercisesData} onCreateSuperset={handleCreateSuperset} />
                 </BottomSheetForm>
-                <BottomSheetForm isWithoutSubmition isOpen={isAttachPeriodizationMode} title="Select Periodization" onSubmit={() => { }} onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>
+                <BottomSheetForm isOpen={isAttachPeriodizationMode} title="Select Periodization" onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>
                     <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} isLoading={isPeriodizationsLoading} isError={isPeriodizationsError} refetchPeriodizations={refetchPeriodizations} />
                 </BottomSheetForm>
             </View>

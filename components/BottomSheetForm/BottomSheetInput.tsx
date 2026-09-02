@@ -8,7 +8,7 @@ import Paragraph from "../Paragraph/Paragraph";
 export default function BottomSheetInput({ label, placeholder, value, onChangeText }: IInputProps) {
     return (
         <View style={styles.container}>
-            <Paragraph style={styles.label}>{label.toUpperCase()}</Paragraph>
+            {label && <Paragraph style={styles.label}>{label.toUpperCase()}</Paragraph>}
             <BottomSheetTextInput
                 style={styles.input}
                 placeholder={placeholder}

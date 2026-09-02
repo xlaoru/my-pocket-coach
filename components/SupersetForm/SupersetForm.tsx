@@ -1,12 +1,32 @@
 import { colors } from "@/styles/colors";
 import { ISupersetFormProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
+import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
+import Button from "../Button/Button";
 import Paragraph from "../Paragraph/Paragraph";
 import Title from "../Title/Title";
 
-export default function SupersetForm({ supersetName, setSupersetName, selectedExercisesData }: ISupersetFormProps) {
+export default function SupersetForm({ selectedExercisesData, onCreateSuperset }: ISupersetFormProps) {
+    const [supersetName, setSupersetName] = useState("")
+
+    const [isCreateSupersetDisabled, setCreateSupersetDisabled] = useState(false)
+
+    const handleCreateSuperset = useCallback(async () => {
+        const trimmedName = supersetName.trim()
+
+        if (!trimmedName) return
+
+        setCreateSupersetDisabled(true)
+
+        await onCreateSuperset(trimmedName).finally(() => {
+            setCreateSupersetDisabled(false)
+        })
+
+        setSupersetName("")
+    }, [onCreateSuperset, supersetName])
+
     return (
         <View style={styles.supersetFormContainer}>
             <View style={styles.supersetVisualizingTableContainer}>
@@ -27,6 +47,7 @@ export default function SupersetForm({ supersetName, setSupersetName, selectedEx
                 </View>
             </View>
             <BottomSheetInput label="Superset Name" placeholder="e.g. Shoulder Circuit" value={supersetName} onChangeText={setSupersetName} />
+            <Button iconName="checkmark" disabled={isCreateSupersetDisabled} onPress={handleCreateSuperset}>Submit</Button>
         </View>
     )
 }
@@ -34,7 +55,7 @@ export default function SupersetForm({ supersetName, setSupersetName, selectedEx
 const styles = StyleSheet.create({
     supersetFormContainer: {
         display: "flex",
-        gap: 16
+        gap: 12
     },
     supersetVisualizingTableContainer: {
         display: "flex",

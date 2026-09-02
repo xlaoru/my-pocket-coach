@@ -1,12 +1,58 @@
+import { ISet } from "@/types/models";
 import { IExerciseFormProps } from "@/types/props";
+import { parseNumericInput } from "@/utils/parseNumericInput";
+import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
+import Button from "../Button/Button";
 import Paragraph from "../Paragraph/Paragraph";
 import AddSetOutlineButton from "./AddSetOutlineButton";
 import ExerciseFormRow from "./ExerciseFormRow";
 
-export default function ExerciseForm({ exerciseName, setExerciseName, sets, onSetChange, onAddSet, onRemoveSet }: IExerciseFormProps) {
+export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
+    const [exerciseName, setExerciseName] = useState("")
+
+    const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
+
+    const [sets, setSets] = useState<ISet[]>([
+        { weight: 0, reps: 0 },
+    ])
+
+    const onSetChange = (index: number, field: "weight" | "reps", value: string) => {
+        setSets((prevSets) => {
+            const numeric = parseNumericInput(value, prevSets[index][field]);
+            const newSets = [...prevSets];
+            newSets[index] = { ...newSets[index], [field]: numeric };
+            return newSets;
+        });
+    }
+
+    const onAddSet = () => {
+        setSets((prevSets) => [...prevSets, { weight: 0, reps: 0 }]);
+    }
+
+    const onRemoveSet = (index: number) => {
+        setSets((prevSets) => prevSets.filter((_, i) => i !== index));
+    }
+
+    const handleCreateExercise = useCallback(async () => {
+        const trimmedExerciseName = exerciseName.trim()
+
+        if (!trimmedExerciseName) return;
+
+        setCreateExerciseDisabled(true)
+
+        await onCreateExercise(trimmedExerciseName, sets).finally(() => {
+            setCreateExerciseDisabled(false)
+        })
+
+        setExerciseName("")
+        setSets([
+            { weight: 0, reps: 0 },
+        ])
+    }, [exerciseName, onCreateExercise, sets])
+
     return (
         <View style={styles.outterContainer}>
             <BottomSheetInput label="Exercise Name" placeholder="e.g. Bench Press" value={exerciseName} onChangeText={setExerciseName} />
@@ -29,13 +75,15 @@ export default function ExerciseForm({ exerciseName, setExerciseName, sets, onSe
                 <View style={styles.addButtonContainer}>
                     <AddSetOutlineButton onPress={onAddSet} />
                 </View>
-            </View >
-        </View >
+            </View>
+            <Button iconName="checkmark" disabled={isCreateExerciseDisabled} onPress={handleCreateExercise}>Submit</Button>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     outterContainer: {
+        flex: 1,
         gap: 12,
         width: "100%",
     },

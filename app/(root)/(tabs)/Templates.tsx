@@ -1,11 +1,11 @@
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
-import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import TemplateForm from "@/components/TemplateForm/TemplateForm";
 import TemplateList from "@/components/TemplateList/TemplateList";
 import { useCreateTemplate } from "@/features/programs/hooks/use-create-template";
 import { useDeleteTemplate } from "@/features/programs/hooks/use-delete-template";
@@ -24,35 +24,24 @@ export default function Templates() {
 
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
 
-    const [templateName, setTemplateName] = useState("")
-    const [templateDescription, setTemplateDescription] = useState("")
-
     const [isCreateTemplateDisabled, setCreateTemplateDisabled] = useState(false)
     const [isDeleteTemplateDisabled, setDeleteTemplateDisabled] = useState(false)
 
-    const handleCreateTemplate = useCallback(async () => {
+    const handleCreateTemplate = useCallback(async (name: string, description: string) => {
         try {
-            const trimmedTemplateName = templateName.trim()
-            const trimmedTemplateDescription = templateDescription.trim()
-
-            if (!trimmedTemplateName) return
-
             setIsBottomSheetOpen(false)
             setCreateTemplateDisabled(true)
 
             await createTemplateMutation.mutateAsync({
-                name: trimmedTemplateName,
-                description: trimmedTemplateDescription
+                name,
+                description,
             }).finally(() => {
                 setCreateTemplateDisabled(false)
             })
-
-            setTemplateName("")
-            setTemplateDescription("")
         } catch {
             Alert.alert("Failed to create template", "Please try again.");
         }
-    }, [createTemplateMutation, templateDescription, templateName])
+    }, [createTemplateMutation])
 
     const handleDeleteTemplate = useCallback(async (templateId: string) => {
         try {
@@ -118,14 +107,11 @@ export default function Templates() {
             </View>
             <Button disabled={isCreateTemplateDisabled} iconName="add-outline" onPress={() => { setIsBottomSheetOpen(true) }}>New Template</Button>
             <BottomSheetForm
-                disabled={isCreateTemplateDisabled}
                 isOpen={isBottomSheetOpen}
                 title="New Template"
-                onSubmit={handleCreateTemplate}
                 onClose={() => setIsBottomSheetOpen(false)}
             >
-                <BottomSheetInput label="Template Name" placeholder="e.g. Push Day Template" value={templateName} onChangeText={setTemplateName} />
-                <BottomSheetInput label="Template Description" placeholder="e.g. A push day workout template" value={templateDescription} onChangeText={setTemplateDescription} />
+                <TemplateForm onCreateTemplate={handleCreateTemplate} />
             </BottomSheetForm>
         </View >
     )

@@ -1,5 +1,4 @@
 import BottomSheetForm from "@/components/BottomSheetForm/BottomSheetForm";
-import BottomSheetInput from "@/components/BottomSheetForm/BottomSheetInput";
 import Button from "@/components/Button/Button";
 import EntityEmptyState from "@/components/EntityEmptyState/EntityEmptyState";
 import GenerateProgramByTemplateForm from "@/components/GenerateProgramByTemplateForm/GenerateProgramByTemplateForm";
@@ -7,6 +6,7 @@ import Heading from "@/components/Heading/Heading";
 import HeadingLabel from "@/components/Heading/HeadingLabel";
 import Loader from "@/components/Loader/Loader";
 import Paragraph from "@/components/Paragraph/Paragraph";
+import ProgramForm from "@/components/ProgramForm/ProgramForm";
 import ProgramList from "@/components/ProgramList/ProgramList";
 import { useCreateProgram } from "@/features/programs/hooks/use-create-program";
 import { useDeleteProgram } from "@/features/programs/hooks/use-delete-program";
@@ -31,36 +31,25 @@ export default function Programs() {
 
     const [isGeneratingProgramByTemplate, setGeneratingProgramByTemplate] = useState(false)
 
-    const [programName, setProgramName] = useState("");
-    const [programDescription, setProgramDescription] = useState("");
-
     const [isCreateProgramDisabled, setCreateProgramDisabled] = useState(false)
     const [isDeleteProgramDisabled, setDeleteProgramDisabled] = useState(false)
     const [isGenerateProgramDisabled, setGenerateProgramDisabled] = useState(false)
 
-    const handleCreateProgram = async () => {
+    const handleCreateProgram = useCallback(async (name: string, description: string) => {
         try {
-            const trimmedProgramName = programName.trim();
-            const trimmedProgramDescription = programDescription.trim();
-
-            if (!trimmedProgramName) return;
-
             setIsBottomSheetOpen(false);
             setCreateProgramDisabled(true)
 
             await createProgramMutation.mutateAsync({
-                name: trimmedProgramName,
-                description: trimmedProgramDescription || undefined,
+                name,
+                description,
             }).finally(() => {
                 setCreateProgramDisabled(false)
             })
-
-            setProgramName("");
-            setProgramDescription("");
         } catch {
             Alert.alert("Failed to create program", "Please try again.");
         }
-    };
+    }, [createProgramMutation])
 
     const handleDeleteProgram = useCallback(async (programId: string) => {
         try {
@@ -144,16 +133,13 @@ export default function Programs() {
             </View>
             <Button iconName="add-outline" disabled={isCreateProgramDisabled} onPress={() => setIsBottomSheetOpen(true)}>New Program</Button>
             <BottomSheetForm
-                disabled={isCreateProgramDisabled}
                 isOpen={isBottomSheetOpen}
                 title="New Program"
-                onSubmit={handleCreateProgram}
                 onClose={() => setIsBottomSheetOpen(false)}
             >
-                <BottomSheetInput label="Program Name" placeholder="e.g. Fullbody" value={programName} onChangeText={setProgramName} />
-                <BottomSheetInput label="Program Description" placeholder="e.g. A fullbody workout program" value={programDescription} onChangeText={setProgramDescription} />
+                <ProgramForm onCreateProgram={handleCreateProgram} />
             </BottomSheetForm>
-            <BottomSheetForm isOpen={isGeneratingProgramByTemplate} title="Generate from Template" onClose={() => setGeneratingProgramByTemplate(false)} onSubmit={() => { }} isWithoutSubmition>
+            <BottomSheetForm isOpen={isGeneratingProgramByTemplate} title="Generate from Template" onClose={() => setGeneratingProgramByTemplate(false)}>
                 <GenerateProgramByTemplateForm templates={templates ?? []} isLoading={isTemplatesLoading} isError={isTemplatesError} onGenerateProgramByTemplate={handleGenerateProgramByTemplate} refetchTemplates={refetchTemplates} isGenerateProgramDisabled={isGenerateProgramDisabled} />
             </BottomSheetForm>
         </View >

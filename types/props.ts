@@ -110,10 +110,7 @@ export interface IBottomSheetFormProps {
   isOpen: boolean
   children: ReactNode
   title: string
-  onSubmit: VoidFunction
   onClose: VoidFunction
-  isWithoutSubmition?: boolean
-  disabled?: boolean
 }
 
 export interface IInputProps {
@@ -137,12 +134,7 @@ export interface IAttachPeriodizationButtonProps {
 }
 
 export interface IExerciseFormProps {
-  exerciseName: string
-  setExerciseName: (name: string) => void
-  sets: ISet[]
-  onSetChange: (index: number, field: 'weight' | 'reps', value: string) => void
-  onAddSet: VoidFunction
-  onRemoveSet: (index: number) => void
+  onCreateExercise: (name: string, sets: ISet[]) => Promise<void>
 }
 
 export interface IExerciseFormRowProps {
@@ -204,9 +196,8 @@ export interface ICheckboxProps {
 }
 
 export interface ISupersetFormProps {
-  supersetName: string
-  setSupersetName: Dispatch<SetStateAction<string>>
   selectedExercisesData: IExercise[]
+  onCreateSuperset: (name: string) => Promise<void>
 }
 
 export interface ISupersetTableProps {
@@ -284,10 +275,7 @@ export interface ISubExerciseTabelRowProps {
 }
 
 export interface IStageFormProps {
-  stageName: string
-  setStageName: Dispatch<SetStateAction<string>>
-  stageDescription: string
-  setStageDescription: Dispatch<SetStateAction<string>>
+  onCreateStage: (name: string, description: string) => Promise<void>
 }
 
 export interface IStageCardProps {
@@ -414,16 +402,12 @@ export interface ISubTemplateExerciseTableProps {
 }
 
 export interface ITemplateExerciseFormProps {
-  exerciseName: string
-  setExerciseName: (name: string) => void
-  exerciseSets: number
-  setExerciseSets: (sets: number) => void
+  onCreateTemplateExercise: (name: string, sets: number) => Promise<void>
 }
 
 export interface ITemplateSupersetFormProps {
-  supersetName: string
-  setSupersetName: Dispatch<SetStateAction<string>>
   selectedExercisesData: ITemplateExercise[]
+  onCreateTemplateSuperset: (name: string) => Promise<void>
 }
 
 export interface IGenerateProgramByTemplateFormProps {
@@ -443,4 +427,16 @@ export interface ITemplateCardProps {
 
 export interface ILoaderProps {
   text?: string
+}
+
+export interface IProgramFormProps {
+  onCreateProgram: (programName: string, programDescription: string) => Promise<void>
+}
+
+export interface ITemplateFormProps {
+  onCreateTemplate: (name: string, description: string) => Promise<void>
+}
+
+export interface IPeriodizationFormProps {
+  onCreatePeriodization: (name: string, description: string) => Promise<void>
 }

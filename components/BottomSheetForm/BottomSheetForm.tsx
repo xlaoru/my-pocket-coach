@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Keyboard, Pressable, StyleSheet, View } from "react-native";
 
 import { colors } from "@/styles/colors";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
@@ -19,6 +19,16 @@ export default function BottomSheetForm({ isOpen, title, children, onClose, }: I
         } else {
             bottomSheetRef.current?.dismiss();
         }
+    }, [isOpen]);
+
+    useEffect(() => {
+        const subscription = Keyboard.addListener("keyboardDidHide", () => {
+            if (isOpen) {
+                bottomSheetRef.current?.snapToIndex(0);
+            }
+        });
+
+        return () => subscription.remove();
     }, [isOpen]);
 
     const handleDismiss = useCallback(() => {
@@ -54,16 +64,20 @@ export default function BottomSheetForm({ isOpen, title, children, onClose, }: I
             backgroundStyle={styles.sheetBackground}
             handleIndicatorStyle={styles.handleIndicator}
         >
-            <BottomSheetView style={styles.container}>
+            <BottomSheetScrollView
+                style={styles.container}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.titleContainer}>
                     <Title>{title}</Title>
                     <IconButton iconName="close" onPress={handleDismiss} />
                 </View>
                 <View style={styles.separator} />
-                <Pressable style={styles.childrenContainer} onPress={() => Keyboard.dismiss()}>
+                <Pressable style={[styles.childrenContainer, { paddingBottom: 24 }]} onPress={() => Keyboard.dismiss()}>
                     {children}
                 </Pressable>
-            </BottomSheetView>
+            </BottomSheetScrollView>
         </BottomSheetModal>
     );
 }

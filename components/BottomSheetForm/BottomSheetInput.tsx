@@ -1,21 +1,35 @@
 import { colors } from "@/styles/colors";
 import { IInputProps } from "@/types/props";
 import { BottomSheetTextInput } from "@gorhom/bottom-sheet";
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import Paragraph from "../Paragraph/Paragraph";
 
 export default function BottomSheetInput({ label, placeholder, value, onChangeText }: IInputProps) {
+    const [isEditing, setIsEditing] = useState(false);
+
     return (
         <View style={styles.container}>
             {label && <Paragraph style={styles.label}>{label.toUpperCase()}</Paragraph>}
-            <BottomSheetTextInput
-                style={styles.input}
-                placeholder={placeholder}
-                value={value}
-                onChangeText={onChangeText}
-                placeholderTextColor={colors.gray100}
-            />
+            {
+                isEditing
+                    ? (
+                        <BottomSheetTextInput
+                            style={styles.input}
+                            placeholder={placeholder}
+                            value={value}
+                            onChangeText={onChangeText}
+                            onBlur={() => setIsEditing(false)}
+                            placeholderTextColor={colors.gray100}
+                            autoFocus
+                        />
+                    )
+                    : (
+                        <Pressable style={styles.input} onPress={() => setIsEditing(true)}>
+                            <Text style={[styles.text, !value && styles.placeholder]}>{value || placeholder}</Text>
+                        </Pressable>
+                    )
+            }
         </View>
     );
 }
@@ -32,6 +46,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.gray500,
         borderRadius: 8,
         padding: 12,
+    },
+    text: {
         color: colors.white,
-    }
+    },
+    placeholder: {
+        color: colors.gray100,
+    },
 });

@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     },
     measurementHeader: {
         flexDirection: "row",
-        paddingLeft: 28,
+        paddingLeft: 36,
         paddingRight: 34,
         gap: 8,
     },

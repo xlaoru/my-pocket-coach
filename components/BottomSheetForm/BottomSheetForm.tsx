@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     separator: {
         height: 1,
         backgroundColor: colors.gray100,
+        marginVertical: 16
     },
     childrenContainer: {
         gap: 8

@@ -3,14 +3,16 @@ import { IExerciseFormProps } from "@/types/props";
 import { parseNumericInput } from "@/utils/parseNumericInput";
 import { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
+import { useBottomSheetFormScroll } from "../BottomSheetForm/BottomSheetForm";
 import Button from "../Button/Button";
 import Paragraph from "../Paragraph/Paragraph";
 import AddSetOutlineButton from "./AddSetOutlineButton";
 import ExerciseFormRow from "./ExerciseFormRow";
 
 export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
+    const { scrollToEnd } = useBottomSheetFormScroll();
+
     const [exerciseName, setExerciseName] = useState("")
 
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
@@ -30,6 +32,11 @@ export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
 
     const onAddSet = () => {
         setSets((prevSets) => [...prevSets, { weight: 0, reps: 0 }]);
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                scrollToEnd();
+            });
+        });
     }
 
     const onRemoveSet = (index: number) => {
@@ -61,7 +68,7 @@ export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
                     <Paragraph style={[styles.headerText, styles.setsTitle]}>{"Sets".toUpperCase()}</Paragraph>
                     <Paragraph style={styles.headerText}>{sets.length} set{sets.length > 1 ? "s" : ""}</Paragraph>
                 </View>
-                <ScrollView>
+                <View>
                     <View style={styles.measurementHeader}>
                         <Paragraph style={styles.measurementTitle}>kg</Paragraph>
                         <Paragraph style={styles.measurementTitle}>reps</Paragraph>
@@ -71,7 +78,7 @@ export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
                             <ExerciseFormRow key={index} index={index} set={set} onChange={onSetChange} onRemove={onRemoveSet} />
                         ))
                     }
-                </ScrollView>
+                </View>
                 <View style={styles.addButtonContainer}>
                     <AddSetOutlineButton onPress={onAddSet} />
                 </View>
@@ -99,7 +106,7 @@ const styles = StyleSheet.create({
     },
     measurementHeader: {
         flexDirection: "row",
-        paddingLeft: 28,
+        paddingLeft: 36,
         paddingRight: 34,
         gap: 8,
     },

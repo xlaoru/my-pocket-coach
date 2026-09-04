@@ -1,17 +1,34 @@
 import { IBottomSheetFormProps } from "@/types/props";
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { Keyboard, Pressable, StyleSheet, View } from "react-native";
 
 import { colors } from "@/styles/colors";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetScrollViewMethods } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import IconButton from "../IconButton/IconButton";
 import Title from "../Title/Title";
+
+interface IBottomSheetFormScrollContext {
+    scrollToEnd: VoidFunction;
+}
+
+const BottomSheetFormScrollContext = createContext<IBottomSheetFormScrollContext | null>(null);
+
+export function useBottomSheetFormScroll() {
+    const context = useContext(BottomSheetFormScrollContext);
+
+    if (!context) {
+        throw new Error("useBottomSheetFormScroll must be used within a BottomSheetForm");
+    }
+
+    return context;
+}
 
 export default function BottomSheetForm({ isOpen, title, children, onClose, }: IBottomSheetFormProps) {
     const insets = useSafeAreaInsets();
 
     const bottomSheetRef = useRef<BottomSheetModal>(null);
+    const scrollViewRef = useRef<BottomSheetScrollViewMethods>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -34,6 +51,12 @@ export default function BottomSheetForm({ isOpen, title, children, onClose, }: I
     const handleDismiss = useCallback(() => {
         onClose();
     }, [onClose]);
+
+    const scrollToEnd = useCallback(() => {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, []);
+
+    const scrollContextValue = useMemo(() => ({ scrollToEnd }), [scrollToEnd]);
 
     const renderBackdrop = useCallback(
         (props: any) => (
@@ -65,18 +88,21 @@ export default function BottomSheetForm({ isOpen, title, children, onClose, }: I
             handleIndicatorStyle={styles.handleIndicator}
         >
             <BottomSheetScrollView
+                ref={scrollViewRef}
                 style={styles.container}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
-                <View style={styles.titleContainer}>
-                    <Title>{title}</Title>
-                    <IconButton iconName="close" onPress={handleDismiss} />
-                </View>
-                <View style={styles.separator} />
-                <Pressable style={[styles.childrenContainer, { paddingBottom: 24 }]} onPress={() => Keyboard.dismiss()}>
-                    {children}
-                </Pressable>
+                <BottomSheetFormScrollContext.Provider value={scrollContextValue}>
+                    <View style={styles.titleContainer}>
+                        <Title>{title}</Title>
+                        <IconButton iconName="close" onPress={handleDismiss} />
+                    </View>
+                    <View style={styles.separator} />
+                    <Pressable style={[styles.childrenContainer, { paddingBottom: 24 }]} onPress={() => Keyboard.dismiss()}>
+                        {children}
+                    </Pressable>
+                </BottomSheetFormScrollContext.Provider>
             </BottomSheetScrollView>
         </BottomSheetModal>
     );

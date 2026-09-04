@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     },
     attachment: {
         fontWeight: "bold",
+        flexShrink: 1,
     },
     pressedText: {
         color: colors.red500

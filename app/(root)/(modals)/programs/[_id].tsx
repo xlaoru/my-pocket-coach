@@ -651,8 +651,8 @@ export default function Program() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button disabled={isCreateExerciseDisabled || isSupersetCombiningMode} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button disabled={isSupersetCombiningDisabled} iconName="layers" variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
+                    <Button disabled={isProgramLoading || isCreateExerciseDisabled || isSupersetCombiningMode} iconName="add" onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    {program?.workout && (programBareExercisesAmount ?? 0) >= 2 && <Button disabled={isProgramLoading || isSupersetCombiningDisabled} iconName="layers" variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
                 <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} title="Add Exercise">
                     <ExerciseForm onCreateExercise={handleCreateExercise} />

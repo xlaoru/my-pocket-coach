@@ -232,48 +232,51 @@ export default function Periodization() {
                 </View>
                 <View style={styles.listContainer}>
                     {
-                        isError ? (<EntityEmptyState
-                            iconName="alert-circle-outline"
-                            title="Failed to load periodizations"
-                            message="Please check the API connection and try again."
-                        />) : isLoading
+                        isError
                             ? (
-                                <Loader />
-                            )
-                            : periodization?.stages.length === 0
+                                <EntityEmptyState
+                                    iconName="alert-circle-outline"
+                                    title="Failed to load periodizations"
+                                    message="Please check the API connection and try again."
+                                />
+                            ) : isLoading
                                 ? (
-                                    <EntityEmptyState iconName="barbell" title="Empty periodization" message="Add stage below to get started" />
+                                    <Loader />
                                 )
-                                : (
-                                    <NestableScrollContainer showsVerticalScrollIndicator={false}>
-                                        <NestableDraggableFlatList
-                                            autoscrollThreshold={30}
-                                            autoscrollSpeed={100}
-                                            data={periodization!.stages ?? []}
-                                            renderItem={({ item, getIndex, drag }) => {
-                                                const index = getIndex()
-                                                return (
-                                                    <View style={styles.itemWrapper}>
-                                                        <StageCard isMoveStageDisabled={isMoveStageDisabled} index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} onEditStageName={handleEditStageName} onEditStageDescription={handleEditStageDescription} />
-                                                    </View>
-                                                )
-                                            }}
-                                            keyExtractor={(item) => item._id}
-                                            onDragEnd={({ from, to }) => {
-                                                if (from === to) {
-                                                    return
-                                                }
+                                : periodization?.stages.length === 0
+                                    ? (
+                                        <EntityEmptyState iconName="barbell" title="Empty periodization" message="Add stage below to get started" />
+                                    )
+                                    : (
+                                        <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                            <NestableDraggableFlatList
+                                                autoscrollThreshold={30}
+                                                autoscrollSpeed={100}
+                                                data={periodization!.stages ?? []}
+                                                renderItem={({ item, getIndex, drag }) => {
+                                                    const index = getIndex()
+                                                    return (
+                                                        <View style={styles.itemWrapper}>
+                                                            <StageCard isMoveStageDisabled={isMoveStageDisabled} index={index ?? 0} stage={item} onDrag={drag} onDeleteStage={handleDeleteStage} onEditStageName={handleEditStageName} onEditStageDescription={handleEditStageDescription} />
+                                                        </View>
+                                                    )
+                                                }}
+                                                keyExtractor={(item) => item._id}
+                                                onDragEnd={({ from, to }) => {
+                                                    if (from === to) {
+                                                        return
+                                                    }
 
-                                                handleMoveStage(from, to)
-                                            }}
-                                        />
-                                    </NestableScrollContainer>
-                                )
+                                                    handleMoveStage(from, to)
+                                                }}
+                                            />
+                                        </NestableScrollContainer>
+                                    )
 
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button disabled={isCreateStageDisabled} iconName="add" onPress={() => { setBottomSheetOpen(true) }} style={styles.button}>New Stage</Button>
+                    <Button disabled={isLoading || isCreateStageDisabled} iconName="add" onPress={() => { setBottomSheetOpen(true) }} style={styles.button}>New Stage</Button>
                 </View>
                 <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} title="Add Stage">
                     <StageForm onCreateStage={handleCreateStage} />

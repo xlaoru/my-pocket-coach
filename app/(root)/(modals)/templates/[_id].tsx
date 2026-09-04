@@ -505,8 +505,8 @@ export default function Template() {
                     }
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button iconName="add" disabled={isCreateExerciseDisabled || isSupersetCombiningMode} onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
-                    {template?.templateWorkout && (templateBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" disabled={isSupersetCombiningDisabled} variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
+                    <Button iconName="add" disabled={isLoading || isCreateExerciseDisabled || isSupersetCombiningMode} onPress={() => setExerciseFormOpen(true)} style={styles.button}>New Exercise</Button>
+                    {template?.templateWorkout && (templateBareExercisesAmount ?? 0) >= 2 && <Button iconName="layers" disabled={isLoading || isSupersetCombiningDisabled} variant="secondary" onPress={() => { setSupersetCombiningMode((prev) => !prev); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.button}>Add Superset</Button>}
                 </View>
                 <BottomSheetForm isOpen={isExerciseFormOpen} onClose={() => setExerciseFormOpen(false)} title="Add Exercise">
                     <TemplateExerciseForm onCreateTemplateExercise={handleCreateTemplateExercise} />

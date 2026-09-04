@@ -506,14 +506,13 @@ export default function Program() {
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <Pressable
+            <View
                 style={[
                     { paddingBottom: insets.bottom + 12 },
                     styles.outerContainer,
                 ]}
-                onPress={Keyboard.dismiss}
             >
-                <View style={styles.header}>
+                <Pressable style={styles.header} onPress={Keyboard.dismiss}>
                     {
                         isProgramLoading
                             ? (
@@ -535,9 +534,9 @@ export default function Program() {
                             : null
                     }
                     <AttachPeriodizationButton onPress={onHandleAttachment} isAttaced={Boolean(periodizationLabel)} value={isProgramLoading ? "Loading..." : periodizationLabel} disabled={isAttachmentDisabled} />
-                </View>
+                </Pressable>
                 {isSupersetCombiningMode && (
-                    <View style={styles.combiningPanelContainer}>
+                    <Pressable style={styles.combiningPanelContainer} onPress={Keyboard.dismiss}>
                         <View>
                             <Title style={styles.combiningPanelTitle}>Combining mode</Title>
                             <Paragraph>Select at least 2</Paragraph>
@@ -546,28 +545,34 @@ export default function Program() {
                             <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.combiningPanelButton}>Cancel</Button>
                             {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
                         </View>
-                    </View>
+                    </Pressable>
                 )}
                 <View style={styles.listContainer}>
                     {
                         isProgramError
                             ? (
-                                <EntityEmptyState
-                                    iconName="alert-circle-outline"
-                                    title="Failed to load program"
-                                    message="Please check the API connection and try again."
-                                    onRetry={() => refetchProgram()}
-                                />
+                                <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                    <EntityEmptyState
+                                        iconName="alert-circle-outline"
+                                        title="Failed to load program"
+                                        message="Please check the API connection and try again."
+                                        onRetry={() => refetchProgram()}
+                                    />
+                                </Pressable>
                             )
                             : isProgramLoading
                                 ? (
-                                    <Loader text="Loading your program..." />
+                                    <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                        <Loader text="Loading your program..." />
+                                    </Pressable>
                                 )
                                 : programExercisesAmount === 0
                                     ? (
-                                        <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
+                                        <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                            <EntityEmptyState iconName="barbell" title="Empty program" message="Add exercise below to get started" />
+                                        </Pressable>
                                     )
-                                    : <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                    : <NestableScrollContainer showsVerticalScrollIndicator={false} keyboardDismissMode="on-drag">
                                         <NestableDraggableFlatList
                                             autoscrollThreshold={30}
                                             autoscrollSpeed={100}
@@ -663,7 +668,7 @@ export default function Program() {
                 <BottomSheetForm isOpen={isAttachPeriodizationMode} title="Select Periodization" onClose={() => { setAttachPeriodizationMode(false); setStagePicking(false); setPickedPeriodization(null) }}>
                     <AttachPeriodizationForm periodizations={periodizations ?? []} onLinkStage={handleLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} isStagePicking={isStagePicking} pickedPeriodization={pickedPeriodization} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} isLoading={isPeriodizationsLoading} isError={isPeriodizationsError} refetchPeriodizations={refetchPeriodizations} />
                 </BottomSheetForm>
-            </Pressable>
+            </View>
         </KeyboardAvoidingView>
     );
 }
@@ -682,6 +687,9 @@ const styles = StyleSheet.create({
         gap: 2,
     },
     listContainer: {
+        flex: 1,
+    },
+    dismissKeyboardArea: {
         flex: 1,
     },
     attachment: {

@@ -377,14 +377,13 @@ export default function Template() {
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <Pressable
+            <View
                 style={[
                     { paddingBottom: insets.bottom + 12 },
                     styles.outerContainer,
                 ]}
-                onPress={Keyboard.dismiss}
             >
-                <View style={styles.header}>
+                <Pressable style={styles.header} onPress={Keyboard.dismiss}>
                     {
                         isLoading
                             ? <Heading>Loading...</Heading>
@@ -397,9 +396,9 @@ export default function Template() {
                                 : <Paragraph isEditable disabled={isTemplateDescriptionDisabled} onChangeText={setTemplateDescription} onBlur={handleEditTemplateDescription}>{templateDescription}</Paragraph>
                             : null
                     }
-                </View>
+                </Pressable>
                 {isSupersetCombiningMode && (
-                    <View style={styles.combiningPanelContainer}>
+                    <Pressable style={styles.combiningPanelContainer} onPress={Keyboard.dismiss}>
                         <View>
                             <Title style={styles.combiningPanelTitle}>Combining mode</Title>
                             <Paragraph>Select at least 2</Paragraph>
@@ -408,28 +407,34 @@ export default function Template() {
                             <Button variant="outlined" onPress={() => { setSupersetCombiningMode(false); setSelectedExercises([]); setSelectedExercisesData([]) }} style={styles.combiningPanelButton}>Cancel</Button>
                             {selectedExercises.length >= 2 && <Button onPress={() => { setSupersetCombiningFormOpen(true) }} style={styles.combiningPanelButton}>Combine</Button>}
                         </View>
-                    </View>
+                    </Pressable>
                 )}
                 <View style={styles.listContainer}>
                     {
                         isError
                             ? (
-                                <EntityEmptyState
-                                    iconName="alert-circle-outline"
-                                    title="Failed to load templates"
-                                    message="Please check the API connection and try again."
-                                />
+                                <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                    <EntityEmptyState
+                                        iconName="alert-circle-outline"
+                                        title="Failed to load templates"
+                                        message="Please check the API connection and try again."
+                                    />
+                                </Pressable>
                             )
                             : isLoading
                                 ? (
-                                    <Loader />
+                                    <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                        <Loader />
+                                    </Pressable>
                                 )
                                 : templateExercisesAmount === 0
                                     ? (
-                                        <EntityEmptyState iconName="document-text-outline" title="Empty template" message="Add template below to get started" />
+                                        <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                            <EntityEmptyState iconName="document-text-outline" title="Empty template" message="Add template below to get started" />
+                                        </Pressable>
                                     )
                                     : (
-                                        <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                        <NestableScrollContainer showsVerticalScrollIndicator={false} keyboardDismissMode="on-drag">
                                             <NestableDraggableFlatList
                                                 autoscrollThreshold={30}
                                                 autoscrollSpeed={100}
@@ -514,7 +519,7 @@ export default function Template() {
                 <BottomSheetForm isOpen={isSupersetCombiningFormOpen} title="Create Superset" onClose={() => { setSupersetCombiningFormOpen(false) }}>
                     <TemplateSupersetForm selectedExercisesData={selectedExercisesData} onCreateTemplateSuperset={handleCreateTemplateSuperset} />
                 </BottomSheetForm>
-            </Pressable>
+            </View>
         </KeyboardAvoidingView>
     )
 }
@@ -533,6 +538,9 @@ const styles = StyleSheet.create({
         gap: 2,
     },
     listContainer: {
+        flex: 1,
+    },
+    dismissKeyboardArea: {
         flex: 1,
     },
     itemWrapper: {

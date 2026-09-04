@@ -201,14 +201,13 @@ export default function Periodization() {
             style={styles.keyboardAvoidingContainer}
             behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-            <Pressable
+            <View
                 style={[
                     { paddingBottom: insets.bottom + 12 },
                     styles.outerContainer,
                 ]}
-                onPress={Keyboard.dismiss}
             >
-                <View style={styles.header}>
+                <Pressable style={styles.header} onPress={Keyboard.dismiss}>
                     {
                         isLoading
                             ? (
@@ -229,26 +228,32 @@ export default function Periodization() {
                                 )
                             : null
                     }
-                </View>
+                </Pressable>
                 <View style={styles.listContainer}>
                     {
                         isError
                             ? (
-                                <EntityEmptyState
-                                    iconName="alert-circle-outline"
-                                    title="Failed to load periodizations"
-                                    message="Please check the API connection and try again."
-                                />
+                                <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                    <EntityEmptyState
+                                        iconName="alert-circle-outline"
+                                        title="Failed to load periodizations"
+                                        message="Please check the API connection and try again."
+                                    />
+                                </Pressable>
                             ) : isLoading
                                 ? (
-                                    <Loader />
+                                    <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                        <Loader />
+                                    </Pressable>
                                 )
                                 : periodization?.stages.length === 0
                                     ? (
-                                        <EntityEmptyState iconName="barbell" title="Empty periodization" message="Add stage below to get started" />
+                                        <Pressable style={styles.dismissKeyboardArea} onPress={Keyboard.dismiss}>
+                                            <EntityEmptyState iconName="barbell" title="Empty periodization" message="Add stage below to get started" />
+                                        </Pressable>
                                     )
                                     : (
-                                        <NestableScrollContainer showsVerticalScrollIndicator={false}>
+                                        <NestableScrollContainer showsVerticalScrollIndicator={false} keyboardDismissMode="on-drag">
                                             <NestableDraggableFlatList
                                                 autoscrollThreshold={30}
                                                 autoscrollSpeed={100}
@@ -281,7 +286,7 @@ export default function Periodization() {
                 <BottomSheetForm isOpen={isBottomSheetOpen} onClose={() => setBottomSheetOpen(false)} title="Add Stage">
                     <StageForm onCreateStage={handleCreateStage} />
                 </BottomSheetForm>
-            </Pressable>
+            </View>
         </KeyboardAvoidingView>
     )
 }
@@ -300,6 +305,9 @@ const styles = StyleSheet.create({
         gap: 2
     },
     listContainer: {
+        flex: 1,
+    },
+    dismissKeyboardArea: {
         flex: 1,
     },
     itemWrapper: {

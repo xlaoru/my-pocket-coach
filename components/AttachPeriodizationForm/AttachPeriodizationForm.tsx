@@ -1,5 +1,5 @@
 import { IAttachPeriodizationFormProps } from "@/types/props";
-import { FlatList, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Button from "../Button/Button";
 import EntityEmptyState from "../EntityEmptyState/EntityEmptyState";
 import Loader from "../Loader/Loader";
@@ -36,16 +36,11 @@ export default function AttachPeriodizationForm({ isStagePicking, setStagePickin
                                                 <EntityEmptyState iconName="flash" title="No stages yet" message="This periodization has no stages" wrapperStyle={{ marginTop: 0, marginBottom: 50 }} />
                                             )
                                             : (
-                                                <FlatList
-                                                    style={styles.container}
-                                                    contentContainerStyle={styles.contentContainer}
-                                                    data={pickedPeriodization?.stages}
-                                                    keyExtractor={(item) => item._id}
-                                                    showsVerticalScrollIndicator={false}
-                                                    renderItem={({ item, index }) => (
-                                                        <StageCard index={index} periodizationId={pickedPeriodization?._id ?? ""} stage={item} onLinkStage={onLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} />
-                                                    )}
-                                                />
+                                                <View style={styles.contentContainer}>
+                                                    {pickedPeriodization?.stages.map((item, index) => (
+                                                        <StageCard key={item._id} index={index} periodizationId={pickedPeriodization?._id ?? ""} stage={item} onLinkStage={onLinkStage} setAttachPeriodizationMode={setAttachPeriodizationMode} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} />
+                                                    ))}
+                                                </View>
                                             )
                                     }
                                 </View>
@@ -56,16 +51,11 @@ export default function AttachPeriodizationForm({ isStagePicking, setStagePickin
                                         <EntityEmptyState iconName="flash" title="No periodiozation yet" message="You haven't created any periodizations" wrapperStyle={{ marginTop: 0, marginBottom: 50 }} />
                                     )
                                     : (
-                                        <FlatList
-                                            style={styles.container}
-                                            contentContainerStyle={styles.contentContainer}
-                                            data={periodizations}
-                                            keyExtractor={(item) => item._id}
-                                            showsVerticalScrollIndicator={false}
-                                            renderItem={({ item }) => (
-                                                <PeriodizationCard periodization={item} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} />
-                                            )}
-                                        />
+                                        <View style={styles.contentContainer}>
+                                            {periodizations?.map((item) => (
+                                                <PeriodizationCard key={item._id} periodization={item} setStagePicking={setStagePicking} setPickedPeriodization={setPickedPeriodization} />
+                                            ))}
+                                        </View>
                                     )
                             )
             }

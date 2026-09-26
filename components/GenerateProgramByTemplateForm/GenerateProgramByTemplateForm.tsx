@@ -1,6 +1,5 @@
 import { IGenerateProgramByTemplateFormProps } from "@/types/props";
 import { StyleSheet, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import EntityEmptyState from "../EntityEmptyState/EntityEmptyState";
 import Loader from "../Loader/Loader";
 import TemplateCard from "./TemplateCard";
@@ -28,16 +27,11 @@ export default function GenerateProgramByTemplateForm({ templates, onGeneratePro
                                 <EntityEmptyState iconName="document-text-outline" title="No templates yet" message="You haven't created any templates" wrapperStyle={{ marginTop: 0, marginBottom: 50 }} />
                             )
                             : (
-                                <FlatList
-                                    style={styles.container}
-                                    contentContainerStyle={styles.contentContainer}
-                                    data={templates}
-                                    keyExtractor={(item) => item._id}
-                                    showsVerticalScrollIndicator={false}
-                                    renderItem={({ item, index }) => (
-                                        <TemplateCard template={item} key={index} onGenerateProgramByTemplate={onGenerateProgramByTemplate} isGenerateProgramDisabled={isGenerateProgramDisabled} />
-                                    )}
-                                />
+                                <View style={styles.contentContainer}>
+                                    {templates?.map((item) => (
+                                        <TemplateCard key={item._id} template={item} onGenerateProgramByTemplate={onGenerateProgramByTemplate} isGenerateProgramDisabled={isGenerateProgramDisabled} />
+                                    ))}
+                                </View>
                             )
             }
         </View>

@@ -464,6 +464,7 @@ export default function Program() {
     }, [_id, unlinkStageMutation])
 
     const onHandleAttachment = useCallback(() => {
+        Keyboard.dismiss()
         if (!periodizationLabel) {
             setAttachPeriodizationMode(true)
         } else {

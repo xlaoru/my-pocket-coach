@@ -35,6 +35,7 @@ export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
     }
 
     const onRemoveSet = (index: number) => {
+        Keyboard.dismiss()
         setSets((prevSets) => prevSets.filter((_, i) => i !== index));
     }
 

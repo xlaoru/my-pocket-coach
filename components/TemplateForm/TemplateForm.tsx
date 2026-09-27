@@ -1,6 +1,6 @@
 import { ITemplateFormProps } from "@/types/props";
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import Button from "../Button/Button";
 
@@ -11,6 +11,8 @@ const TemplateForm = ({ onCreateTemplate }: ITemplateFormProps) => {
     const [isCreateTemplateDisabled, setCreateTemplateDisabled] = useState(false)
 
     const handleCreateTemplate = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedName = templateName.trim()
         const trimmedDescription = templateDescription.trim()
 

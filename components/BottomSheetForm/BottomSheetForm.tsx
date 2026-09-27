@@ -34,6 +34,7 @@ export default function BottomSheetForm({ isOpen, title, children, onClose, }: I
         if (isOpen) {
             bottomSheetRef.current?.present();
         } else {
+            Keyboard.dismiss();
             bottomSheetRef.current?.dismiss();
         }
     }, [isOpen]);

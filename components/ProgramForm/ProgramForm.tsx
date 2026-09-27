@@ -1,6 +1,6 @@
 import { IProgramFormProps } from "@/types/props";
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import Button from "../Button/Button";
 
@@ -11,6 +11,8 @@ export default function ProgramForm({ onCreateProgram }: IProgramFormProps) {
     const [isCreateProgramDisabled, setCreateProgramDisabled] = useState(false)
 
     const handleCreateProgram = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedName = programName.trim()
         const trimmedDescription = programDescription.trim()
 

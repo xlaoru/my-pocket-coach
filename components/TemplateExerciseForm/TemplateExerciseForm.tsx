@@ -1,6 +1,6 @@
 import { ITemplateExerciseFormProps } from "@/types/props";
 import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import Button from "../Button/Button";
 import IconButton from "../IconButton/IconButton";
@@ -14,6 +14,8 @@ export default function TemplateExerciseForm({ onCreateTemplateExercise }: ITemp
     const [isCreateTemplateExerciseDisabled, setCreateTemplateExerciseDisabled] = useState(false)
 
     const handleCreateTemplateExercise = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedName = exerciseName.trim()
 
         if (!trimmedName) return;

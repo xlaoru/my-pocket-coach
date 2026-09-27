@@ -2,7 +2,7 @@ import { ISetInput } from "@/types/models";
 import { IExerciseFormProps } from "@/types/props";
 import { parseNumericInput } from "@/utils/parseNumericInput";
 import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import { useBottomSheetFormScroll } from "../BottomSheetForm/BottomSheetForm";
 import Button from "../Button/Button";
@@ -39,6 +39,8 @@ export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
     }
 
     const handleCreateExercise = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedExerciseName = exerciseName.trim()
 
         if (!trimmedExerciseName) return;

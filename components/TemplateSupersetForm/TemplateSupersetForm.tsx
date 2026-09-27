@@ -2,7 +2,7 @@ import { colors } from "@/styles/colors";
 import { ITemplateSupersetFormProps } from "@/types/props";
 import { Ionicons } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import Button from "../Button/Button";
 import Paragraph from "../Paragraph/Paragraph";
@@ -14,6 +14,8 @@ export default function TemplateSupersetForm({ selectedExercisesData, onCreateTe
     const [isCreateTemplateSupersetDisabled, setCreateTemplateSupersetDisabled] = useState(false)
 
     const handleCreateTemplateSuperset = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedName = supersetName.trim()
 
         if (!trimmedName) return

@@ -16,6 +16,8 @@ export default function Title({ children, style, isEditable, onChangeText, onBlu
                 onChangeText={onChangeText}
                 onBlur={onBlur}
                 onSubmitEditing={onSubmitEditing}
+                submitBehavior="blurAndSubmit"
+                returnKeyType="done"
                 keyboardType={keyboardType}
                 editable={!disabled}
             />

@@ -3,6 +3,11 @@ export interface ISet {
   reps: number
 }
 
+export interface ISetInput {
+  weight: string
+  reps: string
+}
+
 export interface IExercise {
   _id: string
   name: string

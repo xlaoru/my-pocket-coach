@@ -6,6 +6,7 @@ import {
   IPeriodization,
   IProgram,
   ISet,
+  ISetInput,
   IStage,
   ITemplate,
   ITemplateExercise,
@@ -139,7 +140,7 @@ export interface IExerciseFormProps {
 
 export interface IExerciseFormRowProps {
   index: number
-  set: ISet
+  set: ISetInput
   onChange: (index: number, field: 'weight' | 'reps', value: string) => void
   onRemove: (index: number) => void
 }

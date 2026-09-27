@@ -18,6 +18,8 @@ function Paragraph({ children, style, isEditable, autoFocus, onChangeText, onBlu
                 onBlur={onBlur}
                 scrollEnabled={false}
                 editable={!disabled}
+                submitBehavior="blurAndSubmit"
+                returnKeyType="done"
             />
         )
     }

@@ -16,6 +16,8 @@ export default function Heading({ children, style, isEditable, onChangeText, onB
                 onBlur={onBlur}
                 scrollEnabled={false}
                 editable={!disabled}
+                submitBehavior="blurAndSubmit"
+                returnKeyType="done"
             />
         )
     }

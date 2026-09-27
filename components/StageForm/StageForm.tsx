@@ -1,6 +1,6 @@
 import { IStageFormProps } from "@/types/props";
 import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import Button from "../Button/Button";
 
@@ -11,6 +11,8 @@ export default function StageForm({ onCreateStage }: IStageFormProps) {
     const [isCreateStageDisabled, setCreateStageDisabled] = useState(false)
 
     const handleCreateStage = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedName = stageName.trim()
         const trimmedDescription = stageDescription.trim()
 

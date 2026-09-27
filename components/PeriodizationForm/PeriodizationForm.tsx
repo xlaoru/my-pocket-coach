@@ -1,6 +1,6 @@
 import { IPeriodizationFormProps } from "@/types/props";
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import Button from "../Button/Button";
 
@@ -11,6 +11,8 @@ export default function PeriodizationForm({ onCreatePeriodization }: IPeriodizat
     const [isCreatePeriodizationDisabled, setCreatePeriodizationDisabled] = useState(false)
 
     const handleCreatePeriodization = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedName = periodizationName.trim()
         const trimmedDescription = periodizationDescription.trim()
 

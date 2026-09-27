@@ -1,14 +1,16 @@
-import { ISet } from "@/types/models";
+import { ISetInput } from "@/types/models";
 import { IExerciseFormProps } from "@/types/props";
 import { parseNumericInput } from "@/utils/parseNumericInput";
 import { useCallback, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 import BottomSheetInput from "../BottomSheetForm/BottomSheetInput";
 import { useBottomSheetFormScroll } from "../BottomSheetForm/BottomSheetForm";
 import Button from "../Button/Button";
 import Paragraph from "../Paragraph/Paragraph";
 import AddSetOutlineButton from "./AddSetOutlineButton";
 import ExerciseFormRow from "./ExerciseFormRow";
+
+const emptySet: ISetInput = { weight: "", reps: "" }
 
 export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
     const { scrollToEnd } = useBottomSheetFormScroll();
@@ -17,21 +19,14 @@ export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
 
     const [isCreateExerciseDisabled, setCreateExerciseDisabled] = useState(false)
 
-    const [sets, setSets] = useState<ISet[]>([
-        { weight: 0, reps: 0 },
-    ])
+    const [sets, setSets] = useState<ISetInput[]>([emptySet])
 
     const onSetChange = (index: number, field: "weight" | "reps", value: string) => {
-        setSets((prevSets) => {
-            const numeric = parseNumericInput(value, prevSets[index][field]);
-            const newSets = [...prevSets];
-            newSets[index] = { ...newSets[index], [field]: numeric };
-            return newSets;
-        });
+        setSets((prevSets) => prevSets.map((set, i) => i === index ? { ...set, [field]: value } : set));
     }
 
     const onAddSet = () => {
-        setSets((prevSets) => [...prevSets, { weight: 0, reps: 0 }]);
+        setSets((prevSets) => [...prevSets, emptySet]);
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 scrollToEnd();
@@ -40,24 +35,30 @@ export default function ExerciseForm({ onCreateExercise }: IExerciseFormProps) {
     }
 
     const onRemoveSet = (index: number) => {
+        Keyboard.dismiss()
         setSets((prevSets) => prevSets.filter((_, i) => i !== index));
     }
 
     const handleCreateExercise = useCallback(async () => {
+        Keyboard.dismiss()
+
         const trimmedExerciseName = exerciseName.trim()
 
         if (!trimmedExerciseName) return;
 
         setCreateExerciseDisabled(true)
 
-        await onCreateExercise(trimmedExerciseName, sets).finally(() => {
+        const numericSets = sets.map((set) => ({
+            weight: parseNumericInput(set.weight),
+            reps: parseNumericInput(set.reps),
+        }))
+
+        await onCreateExercise(trimmedExerciseName, numericSets).finally(() => {
             setCreateExerciseDisabled(false)
         })
 
         setExerciseName("")
-        setSets([
-            { weight: 0, reps: 0 },
-        ])
+        setSets([emptySet])
     }, [exerciseName, onCreateExercise, sets])
 
     return (
